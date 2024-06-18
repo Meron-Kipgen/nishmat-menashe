@@ -11,9 +11,16 @@ const Audio = lazy(() => import("../pages/Audio/Audio"));
 const Text = lazy(() => import("../pages/Text/Text"));
 const Videos = lazy(() => import("../pages/Video/Videos"));
 const Books = lazy(() => import("../pages/Books/Books"));
-const Details = lazy(() => import("../pages/Video/Details"));
+const PcDetails = lazy(() => import("../pages/Video/PcDetails"));
+const MobileDetails = lazy(() => import("../pages/Video/MobileDetails"));
 
-// Simplified router configuration for debugging
+// Custom hook to handle media queries
+const Details = () => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  return isMobile ? <MobileDetails/>: <PcDetails/>;
+};
+
+// Router configuration
 const routers = createBrowserRouter([
   {
     element: (
@@ -36,7 +43,7 @@ const routers = createBrowserRouter([
         ),
       },
       {
-        path: "feed",
+        path: "/feed",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
             <Feed />
@@ -44,7 +51,7 @@ const routers = createBrowserRouter([
         ),
       },
       {
-        path: "video",
+        path: "/video",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
             <Videos />
@@ -52,15 +59,15 @@ const routers = createBrowserRouter([
         ),
       },
       {
-        path: "video/:id",
+        path: "/video/:id",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
-           <Details/>
+            <Details />
           </Suspense>
         ),
       },
       {
-        path: "audio",
+        path: "/audio",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
             <Audio />
@@ -68,7 +75,7 @@ const routers = createBrowserRouter([
         ),
       },
       {
-        path: "text",
+        path: "/text",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
             <Text />
@@ -76,7 +83,7 @@ const routers = createBrowserRouter([
         ),
       },
       {
-        path: "books",
+        path: "/books",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
             <Books />
@@ -88,3 +95,4 @@ const routers = createBrowserRouter([
 ]);
 
 export default routers;
+
