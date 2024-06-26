@@ -1,7 +1,7 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-// Styled Components
 const CardFooter = styled.div`
   display: flex;
   align-items: center;
@@ -13,36 +13,43 @@ const Card = ({
   title,
   rabbi,
   date,
-  thumbnail,
+  poster,
   category,
+  thumbnail,
   CardContainer,
   ThumbnailContainer,
   TextContainer,
 }) => {
   const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = () => {
     navigate(`/video/${id}`);
   };
 
   return (
-    <>
-      <CardContainer onClick={handleClick}>
-        <ThumbnailContainer>
+    <CardContainer onClick={handleClick}>
+      <ThumbnailContainer
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {isHovered ? (
           <img src={thumbnail} alt={title} />
-        </ThumbnailContainer>
+        ) : (
+          <img src={poster} alt={title} />
+        )}
+      </ThumbnailContainer>
 
-        <TextContainer>
-          <h1>{title}</h1>
-          <p>
-            {date} | {category}
-          </p>
-          <CardFooter>
-            <h3>By: {rabbi}</h3>
-          </CardFooter>
-        </TextContainer>
-      </CardContainer>
-    </>
+      <TextContainer>
+        <h1>{title}</h1>
+        <p>
+          {date} | {category}
+        </p>
+        <CardFooter>
+          <h3>By: {rabbi}</h3>
+        </CardFooter>
+      </TextContainer>
+    </CardContainer>
   );
 };
 

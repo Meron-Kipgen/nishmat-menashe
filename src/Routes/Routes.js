@@ -57,15 +57,19 @@ const routers = createBrowserRouter([
             <Videos />
           </Suspense>
         ),
+        children:[
+          {
+            path: "/video/:id",
+            element: (
+              <Suspense fallback={<SkeletonLoading />}>
+                <Details />
+              </Suspense>
+            ),
+          },
+        ]
+        
       },
-      {
-        path: "/video/:id",
-        element: (
-          <Suspense fallback={<SkeletonLoading />}>
-            <Details />
-          </Suspense>
-        ),
-      },
+  
       {
         path: "/audio",
         element: (

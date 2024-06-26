@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import videoData from "./videoData";
-import Player from "./Player";
+import Player from "./Player/Player";
 import Description from "./Description";
 import Related from "./Related";
 import Suggestions from "./Suggestions";
@@ -89,7 +89,7 @@ export default function PcDetails() {
     <Container>
       <VideoSection>
         <VideoWrapper>
-          <Player videoUrl={video.videoUrl} />
+          <Player src={video.videoUrl} poster={video.poster}/>
         </VideoWrapper>
         <DetailsContainer>
           <h1>{video.title}</h1>

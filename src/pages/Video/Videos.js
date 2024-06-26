@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import videoData from './videoData';
-import Filter from './Filter';
-import Card from './Card';
+import React, { useState, useRef } from "react";
+import styled, { keyframes } from "styled-components";
+import videoData from "./videoData";
+import Filter from "./Filter";
+import Card from "./Card";
+import { Outlet, useNavigate, useOutlet } from "react-router-dom";
+import useMediaQuery from "../../hooks/useMediaQuery";
+import MobileDetails from "./MobileDetails";
 
 const VideoPreviewWrapper = styled.section`
   display: flex;
@@ -40,6 +43,8 @@ const CardContainer = styled.div`
   @media (max-width: 768px) {
     border-radius: 0px;
     padding: 0;
+    width: 100%;
+    height: auto;
   }
 `;
 
@@ -47,12 +52,13 @@ const ThumbnailContainer = styled.div`
   flex: 1;
   img {
     border-radius: 10px;
-    height: 220px;
+    height: 200px;
     width: 100%;
   }
   @media (max-width: 768px) {
     img {
       border-radius: 0px;
+      height: auto;
     }
   }
 `;
@@ -82,42 +88,139 @@ const TextContainer = styled.div`
   }
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 300;
+  animation: ${fadeIn} 0.3s ease-in-out;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: ${({ minimized }) => (minimized ? "none" : "auto")};
+`;
+
+const ModalContent = styled.div`
+  position: ${({ minimized }) => (minimized ? "fixed" : "initial")};
+  bottom: ${({ minimized }) => (minimized ? "50px" : "auto")};
+  right: ${({ minimized }) => (minimized ? "0px" : "auto")};
+  width: ${({ minimized }) => (minimized ? "200px" : "100vw")};
+  height: ${({ minimized }) => (minimized ? "115px" : "100vh")};
+  overflow-y: auto;
+  animation: ${fadeIn} 0.3s ease-in-out;
+  background-color: white;
+  pointer-events: auto;
+  z-index: 301; /* Ensure it's above ModalOverlay */
+  transition: transform 0.3s ease-in-out;
+  transform: ${({ dragging, dragDistance }) =>
+    dragging ? `translateY(${dragDistance}px)` : "translateY(0)"};
+`;
+
 const Videos = () => {
-  const [selectedCategories, setSelectedCategories] = useState(['All']);
- 
+  const [selectedCategories, setSelectedCategories] = useState(["All"]);
+  const [isModalMinimized, setIsModalMinimized] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [dragDistance, setDragDistance] = useState(0);
+  const navigate = useNavigate()
+  const modalRef = useRef(null);
+  const outlet = useOutlet();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const handleCategoryChange = (categories) => {
     setSelectedCategories(categories);
   };
 
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      modalRef.current.startY = touch.clientY;
+      setDragging(true);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 1 && dragging) {
+      const touch = e.touches[0];
+      const deltaY = touch.clientY - modalRef.current.startY;
+      setDragDistance(deltaY);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (dragging) {
+      if (dragDistance > 200) {
+        setIsModalMinimized(true);
+      } else {
+        setIsModalMinimized(false);
+      }
+      setDragging(false);
+      setDragDistance(0);
+    }
+  };
+
   return (
     <>
-      <Filter
-        selectedCategories={selectedCategories}
-        onCategoryChange={handleCategoryChange}
-      />
-      <VideoPreviewWrapper>
-        {videoData
-          .filter(
-            (video) =>
-              selectedCategories.includes('All') ||
-              selectedCategories.includes(video.category)
-          )
-          .map((video, index) => (
-            <Card
-              key={index}
-              id={video.id}
-              title={video.title}
-              rabbi={video.rabbi}
-              thumbnail={video.thumbnail}
-              date={video.date}
-              videoUrl={video.videoUrl}
-              category={video.category}
-              CardContainer={CardContainer}
-              TextContainer={TextContainer}
-              ThumbnailContainer={ThumbnailContainer}
-            />
-          ))}
-      </VideoPreviewWrapper>
+      {isMobile && outlet && (
+        <ModalOverlay minimized={isModalMinimized}>
+          <ModalContent
+            minimized={isModalMinimized}
+            dragging={dragging}
+            dragDistance={dragDistance}
+            ref={modalRef}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <MobileDetails />
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {!isMobile && outlet ? null : (
+        <>
+          <Filter
+            selectedCategories={selectedCategories}
+            onCategoryChange={handleCategoryChange}
+          />
+          <VideoPreviewWrapper onClick={() => setIsModalMinimized(false)}>
+
+            {videoData
+              .filter(
+                (video) =>
+                  selectedCategories.includes("All") ||
+                  selectedCategories.includes(video.category)
+              )
+              .map((video, index) => (
+                <Card
+                  key={index}
+                  id={video.id}
+                  title={video.title}
+                  rabbi={video.rabbi}
+                  thumbnail={video.thumbnail}
+                  poster={video.poster}
+                  date={video.date}
+                  videoUrl={video.videoUrl}
+                  category={video.category}
+                  CardContainer={CardContainer}
+                  TextContainer={TextContainer}
+                  ThumbnailContainer={ThumbnailContainer}
+                  
+                />
+              ))}
+          </VideoPreviewWrapper>
+        </>
+      )}
+      {!isMobile && <Outlet />}
     </>
   );
 };

@@ -62,7 +62,7 @@ const TextContainer = styled.div`
     color: rgb(51, 120, 216);
   }
 `;
-const Suggestions = ({ videos }) => (
+const Suggestions = ({ videos}) => (
   <SuggestionContainer>
     {videos.map((video, index) => (
       <Card

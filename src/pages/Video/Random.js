@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import Card from "./Card";
 import videoData from "./videoData"; // Assuming videoData is correctly imported
 
 const VideoPreviewWrapper = styled.section`
@@ -97,19 +97,20 @@ const Random = ({ currentVideoId }) => {
 
   return (
     <VideoPreviewWrapper>
-      {shuffledVideoData.map((video) => (
-        <Link to={`/video/${video.id}`} key={video.id}>
-          <CardContainer>
-            <ThumbnailContainer>
-              <img src={video.thumbnail} alt={video.title} />
-            </ThumbnailContainer>
-            <TextContainer>
-              <h1>{video.title}</h1>
-              <h3>{video.rabbi}</h3>
-              <p>{video.date}</p>
-            </TextContainer>
-          </CardContainer>
-        </Link>
+      {shuffledVideoData.map((video,index) => (
+        <Card
+        key={index}
+        thumbnail={video.thumbnail}
+        id={video.id}
+        title={video.title}
+        rabbi={video.rabbi}
+        date={video.date}
+        videoUrl={video.videoUrl}
+        category={video.category}
+        CardContainer={CardContainer}
+        TextContainer={TextContainer}
+        ThumbnailContainer={ThumbnailContainer}
+      />
       ))}
     </VideoPreviewWrapper>
   );
