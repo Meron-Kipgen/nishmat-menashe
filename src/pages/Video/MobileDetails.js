@@ -6,11 +6,11 @@ import Player from "./Player/Player";
 import Description from "./Description";
 import Related from "./Related";
 import Suggestions from "./Suggestions";
-import { useGroupedItems, extractBaseTitle } from "../../hooks/useGroupedItems";
 import MobileBtn from "./MobileBtn";
 import Random from "./Random";
 import MobileCommentsBtn from "./MobileCommentsBtn";
 
+// Styled Components
 const Container = styled.section`
   width: 100%;
 `;
@@ -57,26 +57,12 @@ const MobileDetails = () => {
   const { id } = useParams();
   const video = videoData.find((v) => v.id === parseInt(id));
 
-  const groupedVideos = useGroupedItems(videoData, extractBaseTitle);
-
   const [showRelated, setShowRelated] = useState(false); // State to toggle between showing related videos
   const [showSuggestions, setShowSuggestions] = useState(false); // State to toggle between showing suggested videos
 
   if (!video) {
     return <DetailsContainer>Video not found</DetailsContainer>;
   }
-
-  const suggestedVideos = videoData.filter(
-    (suggestion) =>
-      suggestion.id !== video.id &&
-      (suggestion.category === video.category ||
-        suggestion.rabbi === video.rabbi)
-  );
-
-  const relatedVideos =
-    groupedVideos[extractBaseTitle(video.title)]?.filter(
-      (v) => v.id !== video.id
-    ) || [];
 
   const handleRelatedClick = () => {
     setShowRelated(true); // Set state to show related videos
@@ -91,14 +77,14 @@ const MobileDetails = () => {
   return (
     <Container>
       <VideoWrapper>  
-      <Player src={video.videoUrl} poster={video.poster}/>
+        <Player src={video.videoUrl} poster={video.poster} />
       </VideoWrapper>
 
       <DetailsContainer>
         <h1>{video.title}</h1>
         <Description description={video.description} />
         <h3>By: {video.rabbi}</h3>
-        <p>{video.time}</p>
+        <p>{video.date}</p>
       </DetailsContainer>
 
       <StickyMobileBtn>
@@ -114,22 +100,18 @@ const MobileDetails = () => {
         {!showRelated && !showSuggestions && (
           <Random currentVideoId={video.id} />
         )}
-        {showRelated && relatedVideos.length > 0 ? (
-          <Related videos={relatedVideos} />
-        ) : showRelated && relatedVideos.length === 0 ? (
+        {showRelated && (
           <>
-            <p>No related videos available.</p>
+            <Related baseTitle={video.title} videos={videoData} />
             <Random currentVideoId={video.id} />
           </>
-        ) : null}
-        {showSuggestions && suggestedVideos.length > 0 ? (
-          <Suggestions videos={suggestedVideos} />
-        ) : showSuggestions && suggestedVideos.length === 0 ? (
+        )}
+        {showSuggestions && (
           <>
-            <p>No suggested videos available.</p>
+            <Suggestions category={video.category} rabbi={video.rabbi} currentVideoId={video.id} videos={videoData} />
             <Random currentVideoId={video.id} />
           </>
-        ) : null}
+        )}
       </MobileSuggestionContainer>
     </Container>
   );

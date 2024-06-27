@@ -1,6 +1,5 @@
-import React from "react";
 import styled from "styled-components";
-import Preview from "./Card";
+import Card from "./Card";
 
 const RelatedContainer = styled.div`
   max-height: 500px;
@@ -63,24 +62,48 @@ const TextContainer = styled.div`
     color: rgb(226, 25, 114);
   }
 `;
-const Related = ({ videos }) => (
-  <RelatedContainer>
-    {videos.map((video, index) => (
-      <Preview
-        key={index}
-        id={video.id}
-        thumbnail={video.thumbnail}
-        title={video.title}
-        rabbi={video.rabbi}
-        date={video.date}
-        videoUrl={video.videoUrl}
-        category={video.category}
-        CardContainer={CardContainer}
-        TextContainer={TextContainer}
-        ThumbnailContainer={ThumbnailContainer}
-      />
-    ))}
-  </RelatedContainer>
-);
+const Related = ({ baseTitle, videos }) => {
+  const getCommonPrefix = (title) => {
+    const regex = /\d/;
+    const match = regex.exec(title);
+    if (match) {
+      return title.substring(0, match.index).trim();
+    }
+    return title;
+  };
+
+  const getRelatedVideos = (baseTitle, allVideos) => {
+    const commonPrefix = getCommonPrefix(baseTitle);
+    return allVideos.filter(video => {
+      const videoPrefix = getCommonPrefix(video.title);
+      return videoPrefix === commonPrefix && video.title !== baseTitle;
+    });
+  };
+
+  const relatedVideos = getRelatedVideos(baseTitle, videos);
+
+  return (
+    <RelatedContainer>
+      <h2>Related Videos</h2>
+      <ul>
+        {relatedVideos.map((video, index) => (
+           <Card
+           key={index}
+           thumbnail={video.thumbnail}
+           id={video.id}
+           title={video.title}
+           rabbi={video.rabbi}
+           date={video.date}
+           videoUrl={video.videoUrl}
+           category={video.category}
+           CardContainer={CardContainer}
+           TextContainer={TextContainer}
+           ThumbnailContainer={ThumbnailContainer}
+         />
+        ))}
+      </ul>
+    </RelatedContainer>
+  );
+};
 
 export default Related;

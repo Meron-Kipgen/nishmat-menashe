@@ -46,7 +46,7 @@ const Card = ({
           {date} | {category}
         </p>
         <CardFooter>
-          <h3>By: {rabbi}</h3>
+          <h3>{rabbi}</h3>
         </CardFooter>
       </TextContainer>
     </CardContainer>

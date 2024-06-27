@@ -103,7 +103,7 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 300;
+  z-index: 301;
   animation: ${fadeIn} 0.3s ease-in-out;
   display: flex;
   align-items: flex-end;
@@ -122,6 +122,9 @@ const ModalContent = styled.div`
   pointer-events: auto;
   z-index: 301; /* Ensure it's above ModalOverlay */
   transition: transform 0.3s ease-in-out;
+  backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.6);
   transform: ${({ dragging, dragDistance }) =>
     dragging ? `translateY(${dragDistance}px)` : "translateY(0)"};
 `;

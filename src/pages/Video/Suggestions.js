@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Card from "./Card";
+import styled from 'styled-components';
+import Card from './Card';
+
 const SuggestionContainer = styled.div`
   max-height: 700px;
   overflow-y: auto;
@@ -62,24 +62,35 @@ const TextContainer = styled.div`
     color: rgb(51, 120, 216);
   }
 `;
-const Suggestions = ({ videos}) => (
-  <SuggestionContainer>
-    {videos.map((video, index) => (
-      <Card
-        key={index}
-        thumbnail={video.thumbnail}
-        id={video.id}
-        title={video.title}
-        rabbi={video.rabbi}
-        date={video.date}
-        videoUrl={video.videoUrl}
-        category={video.category}
-        CardContainer={CardContainer}
-        TextContainer={TextContainer}
-        ThumbnailContainer={ThumbnailContainer}
-      />
-    ))}
-  </SuggestionContainer>
-);
+const Suggestions = ({ category, rabbi, currentVideoId, videos }) => {
+  const getSuggestedVideos = (category, rabbi, currentVideoId, allVideos) => {
+    return allVideos.filter(video => 
+      (video.category === category || video.rabbi === rabbi) && video.id !== currentVideoId
+    );
+  };
+
+  const suggestedVideos = getSuggestedVideos(category, rabbi, currentVideoId, videos);
+
+  return (
+    <div>
+      <h2>Suggestion</h2>
+        {suggestedVideos.map((video, index )=> (
+          <Card
+          key={index}
+          thumbnail={video.thumbnail}
+          id={video.id}
+          title={video.title}
+          rabbi={video.rabbi}
+          date={video.date}
+          videoUrl={video.videoUrl}
+          category={video.category}
+          CardContainer={CardContainer}
+          TextContainer={TextContainer}
+          ThumbnailContainer={ThumbnailContainer}
+        />
+        ))}
+    </div>
+  );
+};
 
 export default Suggestions;
