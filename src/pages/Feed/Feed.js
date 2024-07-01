@@ -1,8 +1,3 @@
-import React, { useState, useEffect } from 'react';
-import GoogleLogin from '../../components/GoogleLogin';
-import UserProfile from '../../components/UserProfile';
-import LogoutButton from '../../components/Logout';
-import { account } from '../../db/config';
 
 function Feed() {
 
@@ -13,9 +8,7 @@ function Feed() {
         <h1>Welcome to My App</h1>
       </header>
       <main>
-     
-            <UserProfile/>
-            <LogoutButton />
+
    
       </main>
 

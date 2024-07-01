@@ -1,7 +1,8 @@
 import React from "react";
-import ReactDOM from "react-dom/client"; // Import from 'react-dom/client'
+import ReactDOM from "react-dom/client"
 import App from "./App";
 import { createGlobalStyle } from "styled-components";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Define global styles
 const GlobalStyle = createGlobalStyle`
@@ -11,17 +12,21 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
- html ,body {
-    background: linear-gradient(135deg, rgba(173, 216, 230, 8) 100%, rgba(224, 255, 255, 8) 50%, rgba(240, 248, 255, 8) 10%);
+  html ,body {
+    background: linear-gradient(135deg, rgba(173, 216, 230, 0.8) 100%, rgba(224, 255, 255, 0.5) 50%, rgba(240, 248, 255, 0.1) 10%);
     font-family: 'Roboto', sans-serif;
     overscroll-behavior-y: contain;
   }
 `;
 
+const queryClient = new QueryClient();
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <GlobalStyle />
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <GlobalStyle />
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>
 );

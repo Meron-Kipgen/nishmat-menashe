@@ -17,7 +17,15 @@ const Description = ({ description }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)"); // Check if the screen width is less than or equal to 768px
 
-  const truncatedDescription = description.split(" ").slice(0, 6).join(" ");
+  if (!description) {
+    return null; // Handle case where description is undefined or null
+  }
+
+  // Split description if it contains more than 6 words, otherwise use the full description
+  const truncatedDescription =
+    description.split(" ").length > 6
+      ? description.split(" ").slice(0, 6).join(" ")
+      : description;
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -28,22 +36,22 @@ const Description = ({ description }) => {
       {isMobile ? (
         <>
           {showFullDescription ? description : truncatedDescription}{" "}
-          {!showFullDescription && (
-            <button onClick={toggleDescription}>....Read more</button>
-          )}
-          {showFullDescription && (
-            <button onClick={toggleDescription}>....Show less</button>
-          )}
+          {description.split(" ").length > 6 &&
+            (!showFullDescription ? (
+              <button onClick={toggleDescription}>....Read more</button>
+            ) : (
+              <button onClick={toggleDescription}>....Show less</button>
+            ))}
         </>
       ) : (
         <>
           {showFullDescription ? description : truncatedDescription}
-          {!showFullDescription && (
-            <button onClick={toggleDescription}>....Read more</button>
-          )}
-          {showFullDescription && (
-            <button onClick={toggleDescription}>....Show less</button>
-          )}
+          {description.split(" ").length > 6 &&
+            (!showFullDescription ? (
+              <button onClick={toggleDescription}>....Read more</button>
+            ) : (
+              <button onClick={toggleDescription}>....Show less</button>
+            ))}
         </>
       )}
     </DescriptionContainer>

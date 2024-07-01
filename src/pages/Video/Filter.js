@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
-import styled from 'styled-components';
-import videoData from './videoData';
+import React, { useRef, useState, useEffect } from "react";
+import styled from "styled-components";
+import { useDataContext } from "../../contexts/videosDataContext";
 import { CiCircleChevRight, CiCircleChevLeft } from "react-icons/ci";
 
 const Container = styled.section`
@@ -21,7 +21,7 @@ const ScrollButton = styled.button`
   width: 60px;
   z-index: 1;
   transition: background-color 0.3s;
-  color: rgb(45,108,199);
+  color: rgb(45, 108, 199);
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.7);
@@ -51,7 +51,7 @@ const ScrollContainer = styled.div`
     justify-content: flex-start;
     height: 50px;
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px) ;
+    -webkit-backdrop-filter: blur(16px);
     background-color: rgba(255, 255, 255, 0.5);
     padding: 0;
     margin: 0;
@@ -81,37 +81,40 @@ const ScrollContainer = styled.div`
   }
 `;
 
-export default function Filter({ selectedCategories, onCategoryChange }) {
-  const categories = ['All', ...new Set(videoData.map(video => video.category))];
+const Filter = ({ selectedCategories, onCategoryChange }) => {
   const scrollContainerRef = useRef(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(false);
+  const { videoLists = []} = useDataContext();
+
+  useEffect(() => {
+    handleScroll();
+  }, [videoLists]);
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current;
       setShowLeftButton(scrollLeft > 0);
-      setShowRightButton(scrollLeft < scrollWidth - clientWidth - 1); // Adjusted logic to accurately hide the right scroll button
+      setShowRightButton(scrollLeft < scrollWidth - clientWidth - 1);
     }
   };
-
-  useEffect(() => {
-    handleScroll(); // Check initial scroll position
-  }, []);
 
   const handleClick = (category) => {
     let updatedCategories;
 
-    if (category === 'All') {
-      updatedCategories = ['All'];
+    if (category === "All") {
+      updatedCategories = ["All"];
     } else {
       if (selectedCategories.includes(category)) {
-        updatedCategories = selectedCategories.filter(cat => cat !== category);
+        updatedCategories = selectedCategories.filter(
+          (cat) => cat !== category
+        );
         if (updatedCategories.length === 0) {
-          updatedCategories = ['All'];
+          updatedCategories = ["All"];
         }
       } else {
-        updatedCategories = selectedCategories.filter(cat => cat !== 'All');
+        updatedCategories = selectedCategories.filter((cat) => cat !== "All");
         updatedCategories.push(category);
       }
     }
@@ -121,32 +124,46 @@ export default function Filter({ selectedCategories, onCategoryChange }) {
 
   const handleScrollButton = (direction) => {
     if (scrollContainerRef.current) {
-      const scrollAmount = direction === 'left' ? -200 : 200;
-      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      const scrollAmount = direction === "left" ? -200 : 200;
+      scrollContainerRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
     }
   };
+
+  const categories = [
+    "All",
+    ...new Set(videoLists.map((video) => video.category)),
+  ];
 
   return (
     <Container>
       {showLeftButton && (
-        <ScrollButton onClick={() => handleScrollButton('left')}>
+        <ScrollButton onClick={() => handleScrollButton("left")}>
           <CiCircleChevLeft size={30} />
         </ScrollButton>
       )}
       <ScrollContainer ref={scrollContainerRef} onScroll={handleScroll}>
         <ul>
           {categories.map((category, index) => (
-            <li key={index} onClick={() => handleClick(category)} className={selectedCategories.includes(category) ? 'active' : ''}>
+            <li
+              key={index}
+              onClick={() => handleClick(category)}
+              className={selectedCategories.includes(category) ? "active" : ""}
+            >
               {category}
             </li>
           ))}
         </ul>
       </ScrollContainer>
       {showRightButton && (
-        <ScrollButton onClick={() => handleScrollButton('right')}>
+        <ScrollButton onClick={() => handleScrollButton("right")}>
           <CiCircleChevRight size={30} />
         </ScrollButton>
       )}
     </Container>
   );
-}
+};
+
+export default Filter;

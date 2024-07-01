@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import videoData from "./videoData";
+
 import Player from "./Player/Player";
 import Description from "./Description";
 import Related from "./Related";
@@ -9,7 +9,7 @@ import Suggestions from "./Suggestions";
 import MobileBtn from "./MobileBtn";
 import Random from "./Random";
 import MobileCommentsBtn from "./MobileCommentsBtn";
-
+import { useDataContext } from "../../contexts/videosDataContext";
 // Styled Components
 const Container = styled.section`
   width: 100%;
@@ -55,7 +55,8 @@ const StickyMobileBtn = styled.div`
 // Main Component
 const MobileDetails = () => {
   const { id } = useParams();
-  const video = videoData.find((v) => v.id === parseInt(id));
+  const { videoLists } = useDataContext();
+  const video = videoLists.find((v) => v.$id === id);
 
   const [showRelated, setShowRelated] = useState(false); // State to toggle between showing related videos
   const [showSuggestions, setShowSuggestions] = useState(false); // State to toggle between showing suggested videos
@@ -76,7 +77,7 @@ const MobileDetails = () => {
 
   return (
     <Container>
-      <VideoWrapper>  
+      <VideoWrapper>
         <Player src={video.videoUrl} poster={video.poster} />
       </VideoWrapper>
 
@@ -102,13 +103,18 @@ const MobileDetails = () => {
         )}
         {showRelated && (
           <>
-            <Related baseTitle={video.title} videos={videoData} />
+            <Related baseTitle={video.title} videos={videoLists} />
             <Random currentVideoId={video.id} />
           </>
         )}
         {showSuggestions && (
           <>
-            <Suggestions category={video.category} rabbi={video.rabbi} currentVideoId={video.id} videos={videoData} />
+            <Suggestions
+              category={video.category}
+              rabbi={video.rabbi}
+              currentVideoId={video.id}
+              videos={videoLists}
+            />
             <Random currentVideoId={video.id} />
           </>
         )}

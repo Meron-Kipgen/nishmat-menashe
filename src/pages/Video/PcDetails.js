@@ -1,13 +1,12 @@
-import { useParams } from "react-router-dom";
+import React from "react";
 import styled from "styled-components";
-import videoData from "./videoData";
+import { useParams } from "react-router-dom";
 import Player from "./Player/Player";
 import Description from "./Description";
 import Related from "./Related";
 import Suggestions from "./Suggestions";
 import PcBtn from "./PcBtn";
-
-// Styled Components
+import { useDataContext } from "../../contexts/videosDataContext";
 const Container = styled.section`
   display: flex;
   justify-content: space-between;
@@ -59,11 +58,13 @@ const PcSuggestionsSection = styled.div`
     color: white;
   }
 `;
+
 const VideoWrapper = styled.div``;
 
 export default function PcDetails() {
   const { id } = useParams();
-  const video = videoData.find((v) => v.id === parseInt(id));
+  const { videoLists } = useDataContext();
+  const video = videoLists.find((v) => v.$id === id);
 
   if (!video) {
     return <div>Video not found</div>;
@@ -77,22 +78,26 @@ export default function PcDetails() {
         <VideoWrapper>
           <Player src={video.videoUrl} poster={video.poster} />
         </VideoWrapper>
-       
+
         <DetailsContainer>
           <h1>{video.title}</h1>
           <Description description={video.description} />
-          <h3>By: {video.rabbi}</h3><PcBtn />
+          <h3>By: {video.rabbi}</h3>
+          <PcBtn />
           <p>{video.date}</p>
         </DetailsContainer>
- 
-        
 
         <CommentContainer>hello</CommentContainer>
       </VideoSection>
-      
+
       <PcSuggestionsSection>
-        <Related baseTitle={baseTitle} videos={videoData} />
-        <Suggestions category={video.category} rabbi={video.rabbi} currentVideoId={video.id} videos={videoData} />
+        <Related baseTitle={baseTitle} videos={videoLists} />
+        <Suggestions
+          category={video.category}
+          rabbi={video.rabbi}
+          currentVideoId={video.$id}
+          videos={videoLists}
+        />
       </PcSuggestionsSection>
     </Container>
   );

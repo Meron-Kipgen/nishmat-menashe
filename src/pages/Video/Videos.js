@@ -1,11 +1,13 @@
 import React, { useState, useRef } from "react";
 import styled, { keyframes } from "styled-components";
-import videoData from "./videoData";
 import Filter from "./Filter";
 import Card from "./Card";
 import { Outlet, useNavigate, useOutlet } from "react-router-dom";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import MobileDetails from "./MobileDetails";
+import { useDataContext } from "../../contexts/videosDataContext";
+import VideoForm from "./VideoForm";
+
 
 const VideoPreviewWrapper = styled.section`
   display: flex;
@@ -123,8 +125,8 @@ const ModalContent = styled.div`
   z-index: 301; /* Ensure it's above ModalOverlay */
   transition: transform 0.3s ease-in-out;
   backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background-color: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.6);
   transform: ${({ dragging, dragDistance }) =>
     dragging ? `translateY(${dragDistance}px)` : "translateY(0)"};
 `;
@@ -134,10 +136,12 @@ const Videos = () => {
   const [isModalMinimized, setIsModalMinimized] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dragDistance, setDragDistance] = useState(0);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const modalRef = useRef(null);
   const outlet = useOutlet();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const {videoLists} = useDataContext()
+
 
   const handleCategoryChange = (categories) => {
     setSelectedCategories(categories);
@@ -188,7 +192,7 @@ const Videos = () => {
           </ModalContent>
         </ModalOverlay>
       )}
-
+   <div><VideoForm/></div>
       {!isMobile && outlet ? null : (
         <>
           <Filter
@@ -196,8 +200,8 @@ const Videos = () => {
             onCategoryChange={handleCategoryChange}
           />
           <VideoPreviewWrapper onClick={() => setIsModalMinimized(false)}>
-
-            {videoData
+         
+            {videoLists
               .filter(
                 (video) =>
                   selectedCategories.includes("All") ||
@@ -206,18 +210,17 @@ const Videos = () => {
               .map((video, index) => (
                 <Card
                   key={index}
-                  id={video.id}
+                  id={video.$id}
                   title={video.title}
                   rabbi={video.rabbi}
                   thumbnail={video.thumbnail}
                   poster={video.poster}
-                  date={video.date}
+                  createdAt={video.create}
                   videoUrl={video.videoUrl}
                   category={video.category}
                   CardContainer={CardContainer}
                   TextContainer={TextContainer}
                   ThumbnailContainer={ThumbnailContainer}
-                  
                 />
               ))}
           </VideoPreviewWrapper>

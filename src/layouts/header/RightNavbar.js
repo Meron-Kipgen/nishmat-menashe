@@ -2,7 +2,6 @@ import React from "react";
 import { IoNotifications } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import styled from "styled-components";
-import GoogleLogin from "../../components/GoogleLogin";
 
 const Container = styled.div`
   margin-right: 30px;
@@ -20,7 +19,6 @@ export default function RightNavbar() {
     <Container>
       <Button>
         <IoNotifications />
-
         <FaUserCircle />
       </Button>
     </Container>

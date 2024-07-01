@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Card from "./Card";
-import videoData from "./videoData"; // Assuming videoData is correctly imported
+import { useDataContext } from "../../contexts/videosDataContext";
 
 const VideoPreviewWrapper = styled.section`
   display: flex;
@@ -67,14 +67,18 @@ const TextContainer = styled.div`
 
 const Random = ({ currentVideoId }) => {
   const [shuffledVideoData, setShuffledVideoData] = useState([]);
-
+  const { videoLists } = useDataContext();
   useEffect(() => {
     // Filter out the current video from videoData
-    const filteredData = videoData.filter(video => video.id !== currentVideoId);
+    const filteredData = videoLists.filter(
+      (video) => video.$id !== currentVideoId
+    );
 
     // Shuffle function
     const shuffleArray = (array) => {
-      let currentIndex = array.length, temporaryValue, randomIndex;
+      let currentIndex = array.length,
+        temporaryValue,
+        randomIndex;
 
       while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -97,20 +101,21 @@ const Random = ({ currentVideoId }) => {
 
   return (
     <VideoPreviewWrapper>
-      {shuffledVideoData.map((video,index) => (
+      {shuffledVideoData.map((video, index) => (
         <Card
-        key={index}
-        thumbnail={video.thumbnail}
-        id={video.id}
-        title={video.title}
-        rabbi={video.rabbi}
-        date={video.date}
-        videoUrl={video.videoUrl}
-        category={video.category}
-        CardContainer={CardContainer}
-        TextContainer={TextContainer}
-        ThumbnailContainer={ThumbnailContainer}
-      />
+          key={index}
+          poster={video.poster}
+          thumbnail={video.thumbnail}
+          id={video.id}
+          title={video.title}
+          rabbi={video.rabbi}
+          date={video.date}
+          videoUrl={video.videoUrl}
+          category={video.category}
+          CardContainer={CardContainer}
+          TextContainer={TextContainer}
+          ThumbnailContainer={ThumbnailContainer}
+        />
       ))}
     </VideoPreviewWrapper>
   );

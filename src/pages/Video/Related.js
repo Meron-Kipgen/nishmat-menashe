@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import Card from "./Card";
 
@@ -12,6 +13,7 @@ const RelatedContainer = styled.div`
     height: 0; /* Remove scrollbar space */
   }
 `;
+
 const CardContainer = styled.div`
   transition: background-color 0.3s ease-in-out;
   display: flex;
@@ -31,6 +33,7 @@ const CardContainer = styled.div`
     background-color: rgba(255, 255, 255, 0.6);
   }
 `;
+
 const ThumbnailContainer = styled.div`
   flex: 1;
   margin-right: 10px;
@@ -40,6 +43,7 @@ const ThumbnailContainer = styled.div`
     border-radius: 10px;
   }
 `;
+
 const TextContainer = styled.div`
   flex: 1;
   display: flex;
@@ -62,22 +66,22 @@ const TextContainer = styled.div`
     color: rgb(226, 25, 114);
   }
 `;
+
 const Related = ({ baseTitle, videos }) => {
   const getCommonPrefix = (title) => {
-    const regex = /\d/;
-    const match = regex.exec(title);
-    if (match) {
-      return title.substring(0, match.index).trim();
-    }
-    return title;
+    const words = title.split(' ');
+    const commonWords = words.slice(0, 4); 
   };
 
   const getRelatedVideos = (baseTitle, allVideos) => {
     const commonPrefix = getCommonPrefix(baseTitle);
-    return allVideos.filter(video => {
+
+    const relatedVideos = allVideos.filter(video => {
       const videoPrefix = getCommonPrefix(video.title);
       return videoPrefix === commonPrefix && video.title !== baseTitle;
     });
+
+    return relatedVideos;
   };
 
   const relatedVideos = getRelatedVideos(baseTitle, videos);
@@ -88,18 +92,19 @@ const Related = ({ baseTitle, videos }) => {
       <ul>
         {relatedVideos.map((video, index) => (
            <Card
-           key={index}
-           thumbnail={video.thumbnail}
-           id={video.id}
-           title={video.title}
-           rabbi={video.rabbi}
-           date={video.date}
-           videoUrl={video.videoUrl}
-           category={video.category}
-           CardContainer={CardContainer}
-           TextContainer={TextContainer}
-           ThumbnailContainer={ThumbnailContainer}
-         />
+             key={index}
+             poster={video.poster}
+             thumbnail={video.thumbnail}
+             id={video.$id}
+             title={video.title}
+             rabbi={video.rabbi}
+             date={video.date}
+             videoUrl={video.videoUrl}
+             category={video.category}
+             CardContainer={CardContainer}
+             TextContainer={TextContainer}
+             ThumbnailContainer={ThumbnailContainer}
+           />
         ))}
       </ul>
     </RelatedContainer>

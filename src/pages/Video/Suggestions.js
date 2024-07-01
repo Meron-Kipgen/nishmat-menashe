@@ -65,7 +65,7 @@ const TextContainer = styled.div`
 const Suggestions = ({ category, rabbi, currentVideoId, videos }) => {
   const getSuggestedVideos = (category, rabbi, currentVideoId, allVideos) => {
     return allVideos.filter(video => 
-      (video.category === category || video.rabbi === rabbi) && video.id !== currentVideoId
+      (video.category === category || video.rabbi === rabbi) && video.$id !== currentVideoId
     );
   };
 
@@ -77,8 +77,9 @@ const Suggestions = ({ category, rabbi, currentVideoId, videos }) => {
         {suggestedVideos.map((video, index )=> (
           <Card
           key={index}
+          poster={video.poster}
           thumbnail={video.thumbnail}
-          id={video.id}
+          id={video.$id}
           title={video.title}
           rabbi={video.rabbi}
           date={video.date}
