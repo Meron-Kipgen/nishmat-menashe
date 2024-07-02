@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import Filter from "./Filter";
 import Card from "./Card";
@@ -6,8 +6,6 @@ import { Outlet, useNavigate, useOutlet } from "react-router-dom";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import MobileDetails from "./MobileDetails";
 import { useDataContext } from "../../contexts/videosDataContext";
-import VideoForm from "./VideoForm";
-
 
 const VideoPreviewWrapper = styled.section`
   display: flex;
@@ -136,12 +134,16 @@ const Videos = () => {
   const [isModalMinimized, setIsModalMinimized] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dragDistance, setDragDistance] = useState(0);
+  const [loadedVideos, setLoadedVideos] = useState(10); // Initial number of videos to load
   const navigate = useNavigate();
   const modalRef = useRef(null);
   const outlet = useOutlet();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const {videoLists} = useDataContext()
+  const { videoLists } = useDataContext();
 
+  const sortedVideos = videoLists
+    .slice()
+    .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
 
   const handleCategoryChange = (categories) => {
     setSelectedCategories(categories);
@@ -175,6 +177,23 @@ const Videos = () => {
     }
   };
 
+  const handleScroll = () => {
+    const bottom =
+      Math.ceil(window.innerHeight + window.scrollY) >=
+      document.documentElement.scrollHeight;
+
+    if (bottom) {
+      setLoadedVideos((prev) => prev + 10); // Increase number of videos to load
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       {isMobile && outlet && (
@@ -192,7 +211,6 @@ const Videos = () => {
           </ModalContent>
         </ModalOverlay>
       )}
-   <div><VideoForm/></div>
       {!isMobile && outlet ? null : (
         <>
           <Filter
@@ -200,13 +218,13 @@ const Videos = () => {
             onCategoryChange={handleCategoryChange}
           />
           <VideoPreviewWrapper onClick={() => setIsModalMinimized(false)}>
-         
-            {videoLists
+            {sortedVideos
               .filter(
                 (video) =>
                   selectedCategories.includes("All") ||
                   selectedCategories.includes(video.category)
               )
+              .slice(0, loadedVideos)
               .map((video, index) => (
                 <Card
                   key={index}
@@ -215,7 +233,7 @@ const Videos = () => {
                   rabbi={video.rabbi}
                   thumbnail={video.thumbnail}
                   poster={video.poster}
-                  createdAt={video.create}
+                  createdAt={video.$createdAt}
                   videoUrl={video.videoUrl}
                   category={video.category}
                   CardContainer={CardContainer}

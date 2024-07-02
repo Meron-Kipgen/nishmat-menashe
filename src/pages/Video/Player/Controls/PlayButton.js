@@ -5,9 +5,9 @@ const PlayPauseButton = styled.div`
   cursor: pointer;
 `;
 
-const PlayButton = ({ onClick, isPlaying }) => (
+const PlayButton = ({ onClick, isplaying }) => (
   <PlayPauseButton onClick={onClick}>
-    {isPlaying ? <img src="/icons/video/pause.svg" alt='pause'/> : <img src="/icons/video/play.svg" alt='play'/> }
+    {isplaying ? <img src="/icons/video/pause.svg" alt='pause'/> : <img src="/icons/video/play.svg" alt='play'/> }
   </PlayPauseButton>
 );
 

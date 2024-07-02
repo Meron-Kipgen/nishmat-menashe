@@ -237,7 +237,7 @@ const Player = ({
               <BackwardSeekButton onSeekBackward={handleSeekBackward} />
             )}
             {showPlay && (
-              <PlayButton onClick={togglePlay} isPlaying={isPlaying} />
+              <PlayButton onClick={togglePlay} isplaying={isPlaying} />
             )}
             {showForwardSeekButton && (
               <ForwardSeekButton onSeekForward={handleSeekForward} />
@@ -264,7 +264,7 @@ const Player = ({
         </ControlsContainer>
         <CenterContol>
           {showCenterPlayButton && (
-            <CenterPlayButton onClick={togglePlay} isPlaying={isPlaying} />
+            <CenterPlayButton onClick={togglePlay} isplaying={isPlaying} />
           )}
         </CenterContol>
       </Container>

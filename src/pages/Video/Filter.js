@@ -131,10 +131,12 @@ const Filter = ({ selectedCategories, onCategoryChange }) => {
       });
     }
   };
-
+  const sortedVideos = videoLists.slice().sort((a, b) => {
+    return new Date(b.$createdAt) - new Date(a.$createdAt);
+  });
   const categories = [
     "All",
-    ...new Set(videoLists.map((video) => video.category)),
+    ...new Set(sortedVideos.map((video) => video.category)),
   ];
 
   return (

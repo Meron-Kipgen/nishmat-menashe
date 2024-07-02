@@ -11,10 +11,11 @@ const fetchDocuments = async () => {
 
 export const DataProvider = ({ children }) => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: 'Videos',
+    queryKey: ['Videos'],
     queryFn: fetchDocuments,
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 30 * 60 * 1000, // 30 minutes
+    
   });
 
   if (isLoading) {

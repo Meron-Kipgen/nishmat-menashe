@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { db, ID } from "../../db/config"; // Import your Appwrite database configuration
-import { useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
+import { db, ID } from "../../db/config";
+import { useQueryClient } from '@tanstack/react-query'; 
 
 const FormContainer = styled.form`
   max-width: 600px;
@@ -39,8 +39,8 @@ const Button = styled.button`
   }
 `;
 
-const VideoForm = ({ closeModal }) => {
-  const queryClient = useQueryClient(); // Get the queryClient instance
+const VideoForm = () => {
+  const queryClient = useQueryClient(); 
 
   const [formData, setFormData] = useState({
     title: "",
@@ -59,27 +59,27 @@ const VideoForm = ({ closeModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const currentDate = new Date().toISOString(); // Get current date and time
       const response = await db.createDocument(
         "666aff03003ba124b787", // databaseId
         "666aff1400318bf6aa6f", // collectionId
         ID.unique(),
         {
           title: formData.title,
+          description: formData.description,
           rabbi: formData.rabbi,
           thumbnail: formData.thumbnail,
           poster: formData.poster,
           videoUrl: formData.videoUrl,
           category: formData.category,
-      
         }
       );
 
       console.log("Video added successfully:", response);
 
-      // Clear form fields after submission if needed
+      // Clear form fields after submission
       setFormData({
         title: "",
+        description: "",
         rabbi: "",
         thumbnail: "",
         poster: "",
@@ -87,14 +87,10 @@ const VideoForm = ({ closeModal }) => {
         category: "",
       });
 
-      // Close modal after successful submission
-      closeModal();
-
       // Manually refetch data to update the cache
-      await queryClient.invalidateQueries('documents');
+      await queryClient.invalidateQueries(['Videos']);
     } catch (error) {
       console.error("Error adding video:", error);
-      // Handle error states or feedback to user
     }
   };
 
@@ -106,6 +102,16 @@ const VideoForm = ({ closeModal }) => {
           type="text"
           name="title"
           value={formData.title}
+          onChange={handleChange}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label>Description:</Label>
+        <Input
+          type="text"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
           required
         />

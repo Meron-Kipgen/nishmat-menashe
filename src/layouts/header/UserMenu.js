@@ -21,15 +21,15 @@ const SidebarContainer = styled.div`
   z-index: 3;
   top: 0;
   left: ${(props) =>
-    props.isToggle ? "0" : "-300px"}; /* Hide sidebar by default */
+    props.istoggle ? "0" : "-300px"}; /* Hide sidebar by default */
   transition: left 0.3s ease-in-out; /* Smooth transition */
 `;
 
 export default function UserMenu() {
-  const [isToggle, setIsToggle] = useState(false);
+  const [istoggle, setistoggle] = useState(false);
 
   const handleToggle = () => {
-    setIsToggle(!isToggle);
+    setistoggle(!istoggle);
   };
 
   return (
@@ -38,9 +38,10 @@ export default function UserMenu() {
         <BiMenuAltLeft />
       </Button>
 
-      <SidebarContainer isToggle={isToggle}>
+      <SidebarContainer istoggle={istoggle}>
         <LeftSidebar />
       </SidebarContainer>
+
     </Container>
   );
 }

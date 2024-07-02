@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import TimeAgo from "../../components/TimeAgo"; 
 
 const CardFooter = styled.div`
   display: flex;
@@ -12,9 +13,9 @@ const Card = ({
   id,
   title,
   rabbi,
-  date,
   poster,
   category,
+  createdAt,
   thumbnail,
   CardContainer,
   ThumbnailContainer,
@@ -43,7 +44,7 @@ const Card = ({
       <TextContainer>
         <h1>{title}</h1>
         <p>
-          {date} | {category}
+          <TimeAgo createdAt={createdAt} /> | {category}
         </p>
         <CardFooter>
           <h3>{rabbi}</h3>
