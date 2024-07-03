@@ -75,12 +75,12 @@ const Update = ({ videoId }) => {
     videoUrl: "",
   });
 
-  const { getDocument, updateVideo } = useDataContext(); // Destructure getDocument and updateVideo from context
+  const { getDocument, updateVideo } = useDataContext(); 
 
   useEffect(() => {
     const fetchVideoData = async () => {
       try {
-        const document = await getDocument(videoId); // Use getDocument from context
+        const document = await getDocument(videoId);
         console.log("Fetched video data:", document);
 
         setUpdatedData({

@@ -3,21 +3,23 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { db, ID } from "../db/config"; // Assuming db and ID are imported correctly
 
 const DataContext = createContext();
+const DatabaseId = "666aff03003ba124b787"
+const CollectionId = "666aff1400318bf6aa6f"
 
 const fetchDocuments = async () => {
-  const response = await db.listDocuments("666aff03003ba124b787", "666aff1400318bf6aa6f");
+  const response = await db.listDocuments(DatabaseId, CollectionId);
   return response.documents;
 };
 
 const fetchDocument = async (videoId) => {
-  const response = await db.getDocument("666aff03003ba124b787", "666aff1400318bf6aa6f", videoId);
+  const response = await db.getDocument(DatabaseId, CollectionId, videoId);
   return response;
 };
 
 const updateViewCount = async (videoId) => {
   const video = await fetchDocument(videoId);
   const newViewCount = (video.views || 0) + 1;
-  await db.updateDocument("666aff03003ba124b787", "666aff1400318bf6aa6f", videoId, {
+  await db.updateDocument(DatabaseId, CollectionId, videoId, {
     views: newViewCount,
   });
   return { ...video, views: newViewCount };
@@ -26,20 +28,20 @@ const updateViewCount = async (videoId) => {
 const updateLikeCount = async (videoId) => {
   const video = await fetchDocument(videoId);
   const newLikeCount = (video.likes || 0) + 1;
-  await db.updateDocument("666aff03003ba124b787", "666aff1400318bf6aa6f", videoId, {
+  await db.updateDocument(DatabaseId, CollectionId, videoId, {
     likes: newLikeCount,
   });
   return { ...video, likes: newLikeCount };
 };
 
 const deleteVideo = async (videoId) => {
-  await db.deleteDocument("666aff03003ba124b787", "666aff1400318bf6aa6f", videoId);
+  await db.deleteDocument(DatabaseId, CollectionId, videoId);
 };
 
 const createVideo = async (formData) => {
   const response = await db.createDocument(
-    "666aff03003ba124b787", // databaseId
-    "666aff1400318bf6aa6f", // collectionId
+    DatabaseId, // databaseId
+    CollectionId, // collectionId
     ID.unique(),
     formData
   );
@@ -48,8 +50,8 @@ const createVideo = async (formData) => {
 
 const updateVideo = async ({ videoId, updatedData }) => {
   const response = await db.updateDocument(
-    "666aff03003ba124b787", // databaseId
-    "666aff1400318bf6aa6f", // collectionId
+    DatabaseId, // databaseId
+    CollectionId, // collectionId
     videoId,
     updatedData
   );
@@ -118,7 +120,7 @@ const DataContextProvider = ({ children }) => {
         deleteVideo: deleteMutation.mutate,
         createVideo: createMutation.mutate,
         updateVideo: updateMutation.mutate,
-        getDocument: fetchDocument, // Provide fetchDocument method
+        getDocument: fetchDocument,
       }}
     >
       {children}

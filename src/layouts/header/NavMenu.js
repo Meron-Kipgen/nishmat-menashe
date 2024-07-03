@@ -85,6 +85,11 @@ export default function NavMenu() {
             <TbBooks size={24}/>
           </NavLink>
         </li>
+        <li>
+          <NavLink to="/user" activeClassName="active">
+            user
+          </NavLink>
+        </li>
       </ul>
     </Wrapper>
   );

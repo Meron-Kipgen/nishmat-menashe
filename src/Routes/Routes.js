@@ -5,6 +5,7 @@ import useMediaQuery from "../hooks/useMediaQuery";
 
 import PcDetails from "../pages/Video/PcDetails";
 import MobileDetails from "../pages/Video/MobileDetails";
+import User from "../pages/User/User";
 
 const Layout = lazy(() => import("../layouts/Layout"));
 const MainError = lazy(() => import("./MainError"));
@@ -79,6 +80,14 @@ const routers = createBrowserRouter([
         element: (
           <Suspense fallback={<SkeletonLoading />}>
             <Books />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/user",
+        element: (
+          <Suspense fallback={<SkeletonLoading />}>
+            <User />
           </Suspense>
         ),
       },

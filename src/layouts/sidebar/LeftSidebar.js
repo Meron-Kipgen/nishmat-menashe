@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import GoogleLogin from "../../pages/User/GoogleLogin";
+
 
 const Wrapper = styled.section`
   position: absolute;
@@ -22,17 +24,8 @@ export default function LeftSidebar() {
   return (
     <Wrapper>
       <ul>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
-        <li>one</li>
+       <li><GoogleLogin/></li>
+        
       </ul>
     </Wrapper>
   );
