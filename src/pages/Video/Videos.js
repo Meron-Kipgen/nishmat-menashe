@@ -231,6 +231,7 @@ const Videos = () => {
                   id={video.$id}
                   title={video.title}
                   rabbi={video.rabbi}
+                  views={video.views}
                   thumbnail={video.thumbnail}
                   poster={video.poster}
                   createdAt={video.$createdAt}

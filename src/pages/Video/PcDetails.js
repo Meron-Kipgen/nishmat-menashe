@@ -1,12 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Player from "./Player/Player";
 import Description from "./Description";
 import Related from "./Related";
 import Suggestions from "./Suggestions";
 import PcBtn from "./PcBtn";
 import { useDataContext } from "../../contexts/videosDataContext";
+import Likes from "./Likes";
+import Delete from "./Delete"; // Import the Delete component
+import Update from "./Update"; // Import the Update component
+
 const Container = styled.section`
   display: flex;
   justify-content: space-between;
@@ -63,7 +67,7 @@ const VideoWrapper = styled.div``;
 
 export default function PcDetails() {
   const { id } = useParams();
-  const { videoLists } = useDataContext();
+  const { videoLists, updateLikeCount } = useDataContext();
   const video = videoLists.find((v) => v.$id === id);
 
   if (!video) {
@@ -83,8 +87,12 @@ export default function PcDetails() {
           <h1>{video.title}</h1>
           <Description description={video.description} />
           <h3>By: {video.rabbi}</h3>
+          <span>Views: {video.views}</span> <span>Likes: {video.likes}</span>
           <PcBtn />
           <p>{video.date}</p>
+          <Likes videoId={id} updateLikeCount={updateLikeCount} />
+          <Delete videoId={id} />
+          <Update videoId={id} /> 
         </DetailsContainer>
 
         <CommentContainer>hello</CommentContainer>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { db, ID } from "../../db/config";
-import { useQueryClient } from '@tanstack/react-query'; 
+import { useDataContext } from "../../contexts/videosDataContext";
 
 const FormContainer = styled.form`
   max-width: 600px;
@@ -40,10 +39,10 @@ const Button = styled.button`
 `;
 
 const VideoForm = () => {
-  const queryClient = useQueryClient(); 
-
+  const { createVideo } = useDataContext();
   const [formData, setFormData] = useState({
     title: "",
+    description: "",
     rabbi: "",
     thumbnail: "",
     poster: "",
@@ -59,22 +58,7 @@ const VideoForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await db.createDocument(
-        "666aff03003ba124b787", // databaseId
-        "666aff1400318bf6aa6f", // collectionId
-        ID.unique(),
-        {
-          title: formData.title,
-          description: formData.description,
-          rabbi: formData.rabbi,
-          thumbnail: formData.thumbnail,
-          poster: formData.poster,
-          videoUrl: formData.videoUrl,
-          category: formData.category,
-        }
-      );
-
-      console.log("Video added successfully:", response);
+      await createVideo(formData);
 
       // Clear form fields after submission
       setFormData({
@@ -86,9 +70,6 @@ const VideoForm = () => {
         videoUrl: "",
         category: "",
       });
-
-      // Manually refetch data to update the cache
-      await queryClient.invalidateQueries(['Videos']);
     } catch (error) {
       console.error("Error adding video:", error);
     }
