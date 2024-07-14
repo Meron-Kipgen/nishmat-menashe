@@ -6,10 +6,10 @@ import Description from "./Description";
 import Related from "./Related";
 import Suggestions from "./Suggestions";
 import PcBtn from "./PcBtn";
-import { useDataContext } from "../../contexts/videosDataContext";
+import { useDataContext } from "../../contexts/DataContextProvider";
 import Likes from "./Likes";
-import Delete from "./Delete"; // Import the Delete component
-import Update from "./Update"; // Import the Update component
+import Delete from "./Delete";
+import Update from "./Update";
 
 const Container = styled.section`
   display: flex;

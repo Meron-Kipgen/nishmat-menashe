@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Card from "./Card";
-import { useDataContext } from "../../contexts/videosDataContext";
+import { useDataContext } from "../../contexts/DataContextProvider";
 
 const VideoPreviewWrapper = styled.section`
   display: flex;

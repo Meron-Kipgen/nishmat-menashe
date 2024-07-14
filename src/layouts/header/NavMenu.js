@@ -76,7 +76,7 @@ export default function NavMenu() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/Text" activeClassName="active">
+          <NavLink to="/Posts" activeClassName="active">
             <AiOutlineFileText size={24} />
           </NavLink>
         </li>

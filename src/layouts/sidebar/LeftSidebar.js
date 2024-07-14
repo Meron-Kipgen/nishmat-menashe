@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import GoogleLogin from "../../pages/User/GoogleLogin";
+
 
 
 const Wrapper = styled.section`
@@ -23,10 +23,7 @@ const Wrapper = styled.section`
 export default function LeftSidebar() {
   return (
     <Wrapper>
-      <ul>
-       <li><GoogleLogin/></li>
-        
-      </ul>
+left
     </Wrapper>
   );
 }

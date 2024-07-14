@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useDataContext } from "../../contexts/videosDataContext";
+import { useDataContext } from "../../contexts/DataContextProvider";
 
 const Button = styled.button`
   background-color: #dc3545;

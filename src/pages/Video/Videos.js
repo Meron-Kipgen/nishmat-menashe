@@ -5,7 +5,7 @@ import Card from "./Card";
 import { Outlet, useNavigate, useOutlet } from "react-router-dom";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import MobileDetails from "./MobileDetails";
-import { useDataContext } from "../../contexts/videosDataContext";
+import { useDataContext } from "../../contexts/DataContextProvider";
 
 const VideoPreviewWrapper = styled.section`
   display: flex;

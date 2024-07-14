@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TimeAgo from "../../components/TimeAgo"; 
-import { useDataContext } from '../../contexts/videosDataContext'; // Adjust the path
+import { useDataContext } from '../../contexts/DataContextProvider'; // Adjust the path
 
 const CardFooter = styled.div`
   display: flex;
@@ -30,7 +30,7 @@ const Card = ({
 
   const handleClick = async () => {
     await updateViewCount(id); // Increment the view count
-    navigate(`/video/${id}`); // Navigate to the video details page
+    navigate(`/Video/${id}`); // Navigate to the video details page
   };
 
   return (

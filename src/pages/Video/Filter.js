@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
-import { useDataContext } from "../../contexts/videosDataContext";
+import { useDataContext } from "../../contexts/DataContextProvider";
 import { CiCircleChevRight, CiCircleChevLeft } from "react-icons/ci";
 
 const Container = styled.section`

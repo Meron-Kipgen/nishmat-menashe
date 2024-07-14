@@ -6,12 +6,15 @@ import useMediaQuery from "../hooks/useMediaQuery";
 import PcDetails from "../pages/Video/PcDetails";
 import MobileDetails from "../pages/Video/MobileDetails";
 import User from "../pages/User/User";
+import BookDetail from "../pages/Books/BookDetails";
+import PostDetails from "../pages/Post/PostDetails";
+
 
 const Layout = lazy(() => import("../layouts/Layout"));
 const MainError = lazy(() => import("./MainError"));
 const Feed = lazy(() => import("../pages/Feed/Feed"));
 const Audio = lazy(() => import("../pages/Audio/Audio"));
-const Text = lazy(() => import("../pages/Text/Text"));
+const Posts = lazy(() => import("../pages/Post/Posts"));
 const Videos = lazy(() => import("../pages/Video/Videos"));
 const Books = lazy(() => import("../pages/Books/Books"));
 
@@ -68,12 +71,17 @@ const routers = createBrowserRouter([
         ),
       },
       {
-        path: "/text",
+        path: "/posts",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
-            <Text />
+            <Posts />
           </Suspense>
-        ),
+        ),children:[
+          {
+            path: ":id",
+            element: <PostDetails/>
+          }
+        ]
       },
       {
         path: "/books",
@@ -82,6 +90,12 @@ const routers = createBrowserRouter([
             <Books />
           </Suspense>
         ),
+        children:[
+          {
+            path: ":id",
+            element: <BookDetail/>
+          }
+        ]
       },
       {
         path: "/user",
