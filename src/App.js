@@ -3,13 +3,18 @@ import { RouterProvider } from "react-router-dom";
 import routers from "./Routes/Routes";
 import DataContextProvider from "./contexts/DataContextProvider";
 import { BookDataProvider } from "./pages/Books/useBookData";
+import { ArticlesDataProvider } from "./pages/Articles/useArticlesData";
 
-export default function App() {
+const App = () => {
   return (
     <DataContextProvider>
       <BookDataProvider>
-      <RouterProvider router={routers} />
+        <ArticlesDataProvider>
+          <RouterProvider router={routers} />
+        </ArticlesDataProvider>
       </BookDataProvider>
     </DataContextProvider>
   );
-}
+};
+
+export default App;

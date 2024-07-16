@@ -7,14 +7,14 @@ import PcDetails from "../pages/Video/PcDetails";
 import MobileDetails from "../pages/Video/MobileDetails";
 import User from "../pages/User/User";
 import BookDetail from "../pages/Books/BookDetails";
-import PostDetails from "../pages/Post/PostDetails";
+import PostDetails from "../pages/Articles/PostDetails";
 
 
 const Layout = lazy(() => import("../layouts/Layout"));
 const MainError = lazy(() => import("./MainError"));
 const Feed = lazy(() => import("../pages/Feed/Feed"));
 const Audio = lazy(() => import("../pages/Audio/Audio"));
-const Posts = lazy(() => import("../pages/Post/Posts"));
+const Posts = lazy(() => import("../pages/Articles/Articles"));
 const Videos = lazy(() => import("../pages/Video/Videos"));
 const Books = lazy(() => import("../pages/Books/Books"));
 
@@ -71,7 +71,7 @@ const routers = createBrowserRouter([
         ),
       },
       {
-        path: "/posts",
+        path: "/articles",
         element: (
           <Suspense fallback={<SkeletonLoading />}>
             <Posts />

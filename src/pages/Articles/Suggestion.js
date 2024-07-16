@@ -1,5 +1,3 @@
-// Suggestion.js
-
 import React from "react";
 import styled from "styled-components";
 
@@ -40,11 +38,6 @@ const Suggestion = ({ author, category, subcategory, postId, postData }) => {
       post.subcategory === subcategory &&
       post.id !== postId // Exclude the current post
   );
- console.log("Author:", author);
-  console.log("Category:", category);
-  console.log("Subcategory:", subcategory);
-  console.log("Post ID:", postId);
-  console.log("Post Data:", postData); // Check if postData is received correctly
   if (suggestions.length === 0) {
     return null;
   }

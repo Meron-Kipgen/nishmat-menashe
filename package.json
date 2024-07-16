@@ -8,6 +8,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "appwrite": "^15.0.0",
+    "dompurify": "^3.1.6",
     "hls.js": "^1.5.11",
     "media-icons": "^1.1.4",
     "react": "^18.3.1",
@@ -19,7 +20,6 @@
     "react-spinners": "^0.13.8",
     "styled-components": "^6.1.11",
     "web-vitals": "^2.1.4"
-    
   },
   "scripts": {
     "start": "react-scripts start",
@@ -48,5 +48,4 @@
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.21.0"
   }
- 
 }

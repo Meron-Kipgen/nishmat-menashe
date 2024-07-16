@@ -48,6 +48,7 @@ const VideoForm = () => {
     poster: "",
     videoUrl: "",
     category: "",
+    subcategory: "",
   });
 
   const handleChange = e => {
@@ -69,6 +70,7 @@ const VideoForm = () => {
         poster: "",
         videoUrl: "",
         category: "",
+        subcategory: "",
       });
     } catch (error) {
       console.error("Error adding video:", error);
@@ -143,6 +145,16 @@ const VideoForm = () => {
           type="text"
           name="category"
           value={formData.category}
+          onChange={handleChange}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <Label>subCategory:</Label>
+        <Input
+          type="text"
+          name="subcategory"
+          value={formData.subcategory}
           onChange={handleChange}
           required
         />

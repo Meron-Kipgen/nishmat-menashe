@@ -70,6 +70,7 @@ const Update = ({ videoId }) => {
     description: "",
     rabbi: "",
     category: "",
+    subcategory: "",
     thumbnail: "",
     poster: "",
     videoUrl: "",
@@ -88,6 +89,7 @@ const Update = ({ videoId }) => {
           description: document.description || "",
           rabbi: document.rabbi || "",
           category: document.category || "",
+          subcategory: document.subcategory || "",
           thumbnail: document.thumbnail || "",
           poster: document.poster || "",
           videoUrl: document.videoUrl || "",
@@ -187,6 +189,16 @@ const Update = ({ videoId }) => {
               type="text"
               name="category"
               value={updatedData.category}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label>subCategory:</Label>
+            <Input
+              type="text"
+              name="subcategory"
+              value={updatedData.subcategory}
               onChange={handleChange}
               required
             />

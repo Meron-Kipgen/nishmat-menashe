@@ -1,5 +1,4 @@
 import React from "react";
-import UserMenu from "./UserMenu";
 import Logo from "./Logo";
 import styled from "styled-components";
 import Search from "./Search";
@@ -13,7 +12,6 @@ const Container = styled.section`
 export default function LeftNavbar() {
   return (
     <Container>
-      <UserMenu />
       <Logo />
       <Search/>
     </Container>

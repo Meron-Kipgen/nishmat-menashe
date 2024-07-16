@@ -1,5 +1,4 @@
 import React from "react";
-import UserMenu from "../header/UserMenu";
 import Logo from "../header/Logo";
 import Search from "../header/Search";
 import RightNavbar from "../header/RightNavbar";
@@ -14,7 +13,6 @@ const Container = styled.nav`
 export default function NavMenu() {
   return (
     <Container>
-      <UserMenu />
       <Logo />
       <Search />
       <RightNavbar />

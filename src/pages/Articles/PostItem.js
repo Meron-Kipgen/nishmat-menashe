@@ -1,7 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import SubcategoryPoster from "./SubcategoryPoster"; // Import the SubcategoryPoster component
+import SubcategoryPoster from "./SubcategoryPoster";
+import { useArticlesData } from "./useArticlesData";
+import DOMPurify from "dompurify";
+import TimeAgo from "../../components/TimeAgo";
 
 const PostItemContainer = styled.div`
   width: 350px;
@@ -24,17 +27,18 @@ const Title = styled.h2`
   margin-bottom: 10px;
 `;
 
-const Excerpt = styled.p`
-  font-size: 14px;
+const Body = styled.div`
+  font-size: 15px;
   color: #666;
   line-height: 1.6;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+ height: 160px;
+ text-align: justify;
 `;
-
+const Wrapper = styled.div`
+font-size: 13px;
+padding-bottom: 10px;
+color: grey;
+`
 const ReadMoreButton = styled.button`
   margin-top: auto;
   padding: 10px 20px;
@@ -50,18 +54,21 @@ const ReadMoreButton = styled.button`
   }
 `;
 
-const PostItem = ({ id, title, excerpt, subcategory }) => {
+const PostItem = ({ id, title, body, subcategory, writer,views,createdAt }) => {
   const navigate = useNavigate();
+  const { updateViews } = useArticlesData();
 
   const handleReadMore = () => {
-    navigate(`/posts/${id}`);
+    navigate(`/Articles/${id}`);
+    updateViews(id);
   };
 
   return (
     <PostItemContainer>
       <SubcategoryPoster subcategory={subcategory}>{subcategory}</SubcategoryPoster>
       <Title>{title}</Title>
-      <Excerpt>{excerpt}</Excerpt>
+      <Wrapper>{writer} |  <TimeAgo createdAt={createdAt} /> | views: {views}</Wrapper>
+      <Body dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body) }} />
       <ReadMoreButton onClick={handleReadMore}>Read More</ReadMoreButton>
     </PostItemContainer>
   );
