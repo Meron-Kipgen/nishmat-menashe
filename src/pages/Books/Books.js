@@ -1,33 +1,33 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import BookItem from "./BookItem";
-import Categories from "./Categories";
-import TableOfContents from "./TableOfContents";
-import { useBookData } from "./useBookData"; // Import the context
-import AddNewBookForm from "./AddNewBookForm"; // Import the AddNewBookForm component
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import BookItem from './BookItem';
+import Categories from './Categories';
+import { useBookData } from './useBookData'; // Import the context
+import AddNewBookForm from './AddNewBookForm'; // Import the AddNewBookForm component
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
+gap: 40px;
   padding: 20px;
 `;
+const CatWrapper = styled.div`
+width: 300px;
 
+`
 const BooksContainer = styled.div`
-  flex: 2;
+
   padding: 0 20px;
 `;
 
 const BookList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+display: flex;
   gap: 20px;
 `;
 
 const AddBookButton = styled.button`
-  margin-top: 20px;
+
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -47,7 +47,7 @@ const Books = () => {
   const [showAddBookForm, setShowAddBookForm] = useState(false);
 
   useEffect(() => {
-    if (location.pathname === "/Books") {
+    if (location.pathname === '/Books') {
       setSelectedCategory(null);
       setSelectedSubcategory(null);
       setSelectedBook(null);
@@ -58,13 +58,13 @@ const Books = () => {
   }, [location.pathname]);
 
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category === "All" ? null : category);
+    setSelectedCategory(category === 'All' ? null : category);
     setSelectedSubcategory(null);
     setShowMiddleSection(true);
   };
 
   const handleSubcategorySelect = (subcategory) => {
-    setSelectedSubcategory(subcategory === "All" ? null : subcategory);
+    setSelectedSubcategory(subcategory === 'All' ? null : subcategory);
     setShowMiddleSection(true);
   };
 
@@ -88,16 +88,20 @@ const Books = () => {
       await addBook(newBook);
       setShowAddBookForm(false);
     } catch (error) {
-      console.error("Failed to add book:", error);
+      console.error('Failed to add book:', error);
       // Handle error state or logging as needed
     }
   };
 
-  const filteredBooks = books.filter(
-    (book) =>
-      (!selectedCategory || selectedCategory === "All" || book.category === selectedCategory) &&
-      (!selectedSubcategory || book.subcategory === selectedSubcategory)
-  );
+  let filteredBooks = books;
+
+  if (selectedCategory && selectedCategory !== 'All') {
+    filteredBooks = filteredBooks.filter((book) => book.category === selectedCategory);
+  }
+
+  if (selectedSubcategory && selectedSubcategory !== 'All') {
+    filteredBooks = filteredBooks.filter((book) => book.subcategory === selectedSubcategory);
+  }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -105,9 +109,10 @@ const Books = () => {
 
   return (
     <Container>
+      <CatWrapper>
       <Categories
         categories={[
-          { name: "All", subcategories: [] },
+          { name: 'All', subcategories: [] },
           ...books.reduce((acc, book) => {
             const existingCategory = acc.find((item) => item.name === book.category);
             if (!existingCategory) {
@@ -118,14 +123,14 @@ const Books = () => {
               category.subcategories.push(book.subcategory);
             }
             return acc;
-          }, [])
+          }, []),
         ]}
         selectedCategory={selectedCategory}
         selectedSubcategory={selectedSubcategory}
         handleCategorySelect={handleCategorySelect}
         handleSubcategorySelect={handleSubcategorySelect}
       />
-
+</CatWrapper>
       {showMiddleSection && (
         <BooksContainer>
           <h2>Books</h2>
@@ -147,7 +152,7 @@ const Books = () => {
 
       {!showMiddleSection && <Outlet />}
 
-      <TableOfContents selectedBook={selectedBook} />
+ 
     </Container>
   );
 };

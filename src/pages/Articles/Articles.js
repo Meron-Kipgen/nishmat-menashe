@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import Categories from "./Categories";
-import Subcategories from "./Subcategories";
+import Categories from "../../components/Categories";
+import Subcategories from "../../components/Subcategories";
 import PostItem from "./PostItem";
 import { Outlet, useOutlet } from "react-router-dom";
 import { useArticlesData } from "./useArticlesData";
 import AddArticleForm from "./AddArticleForm";
-import ExploreBtn from "./ExploreBtn";
-import AddNewBtn from "./AddNewBtn";
-
+import ExploreBtn from "../../components/ExploreBtn";
+import AddNewBtn from "../../components/AddNewBtn";
+import { UserContext } from "../../contexts/UserContext";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -57,7 +57,7 @@ const Articles = () => {
   const [toggleCategories, setToggleCategories] = useState(false);
   const [addNew, setAddNew] = useState(false);
   const outlet = useOutlet();
-
+  const { isAdmin } = useContext(UserContext);
   useEffect(() => {
     if (selectedCategory !== null) {
       setSelectedSubcategories(["All"]);
@@ -101,7 +101,9 @@ const Articles = () => {
   return (
     <Container>
       <SubcategoriesContainer>
-         <AddNewBtn onClick={handleAddNew} />
+        {
+          isAdmin?<AddNewBtn onClick={handleAddNew} />: ""
+        } 
         {addNew && <AddArticleForm onClose={handleCloseForm} />}
         <ExploreBtn onClick={() => setToggleCategories(!toggleCategories)} />
         {selectedCategory !== null && (

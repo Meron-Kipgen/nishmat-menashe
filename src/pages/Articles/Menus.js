@@ -45,7 +45,14 @@ const ForAdmin = styled.div`
   gap: 30px;
 `;
 
-const Menus = ({ articleId, views, handleClose, increaseFont, decreaseFont, onShowUpdateForm }) => {
+const Menus = ({
+  articleId,
+  views,
+  handleClose,
+  increaseFont,
+  decreaseFont,
+  onShowUpdateForm,
+}) => {
   const { deleteArticle } = useArticlesData();
   const navigate = useNavigate();
   const [showWarning, setShowWarning] = useState(false);
@@ -213,7 +220,7 @@ const Menus = ({ articleId, views, handleClose, increaseFont, decreaseFont, onSh
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="green"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -232,7 +239,7 @@ const Menus = ({ articleId, views, handleClose, increaseFont, decreaseFont, onSh
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="red"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"

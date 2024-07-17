@@ -3,8 +3,16 @@ import styled from "styled-components";
 import { useDataContext } from "../../contexts/DataContextProvider";
 
 const FormContainer = styled.form`
-  max-width: 600px;
+ position: absolute;
+  top: 60px;
+  width: 800px;
+  z-index: 1000;
   margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const FormGroup = styled.div`
@@ -37,8 +45,23 @@ const Button = styled.button`
     background-color: #0056b3;
   }
 `;
+const CloseButton = styled.button`
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
 
-const VideoForm = () => {
+  &:hover {
+    background-color: #bd2130;
+  }
+`;
+
+const VideoForm = ({onClose}) => {
   const { createVideo } = useDataContext();
   const [formData, setFormData] = useState({
     title: "",
@@ -55,7 +78,9 @@ const VideoForm = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
+  const handleCancel = () => {
+    onClose(); 
+  };
   const handleSubmit = async e => {
     e.preventDefault();
     try {
@@ -160,6 +185,9 @@ const VideoForm = () => {
         />
       </FormGroup>
       <Button type="submit">Add Video</Button>
+      <CloseButton type="button" onClick={handleCancel}>
+        Cancel
+      </CloseButton>
     </FormContainer>
   );
 };

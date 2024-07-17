@@ -2,7 +2,11 @@ import React from "react";
 import styled from "styled-components";
 
 const BookItemContainer = styled.div`
+display: flex;
+gap: 20px;
+flex-wrap: wrap;
   padding: 15px;
+  width: 300px;
   border-radius: 8px;
   background-color: ${({ active }) => (active ? "#007bff" : "#f8f9fa")};
   color: ${({ active }) => (active ? "white" : "inherit")};

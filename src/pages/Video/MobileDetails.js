@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-
-import Player from "./Player/Player";
+import Player from "../../Features/VideoPlayer/Player";
 import Description from "./Description";
 import Related from "./Related";
 import Suggestions from "./Suggestions";

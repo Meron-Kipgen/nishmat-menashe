@@ -9,14 +9,15 @@ const Wrapper = styled.div`
   top: 0;
   width: 100%;
   z-index: 1000;
-  backdrop-filter: blur(20px);
+ 
+
   transform: ${(props) => (props.hide ? "translateY(-100%)" : "translateY(0)")};
   transition: transform 0.3s ease-in-out;
 `;
 
 const Container = styled.nav`
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
+  background: linear-gradient(to right, rgb(23, 161, 166), rgb(31, 202, 199));;
   height: 60px;
   display: flex;
   align-items: center;

@@ -1,24 +1,8 @@
-import { useEffect, useState } from "react";
-import { account } from '../../db/config';
+import React, { useContext } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 
 const Profile = () => {
-  const [userInfo, setUserInfo] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const getUserInfo = async () => {
-      try {
-        const user = await account.get();
-        console.log(user); 
-        setUserInfo(user);
-      } catch (error) {
-        console.error('Error fetching user info:', error);
-        setError(error.message); 
-      }
-    };
-
-    getUserInfo();
-  }, []);
+  const { userInfo, error, isLogin } = useContext(UserContext);
 
   return (
     <div>
@@ -28,6 +12,9 @@ const Profile = () => {
         <>
           <h2>Welcome, {userInfo.name}</h2>
           <p>Email: {userInfo.email}</p>
+          <p>Avatar: <img src={userInfo.avatar} alt="Avatar" /></p>
+          <p>Username: {userInfo.username}</p>
+          <p>Logged In: {isLogin ? 'Yes' : 'No'}</p>
         </>
       ) : (
         <p>Loading...</p>

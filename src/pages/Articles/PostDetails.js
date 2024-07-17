@@ -53,7 +53,7 @@ const SuggestionContainer = styled.div`
 `;
 
 const PostDetails = () => {
-  const { articleData } = useArticlesData();
+  const { articleData, addComment} = useArticlesData();
   const { id } = useParams();
   const navigate = useNavigate();
   const post = articleData.find((post) => post.$id === id);
@@ -64,7 +64,10 @@ const PostDetails = () => {
   if (!post) {
     return <div>Post not found</div>;
   }
-
+  const handleAddComment = (newComment) => {
+    
+    addComment(post.$id, newComment);
+  };
   const handleClose = () => {
     navigate(-1);
   };
@@ -103,7 +106,7 @@ const PostDetails = () => {
             )}
           </Body>
         </Post>
-        <Comments comments={post.comments} />
+        <Comments comments={post.comments} onAddComment={handleAddComment} />
         {showUpdateForm && (
           <UpdateArticleForm articleId={post.$id} onClose={() => setShowUpdateForm(false)} />
         )}

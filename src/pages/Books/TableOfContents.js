@@ -3,11 +3,12 @@ import styled from "styled-components";
 
 const TableOfContentsContainer = styled.div`
   flex: 1;
+  width: 400px;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+
 `;
 
 const TableOfContentsTitle = styled.h2`
@@ -56,7 +57,7 @@ const TableOfContents = ({ selectedBook, handleChapterClick }) => (
             active={index === selectedBook.activeChapterIndex}
             onClick={() => handleChapterClick(index)}
           >
-            {chapter.titleEn} {/* Display the Hebrew title of the chapter */}
+            {chapter.titleEn} {/* Display the chapter title */}
           </TableOfContentsItem>
         ))}
       </TableOfContentsList>

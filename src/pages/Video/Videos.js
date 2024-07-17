@@ -1,12 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
-import Filter from "./Filter";
-import Card from "./Card";
 import { Outlet, useNavigate, useOutlet } from "react-router-dom";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import MobileDetails from "./MobileDetails";
 import { useDataContext } from "../../contexts/DataContextProvider";
+import Subcategories from "../../components/Subcategories";
+import Categories from "../../components/Categories";
+import ExploreBtn from "../../components/ExploreBtn";
+import AddNewBtn from "../../components/AddNewBtn";
+import VideoForm from "./VideoForm"
+import Card from "./Card";
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 const VideoPreviewWrapper = styled.section`
   display: flex;
   justify-content: center;
@@ -129,25 +137,80 @@ const ModalContent = styled.div`
     dragging ? `translateY(${dragDistance}px)` : "translateY(0)"};
 `;
 
+
+
+const PostContainer = styled.div`
+ display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+`;
+
+const CategoriesContainer = styled.div`
+  position: fixed;
+  top: 110px;
+  left: ${({ toggleCategories }) => (toggleCategories ? "0" : "-300px")};
+  width: 300px;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+`;
+
+const SubcategoriesContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: white;
+  gap: 30px;
+  margin-bottom: 10px;
+  padding: 0 20px;
+  height: 40px;
+`;
+
 const Videos = () => {
-  const [selectedCategories, setSelectedCategories] = useState(["All"]);
   const [isModalMinimized, setIsModalMinimized] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dragDistance, setDragDistance] = useState(0);
-  const [loadedVideos, setLoadedVideos] = useState(10); // Initial number of videos to load
   const navigate = useNavigate();
   const modalRef = useRef(null);
   const outlet = useOutlet();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { videoLists } = useDataContext();
+  const categories = [...new Set(videoLists.map((video) => video.category))];
+  const subcategories = [...new Set(videoLists.map((video) => video.subcategory))];
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
+  const [toggleCategories, setToggleCategories] = useState(false);
+  const [addNew, setAddNew] = useState(false);
 
-  const sortedVideos = videoLists
-    .slice()
+  useEffect(() => {
+    if (selectedCategory !== null) {
+      setSelectedSubcategories(["All"]);
+    }
+  }, [selectedCategory]);
+
+  const filteredVideos = videoLists
+    .filter(
+      (video) =>
+        (selectedCategory === null || video.category === selectedCategory) &&
+        (selectedSubcategories.includes("All") ||
+          selectedSubcategories.includes(video.subcategory))
+    )
     .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
 
-  const handleCategoryChange = (categories) => {
-    setSelectedCategories(categories);
-  };
+  const filteredSubcategories =
+    selectedCategory === null
+      ? ["All", ...subcategories]
+      : [
+          "All",
+          ...subcategories.filter((subcategory) =>
+            videoLists.some(
+              (video) =>
+                video.category === selectedCategory &&
+                video.subcategory === subcategory
+            )
+          ),
+        ];
+
 
   const handleTouchStart = (e) => {
     if (e.touches.length === 1) {
@@ -177,22 +240,15 @@ const Videos = () => {
     }
   };
 
-  const handleScroll = () => {
-    const bottom =
-      Math.ceil(window.innerHeight + window.scrollY) >=
-      document.documentElement.scrollHeight;
 
-    if (bottom) {
-      setLoadedVideos((prev) => prev + 10); // Increase number of videos to load
-    }
+
+  const handleAddNew = () => {
+    setAddNew(true);
   };
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  const handleCloseForm = () => {
+    setAddNew(false);
+  };
 
   return (
     <>
@@ -212,21 +268,35 @@ const Videos = () => {
         </ModalOverlay>
       )}
       {!isMobile && outlet ? null : (
-        <>
-          <Filter
-            selectedCategories={selectedCategories}
-            onCategoryChange={handleCategoryChange}
+        <Container>
+          <SubcategoriesContainer>
+         <AddNewBtn onClick={handleAddNew} />
+         {addNew && <VideoForm onClose={handleCloseForm} />}
+        <ExploreBtn onClick={() => setToggleCategories(!toggleCategories)} />
+        {selectedCategory !== null && (
+          <Subcategories
+            subcategories={filteredSubcategories}
+            selectedSubcategories={selectedSubcategories}
+            setSelectedSubcategories={setSelectedSubcategories}
           />
-          <VideoPreviewWrapper onClick={() => setIsModalMinimized(false)}>
-            {sortedVideos
-              .filter(
-                (video) =>
-                  selectedCategories.includes("All") ||
-                  selectedCategories.includes(video.category)
-              )
-              .slice(0, loadedVideos)
-              .map((video, index) => (
-                <Card
+        )}
+       
+      </SubcategoriesContainer>
+         
+      <PostContainer>
+        <CategoriesContainer toggleCategories={toggleCategories}>
+          <Categories
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            onClose={() => setToggleCategories(!toggleCategories)}
+          />
+        </CategoriesContainer>
+         
+            <VideoPreviewWrapper>
+              {filteredVideos.map((video, index) => (
+            
+                  <Card
                   key={index}
                   id={video.$id}
                   title={video.title}
@@ -241,11 +311,14 @@ const Videos = () => {
                   TextContainer={TextContainer}
                   ThumbnailContainer={ThumbnailContainer}
                 />
+             
               ))}
-          </VideoPreviewWrapper>
-        </>
+            </VideoPreviewWrapper>
+          </PostContainer>
+         
+        </Container>
       )}
-      {!isMobile && <Outlet />}
+      <Outlet />
     </>
   );
 };

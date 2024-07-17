@@ -7,13 +7,15 @@ import { ArticlesDataProvider } from "./pages/Articles/useArticlesData";
 
 const App = () => {
   return (
+    
     <DataContextProvider>
       <BookDataProvider>
         <ArticlesDataProvider>
           <RouterProvider router={routers} />
         </ArticlesDataProvider>
-      </BookDataProvider>
+      </BookDataProvider>  
     </DataContextProvider>
+  
   );
 };
 

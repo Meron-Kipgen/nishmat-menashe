@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -114,13 +114,36 @@ const Button = styled.button`
   }
 `;
 
-const Comments = ({ comments }) => {
+const Comments = ({ comments, onAddComment }) => {
+  const [newComment, setNewComment] = useState(""); // State for new comment input
+
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value); // Update new comment input
+  };
+
+  const handleAddComment = () => {
+    // Ensure newComment is not empty before adding
+    if (newComment.trim() !== "") {
+      onAddComment({
+        userName: "meron Kipgen", // Replace with actual user name
+        comment: newComment,
+        replies: [] // Initialize with an empty array of replies
+      });
+      setNewComment(""); // Clear input field after adding comment
+    }
+  };
+
   return (
     <Container>
       <CommentBox>
         <Avatar>MK</Avatar>
-        <Input type="text" placeholder="Add a comment..." />
-        <Button>Add Comment</Button>
+        <Input
+          type="text"
+          value={newComment}
+          onChange={handleCommentChange}
+          placeholder="Add a comment..."
+        />
+        <Button onClick={handleAddComment}>Add Comment</Button>
       </CommentBox>
       {comments.length > 0 ? (
         comments.map((comment, index) => (
@@ -128,13 +151,13 @@ const Comments = ({ comments }) => {
             <Avatar>MK</Avatar>
             <Comment>
               <UserContainer>
-                <UserName>User Name</UserName>
+                <UserName>{comment.userName}</UserName>
               </UserContainer>
               <CommentText>{comment.comment}</CommentText>
-              {comment.reply.length > 0 && (
+              {comment.replies.length > 0 && (
                 <RepliesContainer>
                   <ul>
-                    {comment.reply.map((reply, idx) => (
+                    {comment.replies.map((reply, idx) => (
                       <Reply key={idx}>
                         <UserContainer>
                           <Avatar>{reply.userName.charAt(0)}</Avatar>

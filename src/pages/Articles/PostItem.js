@@ -12,7 +12,6 @@ const PostItemContainer = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  cursor: pointer;
   background: white;
   &:hover {
     transform: translateY(-4px);
@@ -31,14 +30,14 @@ const Body = styled.div`
   font-size: 15px;
   color: #666;
   line-height: 1.6;
- height: 160px;
- text-align: justify;
+  height: 160px;
+  text-align: justify;
 `;
 const Wrapper = styled.div`
-font-size: 13px;
-padding-bottom: 10px;
-color: grey;
-`
+  font-size: 13px;
+  padding-bottom: 10px;
+  color: grey;
+`;
 const ReadMoreButton = styled.button`
   margin-top: auto;
   padding: 10px 20px;
@@ -54,7 +53,15 @@ const ReadMoreButton = styled.button`
   }
 `;
 
-const PostItem = ({ id, title, body, subcategory, writer,views,createdAt }) => {
+const PostItem = ({
+  id,
+  title,
+  body,
+  subcategory,
+  writer,
+  views,
+  createdAt,
+}) => {
   const navigate = useNavigate();
   const { updateViews } = useArticlesData();
 
@@ -65,9 +72,13 @@ const PostItem = ({ id, title, body, subcategory, writer,views,createdAt }) => {
 
   return (
     <PostItemContainer>
-      <SubcategoryPoster subcategory={subcategory}>{subcategory}</SubcategoryPoster>
+      <SubcategoryPoster subcategory={subcategory}>
+        {subcategory}
+      </SubcategoryPoster>
       <Title>{title}</Title>
-      <Wrapper>{writer} |  <TimeAgo createdAt={createdAt} /> | views: {views}</Wrapper>
+      <Wrapper>
+        {writer} | <TimeAgo createdAt={createdAt} /> | views: {views}
+      </Wrapper>
       <Body dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body) }} />
       <ReadMoreButton onClick={handleReadMore}>Read More</ReadMoreButton>
     </PostItemContainer>

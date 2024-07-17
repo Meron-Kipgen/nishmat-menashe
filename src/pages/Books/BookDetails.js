@@ -1,5 +1,3 @@
-// BookDetail.js
-
 import React from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -8,10 +6,14 @@ import Menu from "./Menu";
 import { useBookData } from "./useBookData";
 import ChapterForm from "./ChapterForm";
 import EditBookForm from "./EditBookForm";
+import TableOfContents from "./TableOfContents";
 
 const Container = styled.div`
-  max-width: 800px;
-  margin: 20px auto;
+display: flex;
+gap: 40px;
+`
+const TextContainer = styled.div`
+  width: 700px;
   padding: 20px;
   background-color: #f0f0f0;
   border-radius: 8px;
@@ -38,6 +40,12 @@ const BookDetail = () => {
   const [showEn, setShowEn] = React.useState(true);
   const [showHe, setShowHe] = React.useState(true);
   const [gridLayout, setGridLayout] = React.useState(false);
+  const [selectedChapterIndex, setSelectedChapterIndex] = React.useState(0);
+
+  const handleChapterClick = (index) => {
+    setSelectedChapterIndex(index);
+    // Optionally, you can perform additional actions when a chapter is clicked
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -86,6 +94,7 @@ const BookDetail = () => {
 
   return (
     <Container>
+    <TextContainer>
       <Menu
         onIncreaseFontSize={increaseFontSize}
         onDecreaseFontSize={decreaseFontSize}
@@ -112,7 +121,13 @@ const BookDetail = () => {
       />
 
       <ChapterForm bookId={book.$id} />
+     
+    </TextContainer> <TableOfContents
+        selectedBook={book}
+        handleChapterClick={handleChapterClick}
+      />
     </Container>
+    
   );
 };
 

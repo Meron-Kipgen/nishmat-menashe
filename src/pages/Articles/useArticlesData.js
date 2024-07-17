@@ -84,6 +84,26 @@ export const ArticlesDataProvider = ({ children }) => {
             throw err;
         }
     };
+    const addComment = async (articleId, newComment) => {
+        try {
+            const articleToUpdate = articleData.find(article => article.$id === articleId);
+            if (!articleToUpdate.comments) {
+                articleToUpdate.comments = []; // Initialize comments array if it doesn't exist
+            }
+            articleToUpdate.comments.push(newComment);
+
+            await db.updateDocument(databaseId, collectionId, articleId, {
+                comments: articleToUpdate.comments
+            });
+
+            // After updating the document, fetch the updated data again
+            const response = await db.listDocuments(databaseId, collectionId);
+            setArticleData(response.documents);
+        } catch (err) {
+            setError(err);
+            throw err;
+        }
+    };
 
     const contextValue = {
         articleData,
@@ -93,6 +113,7 @@ export const ArticlesDataProvider = ({ children }) => {
         updateViews,
         updateArticle,  // Adding the new updateArticle function here
         deleteArticle,
+        addComment,
     };
 
     return (
