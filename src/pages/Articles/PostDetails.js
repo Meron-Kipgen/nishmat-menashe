@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Suggestion from "./Suggestion";
 import Comments from "./Comments";
 import Menus from "./Menus";
-import UpdateArticleForm from "./UpdateArticleForm"; // Assuming the correct path to your UpdateArticleForm component
+import UpdateArticleForm from "./UpdateArticleForm"; // Adjust the path if necessary
 import { useArticlesData } from "./useArticlesData";
 import DOMPurify from "dompurify";
 import TimeAgo from "../../components/TimeAgo";
@@ -43,7 +43,6 @@ const Body = styled.div`
   p {
     margin-bottom: 10px;
   }
-
 `;
 
 const SuggestionContainer = styled.div`
@@ -53,7 +52,7 @@ const SuggestionContainer = styled.div`
 `;
 
 const PostDetails = () => {
-  const { articleData, addComment} = useArticlesData();
+  const { articleData, addComment } = useArticlesData();
   const { id } = useParams();
   const navigate = useNavigate();
   const post = articleData.find((post) => post.$id === id);
@@ -64,10 +63,11 @@ const PostDetails = () => {
   if (!post) {
     return <div>Post not found</div>;
   }
+
   const handleAddComment = (newComment) => {
-    
-    addComment(post.$id, newComment);
+    addComment(post.$id, newComment); // Use post.$id instead of articleId
   };
+
   const handleClose = () => {
     navigate(-1);
   };
@@ -99,14 +99,14 @@ const PostDetails = () => {
         />
         <Post fontSize={fontSize}>
           <h1>{post.title}</h1>
-          <h5>By: {post.writer}  - <TimeAgo createdAt={post.$createdAt}/></h5>
+          <h5>By: {post.writer} - <TimeAgo createdAt={post.$createdAt} /></h5>
           <Body fontSize={fontSize}>
             {post.body && (
               <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body) }} />
             )}
           </Body>
         </Post>
-        <Comments comments={post.comments} onAddComment={handleAddComment} />
+        <Comments comments={post.comments} onAddComment={handleAddComment} articleId={post.$id} />
         {showUpdateForm && (
           <UpdateArticleForm articleId={post.$id} onClose={() => setShowUpdateForm(false)} />
         )}
@@ -117,7 +117,7 @@ const PostDetails = () => {
           author={author}
           category={category}
           subcategory={subcategory}
-          postId={post.id}
+          postId={post.$id}
           postData={articleData}
         />
       </SuggestionContainer>

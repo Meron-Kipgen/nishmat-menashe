@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useArticlesData } from './useArticlesData'; // Adjust the import path
 
 const Container = styled.div`
   margin-top: 20px;
@@ -114,69 +115,83 @@ const Button = styled.button`
   }
 `;
 
-const Comments = ({ comments, onAddComment }) => {
-  const [newComment, setNewComment] = useState(""); // State for new comment input
+const Comments = ({ articleId, comments }) => {
+    const { addComment, deleteComment } = useArticlesData(); // Use the deleteComment function from the context
+    const [newComment, setNewComment] = useState("");
 
-  const handleCommentChange = (e) => {
-    setNewComment(e.target.value); // Update new comment input
-  };
+    const handleCommentChange = (e) => {
+        setNewComment(e.target.value);
+    };
 
-  const handleAddComment = () => {
-    // Ensure newComment is not empty before adding
-    if (newComment.trim() !== "") {
-      onAddComment({
-        userName: "meron Kipgen", // Replace with actual user name
-        comment: newComment,
-        replies: [] // Initialize with an empty array of replies
-      });
-      setNewComment(""); // Clear input field after adding comment
-    }
-  };
+    const handleAddComment = async () => {
+        if (newComment.trim() !== "") {
+            try {
+                await addComment(articleId, {
+                    comment: newComment,
+                    userId: "your-user-id",
+                    avatar: "default-avatar-url",
+                    userName: "Your Name",
+                    replies: []
+                });
+                setNewComment("");
+            } catch (err) {
+                console.error("Failed to add comment:", err);
+            }
+        }
+    };
 
-  return (
-    <Container>
-      <CommentBox>
-        <Avatar>MK</Avatar>
-        <Input
-          type="text"
-          value={newComment}
-          onChange={handleCommentChange}
-          placeholder="Add a comment..."
-        />
-        <Button onClick={handleAddComment}>Add Comment</Button>
-      </CommentBox>
-      {comments.length > 0 ? (
-        comments.map((comment, index) => (
-          <CommentContainer key={index}>
-            <Avatar>MK</Avatar>
-            <Comment>
-              <UserContainer>
-                <UserName>{comment.userName}</UserName>
-              </UserContainer>
-              <CommentText>{comment.comment}</CommentText>
-              {comment.replies.length > 0 && (
-                <RepliesContainer>
-                  <ul>
-                    {comment.replies.map((reply, idx) => (
-                      <Reply key={idx}>
-                        <UserContainer>
-                          <Avatar>{reply.userName.charAt(0)}</Avatar>
-                          <UserName>{reply.userName}</UserName>
-                        </UserContainer>
-                        <p>{reply.replytext}</p>
-                      </Reply>
-                    ))}
-                  </ul>
-                </RepliesContainer>
-              )}
-            </Comment>
-          </CommentContainer>
-        ))
-      ) : (
-        <p>No comments yet.</p>
-      )}
-    </Container>
-  );
+    const handleDeleteComment = async (commentId) => {
+        try {
+            await deleteComment(commentId);
+        } catch (err) {
+            console.error("Failed to delete comment:", err);
+        }
+    };
+
+    return (
+        <Container>
+            <CommentBox>
+                <Avatar>MK</Avatar>
+                <Input
+                    type="text"
+                    value={newComment}
+                    onChange={handleCommentChange}
+                    placeholder="Add a comment..."
+                />
+                <Button onClick={handleAddComment}>Add Comment</Button>
+            </CommentBox>
+            {comments.length > 0 ? (
+                comments.map((comment, index) => (
+                    <CommentContainer key={index}>
+                        <Avatar>{comment.userName.charAt(0)}</Avatar>
+                        <Comment>
+                            <UserContainer>
+                                <Avatar>{comment.avatar ? comment.avatar.charAt(0) : '?'}</Avatar>
+                                <UserName>{comment.userName}</UserName>
+                            </UserContainer>
+                            <CommentText>{comment.comment}</CommentText>
+                            {comment.replies.length > 0 && (
+                                <RepliesContainer>
+                                    {comment.replies.map((reply, idx) => (
+                                        <Reply key={idx}>
+                                            <UserContainer>
+                                                <Avatar>{reply.avatar ? reply.avatar.charAt(0) : '?'}</Avatar>
+                                                <UserName>{reply.userName}</UserName>
+                                            </UserContainer>
+                                            <p>{reply.comment}</p>
+                                        </Reply>
+                                    ))}
+                                </RepliesContainer>
+                            )}
+                            <Button onClick={() => handleDeleteComment(comment.$id)}>Delete Comment</Button> {/* Add delete button */}
+                        </Comment>
+                    </CommentContainer>
+                ))
+            ) : (
+                <p>No comments yet.</p>
+            )}
+        </Container>
+    );
 };
 
 export default Comments;

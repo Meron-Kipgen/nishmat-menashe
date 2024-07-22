@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { db, ID } from '../../db/config'; // Assuming db and ID are correctly imported and configured
+import { db, ID } from '../../db/config'; // Ensure that ID and db are correctly imported
 
 const databaseId = '666aff03003ba124b787';
-const collectionId = '666b0186000007f47da9';
+const articlesCollectionId = '666b0186000007f47da9';
+const commentsCollectionId = '6693e16d0015537405c2'; // Replace with your comments collection ID
 
 const ArticlesDataContext = createContext();
 
@@ -21,10 +21,10 @@ export const ArticlesDataProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchPosts = async () => {
+        const fetchArticles = async () => {
             setLoading(true);
             try {
-                const response = await db.listDocuments(databaseId, collectionId);
+                const response = await db.listDocuments(databaseId, articlesCollectionId);
                 setArticleData(response.documents);
             } catch (err) {
                 setError(err);
@@ -33,13 +33,13 @@ export const ArticlesDataProvider = ({ children }) => {
             }
         };
 
-        fetchPosts();
+        fetchArticles();
     }, []);
 
-    const addArticle = async (newPost) => {
+    const addArticle = async (newArticle) => {
         try {
-            const newArticle = await db.createDocument(databaseId, collectionId, ID.unique(), newPost);
-            setArticleData(prevData => [...prevData, newArticle]);
+            const addedArticle = await db.createDocument(databaseId, articlesCollectionId, ID.unique(), newArticle);
+            setArticleData(prevData => [...prevData, addedArticle]);
         } catch (err) {
             setError(err);
             throw err;
@@ -48,14 +48,21 @@ export const ArticlesDataProvider = ({ children }) => {
 
     const updateViews = async (articleId) => {
         try {
-            const updatedArticle = articleData.find(article => article.$id === articleId);
-            updatedArticle.views = (updatedArticle.views || 0) + 1;
-    
-            await db.updateDocument(databaseId, collectionId, articleId, {
+            const articleToUpdate = articleData.find(article => article.$id === articleId);
+            if (!articleToUpdate) {
+                throw new Error('Article not found');
+            }
+
+            const updatedArticle = {
+                ...articleToUpdate,
+                views: (articleToUpdate.views || 0) + 1
+            };
+
+            await db.updateDocument(databaseId, articlesCollectionId, articleId, {
                 views: updatedArticle.views
             });
-    
-            const response = await db.listDocuments(databaseId, collectionId);
+
+            const response = await db.listDocuments(databaseId, articlesCollectionId);
             setArticleData(response.documents);
         } catch (err) {
             setError(err);
@@ -65,8 +72,8 @@ export const ArticlesDataProvider = ({ children }) => {
 
     const updateArticle = async (articleId, updatedData) => {
         try {
-            await db.updateDocument(databaseId, collectionId, articleId, updatedData);
-            setArticleData(prevData => prevData.map(article => 
+            await db.updateDocument(databaseId, articlesCollectionId, articleId, updatedData);
+            setArticleData(prevData => prevData.map(article =>
                 article.$id === articleId ? { ...article, ...updatedData } : article
             ));
         } catch (err) {
@@ -77,27 +84,63 @@ export const ArticlesDataProvider = ({ children }) => {
 
     const deleteArticle = async (articleId) => {
         try {
-            await db.deleteDocument(databaseId, collectionId, articleId);
+            // Fetch and delete all comments related to the article
+            const commentsResponse = await db.listDocuments(databaseId, commentsCollectionId);
+            const commentsToDelete = commentsResponse.documents.filter(comment => comment.articleId === articleId);
+
+            await Promise.all(commentsToDelete.map(comment => db.deleteDocument(databaseId, commentsCollectionId, comment.$id)));
+
+            // Delete the article itself
+            await db.deleteDocument(databaseId, articlesCollectionId, articleId);
             setArticleData(prevData => prevData.filter(article => article.$id !== articleId));
         } catch (err) {
             setError(err);
             throw err;
         }
     };
+
     const addComment = async (articleId, newComment) => {
         try {
+            // Ensure newComment includes articleId
+            const commentData = {
+                ...newComment,
+                articleId  // Include the articleId in the comment
+            };
+        
+            // Create the new comment document
+            const addedComment = await db.createDocument(databaseId, commentsCollectionId, ID.unique(), commentData);
+        
+            // Optionally update the article document if you maintain a list of comment IDs
             const articleToUpdate = articleData.find(article => article.$id === articleId);
-            if (!articleToUpdate.comments) {
-                articleToUpdate.comments = []; // Initialize comments array if it doesn't exist
+            if (articleToUpdate) {
+                const updatedComments = [...(articleToUpdate.comments || []), addedComment.$id];
+                await db.updateDocument(databaseId, articlesCollectionId, articleId, {
+                    comments: updatedComments
+                });
             }
-            articleToUpdate.comments.push(newComment);
+        } catch (err) {
+            setError(err);
+            throw err;
+        }
+    };
+    
+    const deleteComment = async (commentId) => {
+        try {
+            // Fetch the comment to get its associated article ID
+            const commentResponse = await db.getDocument(databaseId, commentsCollectionId, commentId);
+            const articleId = commentResponse.articleId;
 
-            await db.updateDocument(databaseId, collectionId, articleId, {
-                comments: articleToUpdate.comments
-            });
+            // Delete the comment
+            await db.deleteDocument(databaseId, commentsCollectionId, commentId);
 
-            // After updating the document, fetch the updated data again
-            const response = await db.listDocuments(databaseId, collectionId);
+            // Optionally update the article document if needed
+            const articleToUpdate = articleData.find(article => article.$id === articleId);
+            if (articleToUpdate) {
+                // Logic for updating the article's comments array if necessary
+            }
+
+            // Refresh the articles data
+            const response = await db.listDocuments(databaseId, articlesCollectionId);
             setArticleData(response.documents);
         } catch (err) {
             setError(err);
@@ -111,9 +154,10 @@ export const ArticlesDataProvider = ({ children }) => {
         error,
         addArticle,
         updateViews,
-        updateArticle,  // Adding the new updateArticle function here
+        updateArticle,
         deleteArticle,
         addComment,
+        deleteComment
     };
 
     return (
