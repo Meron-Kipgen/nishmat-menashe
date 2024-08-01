@@ -1,4 +1,3 @@
-// UserContext.js
 import React, { createContext, useState, useEffect } from 'react';
 import { account } from '../db/config';
 
@@ -11,17 +10,20 @@ const UserProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isLogin, setIsLogin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const getUserInfo = async () => {
       try {
         const user = await account.get();
-  
         setUserInfo(user);
         setIsLogin(true);
         if (user.labels && user.labels.includes("admin")) {
           setIsAdmin(true);
         }
+        setUsername(user.name || '');
+        setUserId(user.$id || '');
       } catch (error) {
         console.error('Error fetching user info:', error);
         setError(error.message);
@@ -32,7 +34,18 @@ const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userInfo, error, isLogin, isAdmin }}>
+    <UserContext.Provider
+      value={{
+        userInfo,
+        setUserInfo,
+        isLogin,
+        setIsLogin,
+        isAdmin,
+        username,
+        userId,
+        error,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

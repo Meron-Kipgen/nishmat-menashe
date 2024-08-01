@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TimeAgo from "../../components/TimeAgo"; 
-import { useDataContext } from '../../contexts/DataContextProvider'; // Adjust the path
+import { useVideosData } from "./useVideosData";
 
 const CardFooter = styled.div`
   display: flex;
@@ -22,15 +22,14 @@ const Card = ({
   ThumbnailContainer,
   TextContainer,
   views,
-  likes,
 }) => {
   const navigate = useNavigate();
-  const { updateViewCount} = useDataContext(); // Access the updateViewCount function
+  const { updateViews} = useVideosData(); 
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleClick = async () => {
-    await updateViewCount(id); // Increment the view count
-    navigate(`/Video/${id}`); // Navigate to the video details page
+  const handleClick = () => {
+    navigate(`/Video/${id}`);
+    updateViews(id); 
   };
 
   return (
@@ -52,7 +51,7 @@ const Card = ({
           <TimeAgo createdAt={createdAt} /> | {category}
         </p>
         <CardFooter>
-          <h3>{rabbi}</h3><span>{views}</span> <span>likes:{likes} </span>
+          <h3>{rabbi}</h3><span>{views}</span>
          
         </CardFooter>
       </TextContainer>

@@ -1,223 +1,189 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useDataContext } from "../../contexts/DataContextProvider"; 
+import { useVideosData } from "./useVideosData";
 
-const UpdateButtonStyled = styled.button`
-  background-color: #ffc107;
-  color: white;
-  border: none;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 4px;
-`;
-
-const ModalContainer = styled.div`
-  display: ${props => (props.isOpen ? "block" : "none")};
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-`;
-
-const ModalContent = styled.div`
-  background-color: #fff;
-  max-width: 600px;
-  margin: 20px auto;
+const FormContainer = styled.form`
+  position: absolute;
+  top: 60px;
+  width: 800px;
+  z-index: 1000;
+  margin: 0 auto;
   padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 1rem;
-`;
+  margin-bottom: 20px;
 
-const Label = styled.label`
-  display: block;
-  margin-bottom: 0.5rem;
-`;
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
 
-const Input = styled.input`
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const Button = styled.button`
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-right: 10px;
-
-  &:hover {
-    background-color: #0056b3;
+  input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
   }
 `;
 
-const Update = ({ videoId }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [updatedData, setUpdatedData] = useState({
-    title: "",
-    description: "",
-    rabbi: "",
-    category: "",
-    subcategory: "",
-    thumbnail: "",
-    poster: "",
-    videoUrl: "",
-  });
+const SubmitButton = styled.button`
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 
-  const { getDocument, updateVideo } = useDataContext(); 
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  color: #6c757d;
+  font-size: 20px;
+  cursor: pointer;
+`;
+
+const Update = ({ videoId, onClose }) => {
+  const { updateVideo, videoData } = useVideosData();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [rabbi, setRabbi] = useState('');
+  const [category, setCategory] = useState('');
+  const [subcategory, setSubcategory] = useState('');
+  const [thumbnail, setThumbnail] = useState('');
+  const [poster, setPoster] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
 
   useEffect(() => {
-    const fetchVideoData = async () => {
-      try {
-        const document = await getDocument(videoId);
-        console.log("Fetched video data:", document);
+    const video = videoData.find(video => video.$id === videoId);
+    if (video) {
+      setTitle(video.title || '');
+      setDescription(video.description || '');
+      setRabbi(video.rabbi || '');
+      setCategory(video.category || '');
+      setSubcategory(video.subcategory || '');
+      setThumbnail(video.thumbnail || '');
+      setPoster(video.poster || '');
+      setVideoUrl(video.videoUrl || '');
+    }
+  }, [videoId, videoData]);
 
-        setUpdatedData({
-          title: document.title || "",
-          description: document.description || "",
-          rabbi: document.rabbi || "",
-          category: document.category || "",
-          subcategory: document.subcategory || "",
-          thumbnail: document.thumbnail || "",
-          poster: document.poster || "",
-          videoUrl: document.videoUrl || "",
-        });
-      } catch (error) {
-        console.error("Error fetching video data:", error);
-      }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const updatedVideo = {
+      title,
+      description,
+      rabbi,
+      category,
+      subcategory,
+      thumbnail,
+      poster,
+      videoUrl
     };
 
-    if (isOpen && videoId) {
-      fetchVideoData();
-    }
-  }, [isOpen, videoId, getDocument]);
-
-  const handleUpdate = async () => {
     try {
-      await updateVideo({ videoId, updatedData }); // Use updateVideo from context
-      setIsOpen(false); // Close modal after successful update
+      await updateVideo(videoId, updatedVideo);
+      onClose(); // Close the form after successful update
     } catch (error) {
-      console.error("Error updating video:", error);
+      console.error('Failed to update video:', error);
     }
-  };
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setUpdatedData({ ...updatedData, [name]: value });
   };
 
   return (
-    <>
-      <UpdateButtonStyled onClick={openModal}>
-        Update Video
-      </UpdateButtonStyled>
-      <ModalContainer isOpen={isOpen}>
-        <ModalContent>
-          <FormGroup>
-            <Label>Title:</Label>
-            <Input
-              type="text"
-              name="title"
-              value={updatedData.title}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Description:</Label>
-            <Input
-              type="text"
-              name="description"
-              value={updatedData.description}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Rabbi:</Label>
-            <Input
-              type="text"
-              name="rabbi"
-              value={updatedData.rabbi}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Thumbnail URL:</Label>
-            <Input
-              type="text"
-              name="thumbnail"
-              value={updatedData.thumbnail}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Poster URL:</Label>
-            <Input
-              type="text"
-              name="poster"
-              value={updatedData.poster}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Category:</Label>
-            <Input
-              type="text"
-              name="category"
-              value={updatedData.category}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>subCategory:</Label>
-            <Input
-              type="text"
-              name="subcategory"
-              value={updatedData.subcategory}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Video URL:</Label>
-            <Input
-              type="text"
-              name="videoUrl"
-              value={updatedData.videoUrl}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-          <Button onClick={handleUpdate}>Update</Button>
-          <Button onClick={closeModal}>Cancel</Button>
-        </ModalContent>
-      </ModalContainer>
-    </>
+    <FormContainer onSubmit={handleSubmit}>
+      <CloseButton onClick={onClose}>&times;</CloseButton>
+      <FormGroup>
+        <label>Title:</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>Description:</label>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>Rabbi:</label>
+        <input
+          type="text"
+          value={rabbi}
+          onChange={(e) => setRabbi(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>Category:</label>
+        <input
+          type="text"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>Subcategory:</label>
+        <input
+          type="text"
+          value={subcategory}
+          onChange={(e) => setSubcategory(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>Thumbnail URL:</label>
+        <input
+          type="text"
+          value={thumbnail}
+          onChange={(e) => setThumbnail(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>Poster URL:</label>
+        <input
+          type="text"
+          value={poster}
+          onChange={(e) => setPoster(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>Video URL:</label>
+        <input
+          type="text"
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
+          required
+        />
+      </FormGroup>
+      <SubmitButton type="submit">Update Video</SubmitButton>
+    </FormContainer>
   );
 };
 

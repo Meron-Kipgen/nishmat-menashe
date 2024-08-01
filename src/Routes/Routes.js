@@ -1,56 +1,34 @@
+import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import React, { Suspense, lazy } from "react";
-import SkeletonLoading from "../components/SkeletonLoading";
-import useMediaQuery from "../hooks/useMediaQuery";
 
+// Direct imports for components
+import Layout from "../layouts/Layout";
+import MainError from "./MainError";
+import Feed from "../pages/Feed/Feed";
+import Audio from "../pages/Audio/Audio";
+import Posts from "../pages/Articles/Articles";
+import Videos from "../pages/Video/Videos";
+import Books from "../pages/Books/Books";
+import User from "../Features/User/User";
+import QnA from "../pages/QnA/QnA";
 import PcDetails from "../pages/Video/PcDetails";
-import MobileDetails from "../pages/Video/MobileDetails";
-import User from "../pages/User/User";
 import BookDetail from "../pages/Books/BookDetails";
 import PostDetails from "../pages/Articles/PostDetails";
+import Home from "../pages/Home/Home";
 
-
-const Layout = lazy(() => import("../layouts/Layout"));
-const MainError = lazy(() => import("./MainError"));
-const Feed = lazy(() => import("../pages/Feed/Feed"));
-const Audio = lazy(() => import("../pages/Audio/Audio"));
-const Posts = lazy(() => import("../pages/Articles/Articles"));
-const Videos = lazy(() => import("../pages/Video/Videos"));
-const Books = lazy(() => import("../pages/Books/Books"));
-
-const Details = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  return isMobile ? <MobileDetails /> : <PcDetails />;
-};
 
 const routers = createBrowserRouter([
   {
-    element: (
-      <Suspense fallback={<SkeletonLoading />}>
-        <Layout />
-      </Suspense>
-    ),
-    errorElement: (
-      <Suspense fallback={<SkeletonLoading />}>
-        <MainError />
-      </Suspense>
-    ),
+    element: <Layout />,
+    errorElement: <MainError />,
     children: [
       {
         path: "/",
-        element: (
-          <Suspense fallback={<SkeletonLoading />}>
-            <Feed />
-          </Suspense>
-        ),
+        element: <Home />,
       },
       {
         path: "/feed",
-        element: (
-          <Suspense fallback={<SkeletonLoading />}>
-            <Feed />
-          </Suspense>
-        ),
+        element: <Feed />,
       },
       {
         path: "/video",
@@ -58,52 +36,41 @@ const routers = createBrowserRouter([
         children: [
           {
             path: ":id",
-            element: <Details />,
+            element: <PcDetails />,
           },
         ],
       },
       {
         path: "/audio",
-        element: (
-          <Suspense fallback={<SkeletonLoading />}>
-            <Audio />
-          </Suspense>
-        ),
+        element: <Audio />,
       },
       {
         path: "/articles",
-        element: (
-          <Suspense fallback={<SkeletonLoading />}>
-            <Posts />
-          </Suspense>
-        ),children:[
+        element: <Posts />,
+        children: [
           {
             path: ":id",
-            element: <PostDetails/>
-          }
-        ]
+            element: <PostDetails />,
+          },
+        ],
       },
       {
         path: "/books",
-        element: (
-          <Suspense fallback={<SkeletonLoading />}>
-            <Books />
-          </Suspense>
-        ),
-        children:[
+        element: <Books />,
+        children: [
           {
             path: ":id",
-            element: <BookDetail/>
-          }
-        ]
+            element: <BookDetail />,
+          },
+        ],
       },
       {
         path: "/user",
-        element: (
-          <Suspense fallback={<SkeletonLoading />}>
-            <User />
-          </Suspense>
-        ),
+        element: <User />,
+      },
+      {
+        path: "/QnA",
+        element: <QnA />,
       },
     ],
   },

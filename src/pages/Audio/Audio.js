@@ -1,10 +1,14 @@
-import styled from "styled-components";
-
-const Wrapper = styled.section``;
+import React from 'react'
+import AudioPlayer from '../../Features/AudioPlayer/AudioPlayer';
+import playerVars from '../../Features/AudioPlayer/PlayerVars';
 export default function Audio() {
+
   return (
-    <>
-      <Wrapper>audio</Wrapper>
-    </>
-  );
+    <div>
+        <AudioPlayer
+        audioId="O7Hb8jtASrg" 
+        playerVars={playerVars}
+      />
+    </div>
+  )
 }

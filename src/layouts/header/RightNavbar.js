@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import UserProfile from "../../components/UserProfile";
+import Profile from "../../Features/User/User";
 
 const Container = styled.div`
   margin-right: 30px;
@@ -46,7 +46,7 @@ const RightNavbar = () => {
         </User>
       </Button>
 
-      {profileVisible && <UserProfile/>}
+      {profileVisible && <Profile/>}
     </Container>
   );
 };

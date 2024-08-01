@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { useParams, useNavigate } from "react-router-dom";
-import Player from "../../Features/VideoPlayer/Player";
+import { useParams } from "react-router-dom";
 import Description from "./Description";
 import Related from "./Related";
+import Player from "../../Features/VideoPlayer/Player";
 import Suggestions from "./Suggestions";
 import PcBtn from "./PcBtn";
-import { useDataContext } from "../../contexts/DataContextProvider";
-import Likes from "./Likes";
+import { useVideosData } from "../../pages/Video/useVideosData";
 import Delete from "./Delete";
 import Update from "./Update";
 
@@ -23,7 +22,9 @@ const VideoSection = styled.div`
   flex: 3;
   max-width: 65%;
 `;
+const VideoWrapper = styled.div`
 
+`;
 const DetailsContainer = styled.section`
   background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(30px);
@@ -63,48 +64,56 @@ const PcSuggestionsSection = styled.div`
   }
 `;
 
-const VideoWrapper = styled.div``;
-
 export default function PcDetails() {
   const { id } = useParams();
-  const { videoLists, updateLikeCount } = useDataContext();
-  const video = videoLists.find((v) => v.$id === id);
+  const { videoData } = useVideosData();
+  const video = videoData.find((v) => v.$id === id);
+
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   if (!video) {
     return <div>Video not found</div>;
   }
 
+  const handleOpenUpdateModal = () => {
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+  };
+
   const baseTitle = video.title;
 
   return (
     <Container>
-      <VideoSection>
+     
+      <VideoSection> 
         <VideoWrapper>
           <Player src={video.videoUrl} poster={video.poster} />
         </VideoWrapper>
-
         <DetailsContainer>
           <h1>{video.title}</h1>
           <Description description={video.description} />
           <h3>By: {video.rabbi}</h3>
-          <span>Views: {video.views}</span> <span>Likes: {video.likes}</span>
+          <span>Views: {video.views}</span>
           <PcBtn />
           <p>{video.date}</p>
-          <Likes videoId={id} updateLikeCount={updateLikeCount} />
           <Delete videoId={id} />
-          <Update videoId={id} /> 
+          <button onClick={handleOpenUpdateModal}>Update Video</button>
+        
         </DetailsContainer>
-
+  {isUpdateModalOpen && <Update videoId={id} onClose={handleCloseUpdateModal} />}
         <CommentContainer>hello</CommentContainer>
       </VideoSection>
 
       <PcSuggestionsSection>
-        <Related baseTitle={baseTitle} videos={videoLists} />
+        <Related baseTitle={baseTitle} videos={videoData} />
         <Suggestions
           category={video.category}
           rabbi={video.rabbi}
           currentVideoId={video.$id}
-          videos={videoLists}
+          videos={videoData}
         />
       </PcSuggestionsSection>
     </Container>

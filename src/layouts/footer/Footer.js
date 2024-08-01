@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 const Container = styled.footer`
   height: 80px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;

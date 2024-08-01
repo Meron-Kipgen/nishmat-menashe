@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Suggestion from "./Suggestion";
-import Comments from "./Comments";
 import Menus from "./Menus";
 import UpdateArticleForm from "./UpdateArticleForm"; // Adjust the path if necessary
 import { useArticlesData } from "./useArticlesData";
@@ -52,36 +51,32 @@ const SuggestionContainer = styled.div`
 `;
 
 const PostDetails = () => {
-  const { articleData, addComment } = useArticlesData();
+  const { articleData } = useArticlesData();
   const { id } = useParams();
   const navigate = useNavigate();
   const post = articleData.find((post) => post.$id === id);
 
-  const [fontSize, setFontSize] = useState(16); // Default font size
+  const [fontSize, setFontSize] = useState(16); 
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   if (!post) {
     return <div>Post not found</div>;
   }
 
-  const handleAddComment = (newComment) => {
-    addComment(post.$id, newComment); // Use post.$id instead of articleId
-  };
-
   const handleClose = () => {
     navigate(-1);
   };
 
   const increaseFontSize = () => {
-    setFontSize((prevSize) => prevSize + 2); // Increase font size by 2 pixels
+    setFontSize((prevSize) => prevSize + 2); 
   };
 
   const decreaseFontSize = () => {
-    setFontSize((prevSize) => Math.max(prevSize - 2, 12)); // Decrease font size by 2 pixels, minimum 12 pixels
+    setFontSize((prevSize) => Math.max(prevSize - 2, 12)); 
   };
 
   const handleShowUpdateForm = () => {
-    setShowUpdateForm(true); // Show update form
+    setShowUpdateForm(true);
   };
 
   const { author, category, subcategory } = post;
@@ -97,7 +92,7 @@ const PostDetails = () => {
           articleId={post.$id}
           onShowUpdateForm={handleShowUpdateForm}
         />
-        <Post fontSize={fontSize}>
+        <Post>
           <h1>{post.title}</h1>
           <h5>By: {post.writer} - <TimeAgo createdAt={post.$createdAt} /></h5>
           <Body fontSize={fontSize}>
@@ -106,7 +101,6 @@ const PostDetails = () => {
             )}
           </Body>
         </Post>
-        <Comments comments={post.comments} onAddComment={handleAddComment} articleId={post.$id} />
         {showUpdateForm && (
           <UpdateArticleForm articleId={post.$id} onClose={() => setShowUpdateForm(false)} />
         )}

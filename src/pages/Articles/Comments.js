@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { useArticlesData } from './useArticlesData'; // Adjust the import path
+import { useArticlesData } from '../../pages/Articles/useArticlesData'; // Adjust the import path
+import { UserContext } from "../../contexts/UserContext";
 
 const Container = styled.div`
   margin-top: 20px;
@@ -45,18 +46,6 @@ const Comment = styled.div`
   }
 `;
 
-const RepliesContainer = styled.div`
-  margin-left: 20px;
-  margin-top: 10px;
-`;
-
-const Reply = styled.div`
-  padding: 10px;
-  background: #e0e0e0;
-  border-radius: 8px;
-  margin-top: 10px;
-`;
-
 const Avatar = styled.div`
   width: 45px;
   height: 45px;
@@ -99,6 +88,21 @@ const Input = styled.input`
   }
 `;
 
+const TextArea = styled.textarea`
+  flex: 1;
+  margin-left: 10px;
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  min-height: 50px;
+
+  &:focus {
+    border-bottom: 2px solid #007bff;
+  }
+`;
+
 const Button = styled.button`
   margin-left: 10px;
   padding: 10px 15px;
@@ -115,83 +119,121 @@ const Button = styled.button`
   }
 `;
 
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 14px;
+`;
+
 const Comments = ({ articleId, comments }) => {
-    const { addComment, deleteComment } = useArticlesData(); // Use the deleteComment function from the context
-    const [newComment, setNewComment] = useState("");
+  const { addComment, deleteComment, updateComment } = useArticlesData();
+  const [newComment, setNewComment] = useState("");
+  const [editStates, setEditStates] = useState({});
+  const [error, setError] = useState("");
+  const { userInfo } = useContext(UserContext);
 
-    const handleCommentChange = (e) => {
-        setNewComment(e.target.value);
-    };
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
 
-    const handleAddComment = async () => {
-        if (newComment.trim() !== "") {
-            try {
-                await addComment(articleId, {
-                    comment: newComment,
-                    userId: "your-user-id",
-                    avatar: "default-avatar-url",
-                    userName: "Your Name",
-                    replies: []
-                });
-                setNewComment("");
-            } catch (err) {
-                console.error("Failed to add comment:", err);
-            }
-        }
-    };
+  const handleAddComment = async () => {
+    if (newComment.trim() !== "") {
+      try {
+        await addComment(articleId, {
+          comment: newComment,
+          userId: userInfo.$id,
+          avatar: "default-avatar-url",
+          userName: userInfo.name,
+        });
+        setNewComment("");
+      } catch (err) {
+        setError("Failed to add comment. Please try again.");
+        console.error("Error adding comment:", err);
+      }
+    }
+  };
 
-    const handleDeleteComment = async (commentId) => {
-        try {
-            await deleteComment(commentId);
-        } catch (err) {
-            console.error("Failed to delete comment:", err);
-        }
-    };
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(commentId);
+    } catch (err) {
+      setError("Failed to delete comment. Please try again.");
+      console.error("Error deleting comment:", err);
+    }
+  };
 
-    return (
-        <Container>
-            <CommentBox>
-                <Avatar>MK</Avatar>
-                <Input
-                    type="text"
-                    value={newComment}
-                    onChange={handleCommentChange}
-                    placeholder="Add a comment..."
-                />
-                <Button onClick={handleAddComment}>Add Comment</Button>
-            </CommentBox>
-            {comments.length > 0 ? (
-                comments.map((comment, index) => (
-                    <CommentContainer key={index}>
-                        <Avatar>{comment.userName.charAt(0)}</Avatar>
-                        <Comment>
-                            <UserContainer>
-                                <Avatar>{comment.avatar ? comment.avatar.charAt(0) : '?'}</Avatar>
-                                <UserName>{comment.userName}</UserName>
-                            </UserContainer>
-                            <CommentText>{comment.comment}</CommentText>
-                            {comment.replies.length > 0 && (
-                                <RepliesContainer>
-                                    {comment.replies.map((reply, idx) => (
-                                        <Reply key={idx}>
-                                            <UserContainer>
-                                                <Avatar>{reply.avatar ? reply.avatar.charAt(0) : '?'}</Avatar>
-                                                <UserName>{reply.userName}</UserName>
-                                            </UserContainer>
-                                            <p>{reply.comment}</p>
-                                        </Reply>
-                                    ))}
-                                </RepliesContainer>
-                            )}
-                            <Button onClick={() => handleDeleteComment(comment.$id)}>Delete Comment</Button> {/* Add delete button */}
-                        </Comment>
-                    </CommentContainer>
-                ))
-            ) : (
-                <p>No comments yet.</p>
-            )}
-        </Container>
-    );
+  const handleUpdateCommentChange = (e, commentId) => {
+    setEditStates(prev => ({
+      ...prev,
+      [commentId]: e.target.value
+    }));
+  };
+
+  const handleUpdateComment = async (commentId) => {
+    const updatedComment = editStates[commentId] || "";
+    if (updatedComment.trim() !== "") {
+      try {
+        await updateComment(commentId, { comment: updatedComment });
+        setEditStates(prev => ({
+          ...prev,
+          [commentId]: ""
+        }));
+      } catch (err) {
+        setError("Failed to update comment. Please try again.");
+        console.error("Error updating comment:", err);
+      }
+    }
+  };
+
+  return (
+    <Container>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      <CommentBox>
+        <Avatar>{userInfo.name.charAt(0)}</Avatar>
+        <Input
+          type="text"
+          value={newComment}
+          onChange={handleCommentChange}
+          placeholder="Add a comment..."
+        />
+        <Button onClick={handleAddComment}>Add Comment</Button>
+      </CommentBox>
+
+      {comments.length > 0 ? (
+        [...comments].reverse().map((comment) => (
+          <CommentContainer key={comment.$id}>
+            <Avatar>{comment.avatar ? comment.avatar.charAt(0) : '?'}</Avatar>
+            <Comment>
+              <UserName>{comment.userName}</UserName>
+              {editStates[comment.$id] ? (
+                <>
+                  <TextArea
+                    value={editStates[comment.$id]}
+                    onChange={(e) => handleUpdateCommentChange(e, comment.$id)}
+                  />
+                  <Button onClick={() => handleUpdateComment(comment.$id)}>Save</Button>
+                </>
+              ) : (
+                <>
+                  <CommentText>{comment.comment}</CommentText>
+                  {comment.userId === userInfo.$id && (
+                    <>
+                      <Button onClick={() => handleDeleteComment(comment.$id)}>Delete</Button>
+                      <Button onClick={() => setEditStates(prev => ({
+                        ...prev,
+                        [comment.$id]: comment.comment
+                      }))}>Edit</Button>
+                    </>
+                  )}
+                </>
+              )}
+            </Comment>
+          </CommentContainer>
+        ))
+      ) : (
+        <p>No comments yet.</p>
+      )}
+    </Container>
+  );
 };
 
 export default Comments;

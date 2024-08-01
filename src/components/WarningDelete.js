@@ -11,6 +11,7 @@ const WarningDeleteBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 989999;
 `;
 
 const WarningDeleteContainer = styled.div`

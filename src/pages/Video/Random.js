@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Card from "./Card";
-import { useDataContext } from "../../contexts/DataContextProvider";
+import { useVideosData } from "../../pages/Video/useVideosData";
 
 const VideoPreviewWrapper = styled.section`
   display: flex;
@@ -67,10 +67,10 @@ const TextContainer = styled.div`
 
 const Random = ({ currentVideoId }) => {
   const [shuffledVideoData, setShuffledVideoData] = useState([]);
-  const { videoLists } = useDataContext();
+  const { videoData } = useVideosData();
   useEffect(() => {
     // Filter out the current video from videoData
-    const filteredData = videoLists.filter(
+    const filteredData = videoData.filter(
       (video) => video.$id !== currentVideoId
     );
 

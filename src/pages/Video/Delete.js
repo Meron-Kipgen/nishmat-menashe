@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useDataContext } from "../../contexts/DataContextProvider";
+import { useVideosData } from "./useVideosData";
 
 const Button = styled.button`
   background-color: #dc3545;
@@ -15,7 +15,7 @@ const Button = styled.button`
 
 const Delete = ({ videoId }) => {
   const navigate = useNavigate();
-  const { deleteVideo } = useDataContext();
+  const { deleteVideo } = useVideosData();
 
   const handleDelete = async () => {
     try {

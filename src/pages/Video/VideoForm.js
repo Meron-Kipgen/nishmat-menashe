@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useDataContext } from "../../contexts/DataContextProvider";
+import { useVideosData } from "../../pages/Video/useVideosData";
 
 const FormContainer = styled.form`
- position: absolute;
+  position: absolute;
   top: 60px;
   width: 800px;
   z-index: 1000;
@@ -45,6 +45,7 @@ const Button = styled.button`
     background-color: #0056b3;
   }
 `;
+
 const CloseButton = styled.button`
   background-color: #dc3545;
   color: white;
@@ -61,8 +62,8 @@ const CloseButton = styled.button`
   }
 `;
 
-const VideoForm = ({onClose}) => {
-  const { createVideo } = useDataContext();
+const VideoForm = ({ onClose }) => {
+  const { addVideo } = useVideosData(); // Use the custom hook to get addVideo function
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -78,13 +79,15 @@ const VideoForm = ({onClose}) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
   const handleCancel = () => {
-    onClose(); 
+    onClose();
   };
+
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await createVideo(formData);
+      await addVideo(formData);
 
       // Clear form fields after submission
       setFormData({
@@ -175,7 +178,7 @@ const VideoForm = ({onClose}) => {
         />
       </FormGroup>
       <FormGroup>
-        <Label>subCategory:</Label>
+        <Label>SubCategory:</Label>
         <Input
           type="text"
           name="subcategory"

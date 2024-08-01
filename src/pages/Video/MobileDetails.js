@@ -8,7 +8,7 @@ import Suggestions from "./Suggestions";
 import MobileBtn from "./MobileBtn";
 import Random from "./Random";
 import MobileCommentsBtn from "./MobileCommentsBtn";
-import { useDataContext } from "../../contexts/DataContextProvider";
+import { useVideosData } from "./useVideosData";
 // Styled Components
 const Container = styled.section`
   width: 100%;
@@ -54,8 +54,8 @@ const StickyMobileBtn = styled.div`
 // Main Component
 const MobileDetails = () => {
   const { id } = useParams();
-  const { videoLists } = useDataContext();
-  const video = videoLists.find(v => v.$id === id);
+  const { videoData } = useVideosData();
+  const video = videoData.find(v => v.$id === id);
 
   const [showRelated, setShowRelated] = useState(false); // State to toggle between showing related videos
   const [showSuggestions, setShowSuggestions] = useState(false); // State to toggle between showing suggested videos
@@ -102,7 +102,7 @@ const MobileDetails = () => {
         )}
         {showRelated && (
           <>
-            <Related baseTitle={video.title} videos={videoLists} />
+            <Related baseTitle={video.title} videos={videoData} />
             <Random currentVideoId={video.id} />
           </>
         )}
@@ -112,7 +112,7 @@ const MobileDetails = () => {
               category={video.category}
               rabbi={video.rabbi}
               currentVideoId={video.id}
-              videos={videoLists}
+              videos={videoData}
             />
             <Random currentVideoId={video.id} />
           </>

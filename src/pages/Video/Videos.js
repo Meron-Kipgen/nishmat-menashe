@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { Outlet, useNavigate, useOutlet } from "react-router-dom";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import MobileDetails from "./MobileDetails";
-import { useDataContext } from "../../contexts/DataContextProvider";
+import { useVideosData } from "./useVideosData";
 import Subcategories from "../../components/Subcategories";
 import Categories from "../../components/Categories";
 import ExploreBtn from "../../components/ExploreBtn";
@@ -174,9 +174,9 @@ const Videos = () => {
   const modalRef = useRef(null);
   const outlet = useOutlet();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const { videoLists } = useDataContext();
-  const categories = [...new Set(videoLists.map((video) => video.category))];
-  const subcategories = [...new Set(videoLists.map((video) => video.subcategory))];
+  const { videoData } = useVideosData();
+  const categories = [...new Set(videoData.map((video) => video.category))];
+  const subcategories = [...new Set(videoData.map((video) => video.subcategory))];
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
   const [toggleCategories, setToggleCategories] = useState(false);
@@ -188,7 +188,7 @@ const Videos = () => {
     }
   }, [selectedCategory]);
 
-  const filteredVideos = videoLists
+  const filteredVideos = videoData
     .filter(
       (video) =>
         (selectedCategory === null || video.category === selectedCategory) &&
@@ -203,7 +203,7 @@ const Videos = () => {
       : [
           "All",
           ...subcategories.filter((subcategory) =>
-            videoLists.some(
+            videoData.some(
               (video) =>
                 video.category === selectedCategory &&
                 video.subcategory === subcategory

@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client"
 import App from "./App";
 import { createGlobalStyle } from "styled-components";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider } from "./contexts/UserContext";
 // Define global styles
 const GlobalStyle = createGlobalStyle`
@@ -19,18 +18,18 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const queryClient = new QueryClient();
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+ 
       <GlobalStyle />
       <UserProvider>
 
         <App />  
       </UserProvider>
     
-    </QueryClientProvider>
+
   </React.StrictMode>
 );
