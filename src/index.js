@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   html ,body {
-    background: #eeecec;
+    background: #D6D6D6;
     font-family: 'Roboto', sans-serif;
     overscroll-behavior-y: contain;
   }

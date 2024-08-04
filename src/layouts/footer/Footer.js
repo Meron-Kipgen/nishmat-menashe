@@ -6,7 +6,7 @@ const Container = styled.footer`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(to right, rgb(25, 176, 182), rgb(31, 202, 199));
+  background:  #142B42;
   color: #ffffff;
   font-size: 1.2rem;
   position: relative;

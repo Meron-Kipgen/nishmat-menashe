@@ -5,8 +5,10 @@ import { VideosDataProvider } from "./pages/Video/useVideosData";
 import { BookDataProvider } from "./pages/Books/useBookData";
 import { ArticlesDataProvider } from "./pages/Articles/useArticlesData";
  import { CategoryProvider } from "./contexts/CategoriesToggle";
+import { PostsProvider } from "./pages/Feed/usePosts";
 const App = () => {
   return (
+    <PostsProvider>
     <VideosDataProvider>
       <BookDataProvider>
         <ArticlesDataProvider>
@@ -16,6 +18,7 @@ const App = () => {
         </ArticlesDataProvider>
       </BookDataProvider>  
     </VideosDataProvider>
+    </PostsProvider>
   );
 };
 

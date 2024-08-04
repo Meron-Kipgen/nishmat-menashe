@@ -1,8 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Wrapper = styled.section`
-  
   font-size: 2.7rem;
   color: white;
   margin-top: -8px;
@@ -13,10 +13,17 @@ const Wrapper = styled.section`
   }
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit; /* Ensure link inherits color from Wrapper */
+`;
+
 export default function Logo() {
   return (
     <Wrapper>
-     <h1>נמ</h1>
+      <StyledLink to="/">
+        <h1>נמ</h1>
+      </StyledLink>
     </Wrapper>
   );
 }
