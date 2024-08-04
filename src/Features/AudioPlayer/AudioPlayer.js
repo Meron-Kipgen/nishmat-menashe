@@ -40,16 +40,33 @@ const Button = styled.button`
 `;
 
 const Slider = styled.input`
-  width: 100%;
+  width: 400px;
   margin: 0 10px;
 `;
 
-const AudioPlayer = ({ audioId, playerVars = {} }) => {
+const TimeDisplay = styled.div`
+  font-size: 14px;
+  margin: 0 10px;
+`;
+
+const formatTime = (seconds) => {
+  if (isNaN(seconds) || seconds === Infinity) {
+    return '00:00:00';
+  }
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+};
+
+const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
   const playerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Track loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const loadYouTubeAPI = () => {
@@ -59,6 +76,15 @@ const AudioPlayer = ({ audioId, playerVars = {} }) => {
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
       window.onYouTubeIframeAPIReady = () => {
+        initializePlayer();
+      };
+    };
+
+    const initializePlayer = () => {
+      if (window.YT && window.YT.Player) {
+        if (playerRef.current) {
+          playerRef.current.destroy(); // Clean up the old player
+        }
         playerRef.current = new window.YT.Player('youtube-player', {
           videoId: audioId,
           playerVars: playerVars,
@@ -67,21 +93,12 @@ const AudioPlayer = ({ audioId, playerVars = {} }) => {
             onStateChange: onPlayerStateChange,
           },
         });
-      };
+      } else {
+        loadYouTubeAPI();
+      }
     };
 
-    if (!window.YT || !window.YT.Player) {
-      loadYouTubeAPI();
-    } else {
-      playerRef.current = new window.YT.Player('youtube-player', {
-        videoId: audioId,
-        playerVars: playerVars,
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange,
-        },
-      });
-    }
+    initializePlayer();
 
     return () => {
       if (playerRef.current) {
@@ -91,33 +108,62 @@ const AudioPlayer = ({ audioId, playerVars = {} }) => {
     };
   }, [audioId, playerVars]);
 
+  useEffect(() => {
+    if (isPlaying) {
+      const interval = requestAnimationFrame(updateProgress);
+      return () => cancelAnimationFrame(interval);
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (isPlayerReady && shouldPlay && playerRef.current) {
+      try {
+        playerRef.current.playVideo();
+      } catch (error) {
+        console.error('Error playing video:', error);
+      }
+    }
+  }, [isPlayerReady, shouldPlay, audioId]);
+
   const onPlayerReady = (event) => {
     setIsPlayerReady(true);
-    if (isLoading) {
-      setIsLoading(false);
+    const videoDuration = playerRef.current.getDuration();
+    if (!isNaN(videoDuration) && videoDuration > 0) {
+      setDuration(videoDuration);
     }
     updateProgress();
+    if (shouldPlay) {
+      try {
+        playerRef.current.playVideo();
+      } catch (error) {
+        console.error('Error playing video:', error);
+      }
+    }
   };
 
   const onPlayerStateChange = (event) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
       setIsPlaying(true);
-      setIsLoading(false); // Reset loading when video starts playing
-      updateProgress();
+      setIsLoading(false);
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);
-      setIsLoading(false); // Reset loading when video is paused
+      setIsLoading(false);
     } else if (event.data === window.YT.PlayerState.ENDED) {
       setIsPlaying(false);
-      setIsLoading(false); // Reset loading when video ends
+      setIsLoading(false);
+      setCurrentTime(0);
+      setProgress(0);
     }
   };
 
   const updateProgress = () => {
     if (playerRef.current && playerRef.current.getDuration) {
-      const duration = playerRef.current.getDuration();
+      const videoDuration = playerRef.current.getDuration();
       const currentTime = playerRef.current.getCurrentTime();
-      setProgress((currentTime / duration) * 100);
+      if (!isNaN(videoDuration) && videoDuration > 0) {
+        setProgress((currentTime / videoDuration) * 100);
+        setCurrentTime(currentTime);
+      }
       if (isPlaying) {
         requestAnimationFrame(updateProgress);
       }
@@ -127,10 +173,18 @@ const AudioPlayer = ({ audioId, playerVars = {} }) => {
   const handlePlayPause = () => {
     if (isPlayerReady && playerRef.current) {
       if (!isPlaying) {
-        setIsLoading(true); // Set loading state when play is clicked
-        playerRef.current.playVideo();
+        setIsLoading(true);
+        try {
+          playerRef.current.playVideo();
+        } catch (error) {
+          console.error('Error playing video:', error);
+        }
       } else {
-        playerRef.current.pauseVideo();
+        try {
+          playerRef.current.pauseVideo();
+        } catch (error) {
+          console.error('Error pausing video:', error);
+        }
       }
     } else {
       console.error('playerRef.current is not initialized or does not have playVideo method');
@@ -139,9 +193,14 @@ const AudioPlayer = ({ audioId, playerVars = {} }) => {
 
   const handleSliderChange = (e) => {
     if (isPlayerReady && playerRef.current && playerRef.current.getDuration) {
-      const newTime = (e.target.value / 100) * playerRef.current.getDuration();
-      playerRef.current.seekTo(newTime);
+      const newTime = (e.target.value / 100) * duration;
+      try {
+        playerRef.current.seekTo(newTime);
+      } catch (error) {
+        console.error('Error seeking to time:', error);
+      }
       setProgress(e.target.value);
+      setCurrentTime(newTime);
     }
   };
 
@@ -151,20 +210,20 @@ const AudioPlayer = ({ audioId, playerVars = {} }) => {
         <div id="youtube-player" />
       </HiddenVideo>
       <Controls>
-        <Button
-          onClick={handlePlayPause}
-        
-        >
+        <Button onClick={handlePlayPause}>
           {isLoading ? 'Loading...' : (isPlaying ? 'Pause' : 'Play')}
         </Button>
+        <TimeDisplay>
+          {formatTime(currentTime)} 
+        </TimeDisplay>
         <Slider
           type="range"
           min="0"
           max="100"
           value={progress}
           onChange={handleSliderChange}
-        
         />
+         {formatTime(duration - 0.5)} 
       </Controls>
     </PlayerContainer>
   );

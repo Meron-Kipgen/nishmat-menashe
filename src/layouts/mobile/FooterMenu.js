@@ -2,7 +2,7 @@ import styled from "styled-components";
 import NavMenu from "../header/NavMenu";
 
 const Container = styled.footer`
-  background: white;
+  background: #04252F;
   position: fixed;
   bottom: 0;
   width: 100%;

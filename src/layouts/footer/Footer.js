@@ -57,7 +57,7 @@ export default function Footer() {
   return (
     <Container>
       <Content>
-        <FooterText>© 2024 Your Social Network. All rights reserved.</FooterText>
+        <FooterText>© 2024 Nishmat Menashe. All rights reserved.</FooterText>
         <div>
           <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms-and-conditions">Terms and Conditions</Link>

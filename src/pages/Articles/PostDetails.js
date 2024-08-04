@@ -6,7 +6,7 @@ import Menus from "./Menus";
 import UpdateArticleForm from "./UpdateArticleForm"; // Adjust the path if necessary
 import { useArticlesData } from "./useArticlesData";
 import DOMPurify from "dompurify";
-import TimeAgo from "../../components/TimeAgo";
+import TimeAgo from "../../utils/TimeAgo";
 
 const Container = styled.div`
   display: flex;

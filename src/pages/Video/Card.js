@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import TimeAgo from "../../components/TimeAgo"; 
+import TimeAgo from "../../utils/TimeAgo"; 
 import { useVideosData } from "./useVideosData";
 
 const CardFooter = styled.div`

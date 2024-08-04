@@ -26,6 +26,9 @@ const TimeAgo = ({ createdAt }) => {
     if (interval >= 1) {
       return `${interval} minute${interval === 1 ? "" : "s"} ago`;
     }
+    if (seconds < 60) {
+      return 'a moment ago';
+    }
     return `${Math.floor(seconds)} second${seconds === 1 ? "" : "s"} ago`;
   };
 

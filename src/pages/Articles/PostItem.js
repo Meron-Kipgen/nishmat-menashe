@@ -4,7 +4,7 @@ import styled from "styled-components";
 import SubcategoryPoster from "./SubcategoryPoster";
 import { useArticlesData } from "./useArticlesData";
 import DOMPurify from "dompurify";
-import TimeAgo from "../../components/TimeAgo";
+import TimeAgo from "../../utils/TimeAgo";
 
 const PostItemContainer = styled.div`
   width: 350px;

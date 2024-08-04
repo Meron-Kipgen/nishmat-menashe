@@ -15,6 +15,7 @@ import PcDetails from "../pages/Video/PcDetails";
 import BookDetail from "../pages/Books/BookDetails";
 import PostDetails from "../pages/Articles/PostDetails";
 import Home from "../pages/Home/Home";
+import Results from "../Features/Search/Results";
 
 
 const routers = createBrowserRouter([
@@ -71,6 +72,10 @@ const routers = createBrowserRouter([
       {
         path: "/QnA",
         element: <QnA />,
+      },
+      {
+        path: "/search",
+        element: <Results/>,
       },
     ],
   },

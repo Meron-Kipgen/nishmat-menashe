@@ -33,7 +33,7 @@ const ExploreBtn = ({ onClick }) => (
       <path d="M9 6l3 3l3 -3l-3 -3z" />
       <path d="M9 18l3 3l3 -3l-3 -3z" />
     </svg>
-    <span>Explore</span>
+    <span>Categories</span>
   </ExploreContainer>
 );
 
