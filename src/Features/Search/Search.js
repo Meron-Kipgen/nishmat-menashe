@@ -12,7 +12,7 @@ const collections = [
 ];
 
 const Wrapper = styled.section`
-  width: 600px;
+  width: 500px;
   position: relative;
 `;
 

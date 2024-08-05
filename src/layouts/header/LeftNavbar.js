@@ -8,7 +8,7 @@ const Container = styled.section`
   align-items: center;
   justify-content: center;
   gap: 30px;
-  margin-left: 30px;
+  margin-left: 100px;
 `;
 export default function LeftNavbar() {
   return (

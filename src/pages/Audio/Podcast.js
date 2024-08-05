@@ -1,25 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// Container for the card
-const CardContainer = styled.div`
+// Container for the Podcast
+const Container = styled.div`
   display: flex;
+  align-items: center;
+  flex-direction: column;
   background: #fff;
   border-radius: 8px;
-  width: 440px;
-  height: 150px;
+
+  overflow: hidden;
+
   margin: 10px;
+height:300px;
+width: 200px;
+max-width: 200px;
   padding: 15px;
+  gap: 15px;
 `;
 
 // Thumbnail container
 const Thumbnail = styled.div`
+  flex: 0 0 auto;
   width: 120px;
   height: 120px;
   background: #ddd;
   border-radius: 8px;
   overflow: hidden;
-  margin-right: 10px;
 `;
 
 // Thumbnail image
@@ -33,7 +40,7 @@ const ThumbnailImage = styled.img`
 const Content = styled.div`
   flex: 1;
   display: flex;
-  flex-direction: column;
+
   justify-content: center;
 `;
 
@@ -65,17 +72,16 @@ const PlayButton = styled.button`
   }
 `;
 
-const Card = ({ title, description, audioId, onPlay, thumbnailUrl }) => (
-  <CardContainer>
-    <Thumbnail>
+const Podcast = ({ title, description, thumbnailUrl }) => (
+  <Container>
+  
       <ThumbnailImage src={thumbnailUrl} alt={`${title} thumbnail`} />
-    </Thumbnail>
-    <Content>
+
       <Title>{title}</Title>
       <Description>{description}</Description>
-      <PlayButton onClick={() => onPlay(audioId)}>Play</PlayButton>
-    </Content>
-  </CardContainer>
+      
+
+  </Container>
 );
 
-export default Card;
+export default Podcast;

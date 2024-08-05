@@ -144,26 +144,28 @@ const PostContainer = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
+  margin-top: 10px;
 `;
+
+
 
 const CategoriesContainer = styled.div`
   position: fixed;
-  top: 110px;
+  top: 45px;
   left: ${({ toggleCategories }) => (toggleCategories ? "0" : "-300px")};
   width: 300px;
   transition: left 0.3s ease-in-out;
   z-index: 1000;
+
 `;
 
-const SubcategoriesContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  background: white;
-  gap: 30px;
-  margin-bottom: 10px;
-  padding: 0 20px;
-  height: 40px;
+const CategoriesBtn = styled.div`
+  position: fixed;
+  top: ${({ show }) => (show ? "0px" : "-40px")}; /* Hide above viewport */
+  left: 10px; /* Adjust right position as needed */
+  width: 150px;
+  z-index: 1000;
+  transition: top 0.3s ease-in-out;
 `;
 
 const Videos = () => {
@@ -181,6 +183,25 @@ const Videos = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
   const [toggleCategories, setToggleCategories] = useState(false);
   const [addNew, setAddNew] = useState(false);
+  const [showBtn, setShowBtn] = useState(true); 
+  const [lastScrollTop, setLastScrollTop] = useState(0); 
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollTop = window.scrollY;
+      if (currentScrollTop > lastScrollTop) {
+        // Scrolling down
+        setShowBtn(false);
+      } else {
+        // Scrolling up
+        setShowBtn(true);
+      }
+      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollTop]);
 
   useEffect(() => {
     if (selectedCategory !== null) {
@@ -269,10 +290,11 @@ const Videos = () => {
       )}
       {!isMobile && outlet ? null : (
         <Container>
-          <SubcategoriesContainer>
-         <AddNewBtn onClick={handleAddNew} />
-         {addNew && <VideoForm onClose={handleCloseForm} />}
+          
+          <CategoriesBtn show={showBtn}>
         <ExploreBtn onClick={() => setToggleCategories(!toggleCategories)} />
+      </CategoriesBtn>
+       
         {selectedCategory !== null && (
           <Subcategories
             subcategories={filteredSubcategories}
@@ -281,10 +303,11 @@ const Videos = () => {
           />
         )}
        
-      </SubcategoriesContainer>
+    
          
-      <PostContainer>
-        <CategoriesContainer toggleCategories={toggleCategories}>
+      <PostContainer>         {addNew && <VideoForm onClose={handleCloseForm} />}
+        <CategoriesContainer toggleCategories={toggleCategories}> 
+<AddNewBtn onClick={handleAddNew} />
           <Categories
             categories={categories}
             selectedCategory={selectedCategory}

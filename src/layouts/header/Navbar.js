@@ -18,6 +18,7 @@ const Container = styled.nav`
   background: #142B42;
   height: 45px;
   display: flex;
+ 
   align-items: center;
   justify-content: space-between;
 `;

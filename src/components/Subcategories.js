@@ -9,6 +9,7 @@ const Container = styled.div`
   gap: 10px;
   width: 100%;
   height: 40px;
+ padding: 0 20px;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -21,14 +22,14 @@ align-items: center;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
   white-space: nowrap;
-  background-color: ${(props) => (props.active ? "green" : "transparent")};
+  background-color: ${(props) => (props.active ? "rgb(20,43,66, 0.9)" : "transparent")};
   color: ${(props) => (props.active ? "white" : "#333")};
   border-radius: 20px;
 
   &:hover {
-    background-color: green;
+    background-color: rgb(20,43,66,0.9);
     color: white;
-    border-color: green;
+    
   }
 `;
 

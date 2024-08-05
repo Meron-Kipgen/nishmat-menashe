@@ -1,12 +1,16 @@
-// VideoPost.js
 import React from 'react';
+import styled from 'styled-components';
+import Player from '../../Features/VideoPlayer/Player';
 
+const Container = styled.div`
+
+`
 const VideoPost = ({ post }) => (
-  <div>
+  <Container>
+    <Player src={post.videoUrl} poster={post.poster} />
     <h2>{post.title}</h2>
-    <video src={post.videoUrl} controls />
     <p>{post.description}</p>
-  </div>
+  </Container>
 );
 
 export default VideoPost;

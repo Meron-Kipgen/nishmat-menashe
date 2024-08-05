@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Profile from "../../Features/User/User";
 
 const Container = styled.div`
-  margin-right: 30px;
+  margin-right: 100px;
   margin-top: 10px;
 `;
 

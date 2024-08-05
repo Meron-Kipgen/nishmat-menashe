@@ -7,7 +7,6 @@ const Container = styled.div`
   justify-content: center;
   gap: 10px;
   background: #9e6605;
-  border-radius: 30px;
   height: 30px;
   padding: 5px 10px;
   cursor: pointer;

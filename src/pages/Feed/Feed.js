@@ -4,7 +4,27 @@ import VideoPost from './VideoPost';
 import AudioPost from './AudioPost';
 import ArticlePost from './ArticlePost';
 import QnAPost from './QnAPost';
+import styled from 'styled-components';
 
+const Container = styled.section`
+width: 100%;
+display: flex;
+justify-content: center;
+gap: 30px;
+margin-top: 10px;
+`
+const Left = styled.section`
+width: 300px;
+background: white;
+`
+const Middle =styled.section`
+width: 600px;
+background: white;
+`
+const Right = styled.section`
+width: 400px;
+background: white;
+`
 const Feed = () => {
   const { posts, loading, error } = usePosts();
 
@@ -12,8 +32,12 @@ const Feed = () => {
   if (error) return <div>Error loading posts: {error.message}</div>;
 
   return (
-    <div>
-      {posts.map(post => {
+    <Container>
+      <Left>
+        left
+      </Left>
+      <Middle>
+        {posts.map(post => {
         switch (post.type) {
           case 'video':
             return <VideoPost key={post.$id} post={post} />;
@@ -27,8 +51,12 @@ const Feed = () => {
             return null;
         }
       })}
-  
-    </div>
+      </Middle>
+      
+  <Right>
+    right
+  </Right>
+    </Container>
   );
 };
 

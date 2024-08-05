@@ -9,6 +9,7 @@ import AddArticleForm from "./AddArticleForm";
 import ExploreBtn from "../../components/ExploreBtn";
 import AddNewBtn from "../../components/AddNewBtn";
 import { UserContext } from "../../contexts/UserContext";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -26,26 +27,25 @@ const ItemContainer = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
+  margin-top: 10px;
 `;
 
 const CategoriesContainer = styled.div`
   position: fixed;
-  top: 110px;
+  top: 45px;
   left: ${({ toggleCategories }) => (toggleCategories ? "0" : "-300px")};
   width: 300px;
   transition: left 0.3s ease-in-out;
   z-index: 1000;
 `;
 
-const SubcategoriesContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  background: white;
-  gap: 30px;
-  margin-bottom: 10px;
-  padding: 0 20px;
-  height: 40px;
+const CategoriesBtn = styled.div`
+  position: fixed;
+  top: ${({ show }) => (show ? "0px" : "-40px")};
+  left: 10px;
+  width: 150px;
+  z-index: 1000;
+  transition: top 0.3s ease-in-out;
 `;
 
 const Articles = () => {
@@ -56,13 +56,32 @@ const Articles = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
   const [toggleCategories, setToggleCategories] = useState(false);
   const [addNew, setAddNew] = useState(false);
+  const [showBtn, setShowBtn] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const outlet = useOutlet();
   const { isAdmin } = useContext(UserContext);
+
   useEffect(() => {
     if (selectedCategory !== null) {
       setSelectedSubcategories(["All"]);
     }
   }, [selectedCategory]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollTop = window.scrollY;
+      if (currentScrollTop > lastScrollTop) {
+        setShowBtn(false);
+      } else {
+        setShowBtn(true);
+      }
+      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollTop]);
 
   const filteredPosts = articleData
     .filter(
@@ -96,33 +115,40 @@ const Articles = () => {
 
   const handleCloseForm = () => {
     setAddNew(false);
+    setFlipped(false); // Ensure the button flips back when closing
+  };
+
+  const handleToggleCategories = () => {
+    setToggleCategories(!toggleCategories);
+    setFlipped(!flipped); // Toggle the flip state
   };
 
   return (
     <Container>
-      <SubcategoriesContainer>
-        {
-          isAdmin?<AddNewBtn onClick={handleAddNew} />: ""
-        } 
-        {addNew && <AddArticleForm onClose={handleCloseForm} />}
-        <ExploreBtn onClick={() => setToggleCategories(!toggleCategories)} />
-        {selectedCategory !== null && (
-          <Subcategories
-            subcategories={filteredSubcategories}
-            selectedSubcategories={selectedSubcategories}
-            setSelectedSubcategories={setSelectedSubcategories}
-          />
-        )}
-       
-      </SubcategoriesContainer>
+      <CategoriesBtn show={showBtn}>
+        <ExploreBtn onClick={handleToggleCategories} flipped={flipped} />
+      </CategoriesBtn>
+
+      {selectedCategory !== null && (
+        <Subcategories
+          subcategories={filteredSubcategories}
+          selectedSubcategories={selectedSubcategories}
+          setSelectedSubcategories={setSelectedSubcategories}
+        />
+      )}
 
       <PostContainer>
+        {addNew && <AddArticleForm onClose={handleCloseForm} />}
         <CategoriesContainer toggleCategories={toggleCategories}>
+          {isAdmin ? <AddNewBtn onClick={handleAddNew} /> : ""}
           <Categories
             categories={categories}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
-            onClose={() => setToggleCategories(!toggleCategories)}
+            onClose={() => {
+              setToggleCategories(false);
+              setFlipped(false); // Ensure the button flips back when closing
+            }}
           />
         </CategoriesContainer>
 
