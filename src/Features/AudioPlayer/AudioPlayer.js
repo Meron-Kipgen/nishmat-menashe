@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import Loading from '../../components/Loading';
 
 const PlayerContainer = styled.div`
   display: flex;
@@ -20,14 +21,17 @@ const Controls = styled.div`
   margin-top: 10px;
 `;
 
-const Button = styled.button`
-  padding: 10px;
-  margin-right: 10px;
+const Button = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
-  border: none;
+  border-radius: 50%;
   background-color: #333;
   color: white;
-  border-radius: 5px;
+  margin-right: 20px;
 
   &:hover {
     background-color: #555;
@@ -41,6 +45,11 @@ const Button = styled.button`
 
 const Slider = styled.input`
   width: 400px;
+  margin: 0 10px;
+`;
+
+const VolumeSlider = styled.input`
+  width: 100px;
   margin: 0 10px;
 `;
 
@@ -59,7 +68,7 @@ const formatTime = (seconds) => {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
 
-const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
+const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
   const playerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -67,6 +76,8 @@ const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [volume, setVolume] = useState(50); // Volume level (0-100)
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
     const loadYouTubeAPI = () => {
@@ -86,7 +97,7 @@ const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
           playerRef.current.destroy(); // Clean up the old player
         }
         playerRef.current = new window.YT.Player('youtube-player', {
-          videoId: audioId,
+          videoId: audioUrl,
           playerVars: playerVars,
           events: {
             onReady: onPlayerReady,
@@ -106,7 +117,7 @@ const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
         playerRef.current = null;
       }
     };
-  }, [audioId, playerVars]);
+  }, [audioUrl, playerVars]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -123,7 +134,18 @@ const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
         console.error('Error playing video:', error);
       }
     }
-  }, [isPlayerReady, shouldPlay, audioId]);
+  }, [isPlayerReady, shouldPlay, audioUrl]);
+
+  useEffect(() => {
+    if (isPlayerReady && playerRef.current) {
+      playerRef.current.setVolume(volume);
+      playerRef.current.isMuted() ? setIsMuted(true) : setIsMuted(false);
+    }
+    if (volume === 0){
+      setIsMuted(true)
+    }
+
+  }, [volume, isPlayerReady]);
 
   const onPlayerReady = (event) => {
     setIsPlayerReady(true);
@@ -142,7 +164,9 @@ const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
   };
 
   const onPlayerStateChange = (event) => {
-    if (event.data === window.YT.PlayerState.PLAYING) {
+    if (event.data === window.YT.PlayerState.BUFFERING) {
+      setIsLoading(true);
+    } else if (event.data === window.YT.PlayerState.PLAYING) {
       setIsPlaying(true);
       setIsLoading(false);
     } else if (event.data === window.YT.PlayerState.PAUSED) {
@@ -204,6 +228,23 @@ const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
     }
   };
 
+  const handleVolumeChange = (e) => {
+    const newVolume = e.target.value;
+    setVolume(newVolume);
+  };
+
+  const handleMuteUnmute = () => {
+    if (isPlayerReady && playerRef.current) {
+      if (isMuted) {
+        playerRef.current.unMute();
+        setIsMuted(false);
+      } else {
+        playerRef.current.mute();
+        setIsMuted(true);
+      }
+    }
+  };
+
   return (
     <PlayerContainer>
       <HiddenVideo>
@@ -211,19 +252,41 @@ const AudioPlayer = ({ audioId, shouldPlay, playerVars = {} }) => {
       </HiddenVideo>
       <Controls>
         <Button onClick={handlePlayPause}>
-          {isLoading ? 'Loading...' : (isPlaying ? 'Pause' : 'Play')}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            isPlaying ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-player-pause-filled" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M9 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" strokeWidth="0" fill="currentColor" />
+                <path d="M17 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" strokeWidth="0" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-player-play" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M7 4v16l13 -8z" strokeWidth="0" fill="currentColor" />
+              </svg>
+            )
+          )}
         </Button>
-        <TimeDisplay>
-          {formatTime(currentTime)} 
-        </TimeDisplay>
-        <Slider
-          type="range"
-          min="0"
-          max="100"
-          value={progress}
-          onChange={handleSliderChange}
-        />
-         {formatTime(duration - 0.5)} 
+        <Slider type="range" min="0" max="100" value={progress} onChange={handleSliderChange} />
+        <TimeDisplay>{formatTime(currentTime)} / {formatTime(duration)}</TimeDisplay>
+        <VolumeSlider type="range" min="0" max="100" value={volume} onChange={handleVolumeChange} />
+        <Button onClick={handleMuteUnmute}>
+          {isMuted ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-volume-off" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M14 15v-6l5 3z" strokeWidth="0" fill="currentColor" />
+              <path d="M3 3l18 18" strokeWidth="2" fill="none" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-volume-2" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M15 18v-12l-5 6z" strokeWidth="0" fill="currentColor" />
+              <path d="M19 19a4 4 0 0 0 0 -14" strokeWidth="2" fill="none" />
+            </svg>
+          )}
+        </Button>
       </Controls>
     </PlayerContainer>
   );

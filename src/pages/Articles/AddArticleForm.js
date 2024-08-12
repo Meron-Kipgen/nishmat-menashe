@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useArticlesData } from './useArticlesData';
 import TextEditor from '../../components/TextEditor';
+import Draggable from 'react-draggable';
 
 const FormContainer = styled.form`
   position: absolute;
@@ -13,7 +14,30 @@ const FormContainer = styled.form`
   background-color: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  cursor: move;
+`;
+
+const FormHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const CloseButton = styled.button`
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #bd2130;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -55,22 +79,6 @@ const SubmitButton = styled.button`
   }
 `;
 
-const CloseButton = styled.button`
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 10px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #bd2130;
-  }
-`;
-
 const AddArticleForm = ({ onClose }) => {
   const { addArticle } = useArticlesData();
   const [title, setTitle] = useState('');
@@ -97,64 +105,65 @@ const AddArticleForm = ({ onClose }) => {
       setSubcategory('');
       setBody('');
       setWriter('');
-      onClose(); // Close the form
+      onClose();
     } catch (error) {
       console.error('Failed to add article:', error);
     }
   };
 
-  const handleCancel = () => {
-    onClose(); // Close the form
-  };
-
   return (
-    <FormContainer onSubmit={handleSubmit}>
-      <FormGroup>
-        <label>Title:</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </FormGroup>
-      <FormGroup>
-        <label>Category:</label>
-        <input
-          type="text"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-        />
-      </FormGroup>
-      <FormGroup>
-        <label>Subcategory:</label>
-        <input
-          type="text"
-          value={subcategory}
-          onChange={(e) => setSubcategory(e.target.value)}
-          required
-        />
-      </FormGroup>
-      <FormGroup>
-        <label>Writer:</label>
-        <input
-          type="text"
-          value={writer}
-          onChange={(e) => setWriter(e.target.value)}
-          required
-        />
-      </FormGroup>
-      <FormGroup>
-        <label>Body:</label>
-        <TextEditor value={body} onChange={(value) => setBody(value)} />
-      </FormGroup>
+    <Draggable>
+      <FormContainer onSubmit={handleSubmit}>
       
-      <SubmitButton type="submit">Add Article</SubmitButton>
-      <CloseButton type="button" onClick={handleCancel}>
-        Cancel
-      </CloseButton>
-    </FormContainer>
+        <FormHeader>  
+          <h1>Add Article</h1>
+          <CloseButton type="button" onClick={onClose}>
+            X
+          </CloseButton>
+        </FormHeader>
+        <FormGroup>
+          <label>Title:</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label>Category:</label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label>Subcategory:</label>
+          <input
+            type="text"
+            value={subcategory}
+            onChange={(e) => setSubcategory(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label>Writer:</label>
+          <input
+            type="text"
+            value={writer}
+            onChange={(e) => setWriter(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label>Body:</label>
+          <TextEditor value={body} onChange={(value) => setBody(value)} />
+        </FormGroup>
+        <SubmitButton type="submit">Add Article</SubmitButton>
+      </FormContainer>
+    </Draggable>
   );
 };
 

@@ -43,7 +43,6 @@ const CategoriesBtn = styled.div`
   position: fixed;
   top: ${({ show }) => (show ? "0px" : "-40px")};
   left: 10px;
-  width: 150px;
   z-index: 1000;
   transition: top 0.3s ease-in-out;
 `;
@@ -115,12 +114,12 @@ const Articles = () => {
 
   const handleCloseForm = () => {
     setAddNew(false);
-    setFlipped(false); // Ensure the button flips back when closing
+    setFlipped(false); 
   };
 
   const handleToggleCategories = () => {
     setToggleCategories(!toggleCategories);
-    setFlipped(!flipped); // Toggle the flip state
+    setFlipped(!flipped); 
   };
 
   return (
@@ -147,7 +146,7 @@ const Articles = () => {
             setSelectedCategory={setSelectedCategory}
             onClose={() => {
               setToggleCategories(false);
-              setFlipped(false); // Ensure the button flips back when closing
+              setFlipped(false); 
             }}
           />
         </CategoriesContainer>

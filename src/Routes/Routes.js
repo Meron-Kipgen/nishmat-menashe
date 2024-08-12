@@ -16,6 +16,10 @@ import BookDetail from "../pages/Books/BookDetails";
 import PostDetails from "../pages/Articles/PostDetails";
 import Home from "../pages/Home/Home";
 import Results from "../Features/Search/Results";
+import PodcastDetails from "../pages/Audio/Podcast/PodcastDetails";
+
+import AudioDetails from "../pages/Audio/AudioDetails";
+import Podcast from "../pages/Audio/Podcast/Podcast";
 
 
 const routers = createBrowserRouter([
@@ -44,7 +48,15 @@ const routers = createBrowserRouter([
       {
         path: "/audio",
         element: <Audio />,
+        children: [
+          {
+            path: ":id",
+            element: <PodcastDetails />,
+          }, 
+        ],
       },
+      
+      
       {
         path: "/articles",
         element: <Posts />,

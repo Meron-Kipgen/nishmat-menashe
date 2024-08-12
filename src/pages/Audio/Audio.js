@@ -1,123 +1,317 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import GlobalPlayer from './GlobalPlayer';
+import React, { useState, useEffect, useContext } from "react";
+import styled from "styled-components";
+import Categories from "../../components/Categories";
+import Subcategories from "../../components/Subcategories";
 import Card from './Card';
-import Podcast from './Podcast';
+import GlobalPlayer from './GlobalPlayer';
+import AddAudioForm from './AddAudioForm'; 
+import EditAudioForm from "./EditAudioForm";
+import { useAudioData } from "./useAudioData";
+import ExploreBtn from "../../components/ExploreBtn";
+import AddNewBtn from "../../components/AddNewBtn";
+import { UserContext } from "../../contexts/UserContext";
+import Podcast from "../Audio/Podcast/Podcast";
+import { Outlet, useOutlet } from "react-router-dom";
 
-const Container = styled.div`
+ const Container = styled.div`
   display: flex;
-  height: 100vh; 
-  overflow: hidden;
-  gap: 10px;
+  gap: 30px;
+  height: 100vh; /* Ensure it takes full viewport height */
+  overflow: hidden; /* Hide any overflow from the container itself */
 `;
 
 const AudioContainer = styled.div`
-  flex: 2; 
   display: flex;
   flex-wrap: wrap;
+  width: 1000px;
+  justify-content: flex-end;
+  overflow-y: auto; /* Enable vertical scrolling */
+  height: 100vh; /* Adjust the height as needed */
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
 
-  justify-content: center;
-  overflow-y: auto; 
-  height: 100%; 
-  &::-webkit-scrollbar {
+  /* Hide scrollbar for WebKit browsers */
+  ::-webkit-scrollbar {
     display: none;
-  }
-  scrollbar-width: none;
-  h1{
-    width: 100%;
-    margin-left: 60px;
-    margin-top: 20px;
-display: flex;
-align-items: center;
-gap: 20px;
   }
 `;
 
-const PodcastContainer = styled.div`
-  flex: 1; 
-  display: flex;
+const PodcastContainer = styled.section`
+  width: 550px;
   flex-wrap: wrap;
-  justify-content: center;
-  overflow-y: auto; 
-  height: 100%; 
-  &::-webkit-scrollbar {
+  display: flex;
+  height: 100vh; /* Adjust the height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+
+  /* Hide scrollbar for WebKit browsers */
+  ::-webkit-scrollbar {
     display: none;
   }
-  scrollbar-width: none;
-  h1{
-    width: 100%;
-    margin-left: 50px;
-    margin-top: 20px;
+`;
+
+
+const ItemContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+ 
+`;
+
+const CategoriesContainer = styled.div`
+  position: fixed;
+  top: 45px;
+  left: ${({ toggleCategories }) => (toggleCategories ? "0" : "-300px")};
+  width: 300px;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+`;
+
+const CategoriesBtn = styled.div`
+  position: fixed;
+  top: ${({ show }) => (show ? "0px" : "-40px")};
+  left: 10px;
+  z-index: 1000;
+  transition: top 0.3s ease-in-out;
+`;
+const AudioHeading = styled.section`
+width: 100%;
+height: 30px;
 display: flex;
 align-items: center;
 gap: 20px;
-  }
+margin: 10px 0 0 70px;
+h1{
+  font-size: 20px;
+}
 
-`;
+`
+const LeftSide = styled.section`
+display: flex;
+flex-direction: column;
 
+
+`
+const Heading = styled.section`
+display: flex;
+align-items: center;
+gap: 20px;
+margin: 10px 0 0 30px;
+h1{
+  font-size: 20px;
+}
+`
 const Audio = () => {
-  const [currentAudioId, setCurrentAudioId] = useState(null);
-  const [shouldPlay, setShouldPlay] = useState(false);
+  const { audioData, deleteAudio, updatePlayed, fetchAudioData } = useAudioData();
+  const { isAdmin } = useContext(UserContext);
 
-  const handlePlayAudio = (audioId) => {
-    if (currentAudioId === audioId) {
-      // If the same audio is clicked, toggle play/pause
-      setShouldPlay((prev) => !prev);
+  const categories = [...new Set(audioData.map(audio => audio.category))];
+  const subcategories = [...new Set(audioData.map(audio => audio.subcategory))];
+
+  const [selectedCategory, setSelectedCategory] = useState(null); 
+  const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
+  const [toggleCategories, setToggleCategories] = useState(false);
+  const [addNew, setAddNew] = useState(false);
+  const [showBtn, setShowBtn] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [currentAudioUrl, setCurrentAudioUrl] = useState(null);
+  const [shouldPlay, setShouldPlay] = useState(false);
+  const [currentThumbnail, setCurrentThumbnail] = useState('');
+  const [currentTitle, setCurrentTitle] = useState('');
+  const [currentRabbi, setCurrentRabbi] = useState('');
+  const [editingAudio, setEditingAudio] = useState(null);
+const outlet = useOutlet()
+
+  const uniqueAudioData = Array.from(new Set(audioData.map(a => a.audioUrl)))
+    .map(url => audioData.find(audio => audio.audioUrl === url));
+
+  // Filtered audio based on selected category and subcategories
+  const filteredAudios = uniqueAudioData
+    .filter(audio =>
+      (selectedCategory === null || audio.category === selectedCategory) &&
+      (selectedSubcategories.includes("All") || selectedSubcategories.includes(audio.subcategory))
+    )
+    .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
+
+  // Filter subcategories based on the selected category
+  const filteredSubcategories =
+    selectedCategory === null
+      ? ["All", ...subcategories]
+      : [
+          "All",
+          ...subcategories.filter(subcategory =>
+            audioData.some(
+              audio =>
+                audio.category === selectedCategory &&
+                audio.subcategory === subcategory
+            )
+          ),
+        ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollTop = window.scrollY;
+      setShowBtn(currentScrollTop <= lastScrollTop);
+      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollTop]);
+
+  useEffect(() => {
+    if (selectedCategory === null) {
+      setSelectedSubcategories(["All"]); // Reset to "All" when category is reset
     } else {
-      // If a new audio is selected, set the new ID and start playing
-      setCurrentAudioId(audioId);
-      setShouldPlay(true);
+      setSelectedSubcategories(["All"]); // Ensure "All" is selected when category is changed
+    }
+  }, [selectedCategory]);
+
+  const handleEditAudio = (audio) => setEditingAudio(audio);
+
+  const handleDeleteAudio = async (audioUrl) => {
+    try {
+      await deleteAudio(audioUrl);
+      await fetchAudioData(); // Refresh the data after deletion
+    } catch (error) {
+      console.error("Failed to delete audio", error);
     }
   };
 
-  // Sample audio data
-  const audioData = [
-    { title: "Sample Audio 1", description: "Description for audio 1.", audioId: "O7Hb8jtASrg" },
-    { title: "Sample Audio 2", description: "Description for audio 2.", audioId: "ETOXFqB-o6I" },
-    { title: "Sample Audio 3", description: "Description for audio 3.", audioId: "eEqCEFuQqF8" },
-    { title: "Sample Audio 4", description: "Description for audio 4.", audioId: "sDDHIu6nwUs" },
-    { title: "Sample Audio 5", description: "Description for audio 5.", audioId: "nUb9Pvhxd2M" },
-    { title: "Sample Audio 1", description: "Description for audio 1.", audioId: "O7Hb8jtASrg" },
-    { title: "Sample Audio 2", description: "Description for audio 2.", audioId: "ETOXFqB-o6I" },
-    { title: "Sample Audio 3", description: "Description for audio 3.", audioId: "eEqCEFuQqF8" },
-    { title: "Sample Audio 4", description: "Description for audio 4.", audioId: "sDDHIu6nwUs" },
-    { title: "Sample Audio 5", description: "Description for audio 5.", audioId: "nUb9Pvhxd2M" },
-  ];
+  const handlePlayAudio = async (audioUrl, thumbnail, title, rabbi) => {
+    try {
+      if (currentAudioUrl === audioUrl) {
+        setShouldPlay(prev => !prev);
+      } else {
+        setCurrentAudioUrl(audioUrl);
+        setCurrentThumbnail(thumbnail);
+        setCurrentTitle(title);
+        setCurrentRabbi(rabbi);
+        setShouldPlay(true);
+        await updatePlayed(audioUrl);
+      }
+    } catch (error) {
+      console.error("Failed to update played count", error);
+    }
+  };
+
+  const handleAddNew = () => setAddNew(prev => !prev);
+
+  const handleCloseForm = () => {
+    setAddNew(false);
+    setFlipped(false); 
+  };
+
+  const handleToggleCategories = () => {
+    setToggleCategories(prev => !prev);
+    setFlipped(prev => !prev); 
+  };
 
   return (
     <Container>
-      <AudioContainer> 
-        <h1><span>
-        <svg width="30" height="30" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path fill="#000000" d="M468.53 236.03H486v39.94h-17.47v-39.94zm-34.426 51.634h17.47v-63.328h-17.47v63.328zm-33.848 32.756h17.47V191.58h-17.47v128.84zm-32.177 25.276h17.47V167.483h-17.47v178.17zm-34.448-43.521h17.47v-92.35h-17.47v92.35zm-34.994 69.879h17.47v-236.06h-17.525v236.06zM264.2 405.9h17.47V106.1H264.2V405.9zm-33.848-46.284h17.47V152.383h-17.47v207.234zm-35.016-58.85h17.47v-87.35h-17.47v87.35zm-33.847-20.823h17.47V231.98h-17.47v48.042zm-33.848 25.66h17.47v-99.24h-17.47v99.272zm-33.302 48.04h17.47V152.678H94.34v201zm-33.847-30.702h17.47V187.333h-17.47v135.642zM26 287.664h17.47v-63.328H26v63.328z"/></svg> 
-          </span>
-          Audio</h1>
-        {audioData.map((audio, index) => (
-          <Card
-            key={index}
-            title={audio.title}
-            description={audio.description}
-            audioId={audio.audioId}
-            onPlay={handlePlayAudio}
+              {!outlet && (
+
+<>
+      <CategoriesBtn show={showBtn}>
+        <ExploreBtn onClick={handleToggleCategories} flipped={flipped} />
+      </CategoriesBtn>
+<AudioContainer>
+        {selectedCategory !== null && (
+          <Subcategories
+            subcategories={filteredSubcategories} 
+            selectedSubcategories={selectedSubcategories}
+            setSelectedSubcategories={setSelectedSubcategories}
           />
-        ))}
-        <GlobalPlayer audioId={currentAudioId} shouldPlay={shouldPlay} />
+        )}
+        {addNew && <AddAudioForm onClose={handleCloseForm} onAdd={fetchAudioData} />}
+        <CategoriesContainer toggleCategories={toggleCategories}>
+          {isAdmin && <AddNewBtn onClick={handleAddNew} />}
+          <Categories
+            categories={[ ...categories]}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            onClose={() => {
+              setToggleCategories(false);
+              setFlipped(false); 
+            }}
+          />
+        </CategoriesContainer>
+
+       <AudioHeading>
+       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-deezer" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M3 16.5h2v.5h-2z" />
+  <path d="M8 16.5h2.5v.5h-2.5z" />
+  <path d="M16 17h-2.5v-.5h2.5z" />
+  <path d="M21.5 17h-2.5v-.5h2.5z" />
+  <path d="M21.5 13h-2.5v.5h2.5z" />
+  <path d="M21.5 9.5h-2.5v.5h2.5z" />
+  <path d="M21.5 6h-2.5v.5h2.5z" />
+  <path d="M16 13h-2.5v.5h2.5z" />
+  <path d="M8 13.5h2.5v-.5h-2.5z" />
+  <path d="M8 9.5h2.5v.5h-2.5z" />
+</svg>
+       <h1> Audio</h1>
+        </AudioHeading>
+      
+           <ItemContainer>  
+         
+          {editingAudio && <EditAudioForm audio={editingAudio} onClose={() => setEditingAudio(null)} />}
+          {filteredAudios.map((audio) => (
+            <Card
+              key={audio.audioUrl}
+              id={audio.$id}
+              thumbnail={audio.thumbnail}
+              title={audio.title}
+              createdAt={audio.$createdAt}
+              played={audio.played}
+              category={audio.category}
+              subcategory={audio.subcategory}
+              rabbi={audio.rabbi}
+              onPlay={() => handlePlayAudio(audio.audioUrl, audio.thumbnail, audio.title, audio.rabbi)}
+              onEdit={() => handleEditAudio(audio)}
+              onDelete={() => handleDeleteAudio(audio.audioUrl)}
+              onClick={() => handlePlayAudio(audio.audioUrl, audio.thumbnail, audio.title, audio.rabbi)}
+              isPlaying={currentAudioUrl === audio.audioUrl && shouldPlay}
+            />
+          ))}
+        </ItemContainer>
+     
+      
       </AudioContainer>
+       <Outlet/>
+      {currentAudioUrl && (
+        <GlobalPlayer
+          audioUrl={currentAudioUrl}
+          thumbnail={currentThumbnail}
+          title={currentTitle}
+          rabbi={currentRabbi}
+          shouldPlay={shouldPlay}
+          onClose={() => setCurrentAudioUrl(null)}
+        />
+      )}
 
-      <PodcastContainer>
 
-        <h1><span>
-        <svg fill="#000000" width="30px" height="30px" viewBox="-32 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M267.429 488.563C262.286 507.573 242.858 512 224 512c-18.857 0-38.286-4.427-43.428-23.437C172.927 460.134 160 388.898 160 355.75c0-35.156 31.142-43.75 64-43.75s64 8.594 64 43.75c0 32.949-12.871 104.179-20.571 132.813zM156.867 288.554c-18.693-18.308-29.958-44.173-28.784-72.599 2.054-49.724 42.395-89.956 92.124-91.881C274.862 121.958 320 165.807 320 220c0 26.827-11.064 51.116-28.866 68.552-2.675 2.62-2.401 6.986.628 9.187 9.312 6.765 16.46 15.343 21.234 25.363 1.741 3.654 6.497 4.66 9.449 1.891 28.826-27.043 46.553-65.783 45.511-108.565-1.855-76.206-63.595-138.208-139.793-140.369C146.869 73.753 80 139.215 80 220c0 41.361 17.532 78.7 45.55 104.989 2.953 2.771 7.711 1.77 9.453-1.887 4.774-10.021 11.923-18.598 21.235-25.363 3.029-2.2 3.304-6.566.629-9.185zM224 0C100.204 0 0 100.185 0 224c0 89.992 52.602 165.647 125.739 201.408 4.333 2.118 9.267-1.544 8.535-6.31-2.382-15.512-4.342-30.946-5.406-44.339-.146-1.836-1.149-3.486-2.678-4.512-47.4-31.806-78.564-86.016-78.187-147.347.592-96.237 79.29-174.648 175.529-174.899C320.793 47.747 400 126.797 400 224c0 61.932-32.158 116.49-80.65 147.867-.999 14.037-3.069 30.588-5.624 47.23-.732 4.767 4.203 8.429 8.535 6.31C395.227 389.727 448 314.187 448 224 448 100.205 347.815 0 224 0zm0 160c-35.346 0-64 28.654-64 64s28.654 64 64 64 64-28.654 64-64-28.654-64-64-64z"/></svg>
-          </span>
-          Podcast</h1>
-        {audioData.map((audio, index) => (
-          <Podcast
-            key={index}
-            title={audio.title}
-            description={audio.description}
-            audioId={audio.audioId}
-          />
-        ))}
-      </PodcastContainer>
+      <LeftSide>
+     
+      <Heading>
+      <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 14.4856 19.9937 16.7342 18.364 18.364C17.9734 18.7545 17.9734 19.3876 18.364 19.7782C18.7545 20.1687 19.3876 20.1687 19.7782 19.7782C21.7677 17.7887 23 15.0373 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 15.0373 2.23231 17.7887 4.22183 19.7782C4.61235 20.1687 5.24551 20.1687 5.63604 19.7782C6.02656 19.3876 6.02656 18.7545 5.63604 18.364C4.00626 16.7342 3 14.4856 3 12ZM7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12C17 13.381 16.4415 14.6296 15.5355 15.5355C15.145 15.9261 15.145 16.5592 15.5355 16.9497C15.9261 17.3403 16.5592 17.3403 16.9497 16.9497C18.2154 15.6841 19 13.9327 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 13.9327 5.7846 15.6841 7.05025 16.9497C7.44078 17.3403 8.07394 17.3403 8.46447 16.9497C8.85499 16.5592 8.85499 15.9261 8.46447 15.5355C7.55855 14.6296 7 13.381 7 12ZM14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5C13.3807 9.5 14.5 10.6193 14.5 12ZM9.67319 17.494C9.57955 16.1455 10.6482 15 12 15C13.3518 15 14.4205 16.1455 14.3268 17.494L14.0049 22.1295C13.9317 23.1829 13.0559 24 12 24C10.9441 24 10.0683 23.1829 9.9951 22.1295L9.67319 17.494Z" fill="#000000"/>
+</svg>
+       <h1> Podcast</h1>
+      </Heading>
+    
+       <PodcastContainer>
+        <Podcast/>
+      </PodcastContainer>  
+      </LeftSide>
+  
+  </>
+)}
+      <Outlet/>
     </Container>
   );
 };

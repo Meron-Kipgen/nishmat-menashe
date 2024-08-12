@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useVideosData } from "../../pages/Video/useVideosData";
+import Draggable from "react-draggable";
 
 const FormContainer = styled.form`
   position: absolute;
@@ -9,10 +10,12 @@ const FormContainer = styled.form`
   z-index: 1000;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   border: 1px solid #ced4da;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 `;
 
 const FormGroup = styled.div`
@@ -40,6 +43,7 @@ const Button = styled.button`
   font-size: 1rem;
   cursor: pointer;
   border-radius: 4px;
+  margin-top: 1rem;
 
   &:hover {
     background-color: #0056b3;
@@ -50,11 +54,13 @@ const CloseButton = styled.button`
   background-color: #dc3545;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 5px 10px;
   font-size: 18px;
-  border-radius: 4px;
+  border-radius: 50%;
   cursor: pointer;
-  margin-right: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
   transition: background-color 0.3s ease;
 
   &:hover {
@@ -63,7 +69,7 @@ const CloseButton = styled.button`
 `;
 
 const VideoForm = ({ onClose }) => {
-  const { addVideo } = useVideosData(); // Use the custom hook to get addVideo function
+  const { addVideo } = useVideosData();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -75,21 +81,15 @@ const VideoForm = ({ onClose }) => {
     subcategory: "",
   });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleCancel = () => {
-    onClose();
-  };
-
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await addVideo(formData);
-
-      // Clear form fields after submission
       setFormData({
         title: "",
         description: "",
@@ -100,13 +100,18 @@ const VideoForm = ({ onClose }) => {
         category: "",
         subcategory: "",
       });
+      onClose(); // Close the form after successful submission
     } catch (error) {
       console.error("Error adding video:", error);
     }
   };
 
   return (
+    <Draggable>
     <FormContainer onSubmit={handleSubmit}>
+      <CloseButton type="button" onClick={onClose}>
+        &times;
+      </CloseButton>
       <FormGroup>
         <Label>Title:</Label>
         <Input
@@ -188,10 +193,8 @@ const VideoForm = ({ onClose }) => {
         />
       </FormGroup>
       <Button type="submit">Add Video</Button>
-      <CloseButton type="button" onClick={handleCancel}>
-        Cancel
-      </CloseButton>
     </FormContainer>
+    </Draggable>
   );
 };
 

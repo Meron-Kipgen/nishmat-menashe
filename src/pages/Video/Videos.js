@@ -163,7 +163,6 @@ const CategoriesBtn = styled.div`
   position: fixed;
   top: ${({ show }) => (show ? "0px" : "-40px")}; /* Hide above viewport */
   left: 10px; /* Adjust right position as needed */
-  width: 150px;
   z-index: 1000;
   transition: top 0.3s ease-in-out;
 `;

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useArticlesData } from './useArticlesData';
 import TextEditor from '../../components/TextEditor';
+import Draggable from 'react-draggable';
 
 const FormContainer = styled.form`
   position: absolute;
   top: 60px;
-
+cursor: move;
   width: 800px;
   z-index: 1000;
   margin: 0 auto;
@@ -57,14 +58,23 @@ const SubmitButton = styled.button`
 `;
 
 const CloseButton = styled.button`
-  position: absolute;
+   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: transparent;
+  background: #ff4d4d;
+  color: #fff;
   border: none;
-  color: #6c757d;
-  font-size: 20px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  font-size: 16px;
+  &:hover {
+    background: #e03e3e;
+  }
 `;
 
 const UpdateArticleForm = ({ articleId, onClose }) => {
@@ -111,6 +121,7 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
   };
 
   return (
+    <Draggable>
     <FormContainer onSubmit={handleSubmit}>
       <CloseButton onClick={onClose}>&times;</CloseButton>
       <FormGroup>
@@ -156,6 +167,7 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
       
       <SubmitButton type="submit">Update Article</SubmitButton>
     </FormContainer>
+    </Draggable>
   );
 };
 

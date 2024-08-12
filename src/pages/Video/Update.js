@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useVideosData } from "./useVideosData";
+import Draggable from "react-draggable";
 
 const FormContainer = styled.form`
   position: absolute;
@@ -53,11 +54,20 @@ const CloseButton = styled.button`
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: transparent;
+  background: #ff4d4d;
+  color: #fff;
   border: none;
-  color: #6c757d;
-  font-size: 20px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  font-size: 16px;
+  &:hover {
+    background: #e03e3e;
+  }
 `;
 
 const Update = ({ videoId, onClose }) => {
@@ -108,6 +118,7 @@ const Update = ({ videoId, onClose }) => {
   };
 
   return (
+    <Draggable>
     <FormContainer onSubmit={handleSubmit}>
       <CloseButton onClick={onClose}>&times;</CloseButton>
       <FormGroup>
@@ -184,6 +195,7 @@ const Update = ({ videoId, onClose }) => {
       </FormGroup>
       <SubmitButton type="submit">Update Video</SubmitButton>
     </FormContainer>
+    </Draggable>
   );
 };
 

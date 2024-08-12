@@ -6,6 +6,7 @@ const videoCollectionId = '666aff1400318bf6aa6f';
 const audioCollectionId = '66af4006003ae36a8486';
 const articleCollectionId = '666b0186000007f47da9';
 const questionCollectionId = '66af4050002242fd5159';
+const podcastCollectionId = '66af4050002242fd5159';
 
 const PostsContext = createContext();
 
@@ -59,12 +60,14 @@ export const PostsProvider = ({ children }) => {
         const audioResponse = await db.listDocuments(databaseId, audioCollectionId);
         const articleResponse = await db.listDocuments(databaseId, articleCollectionId);
         const questionResponse = await db.listDocuments(databaseId, questionCollectionId);
+        const podcastResponse = await db.listDocuments(databaseId, podcastCollectionId);
 
         const combinedPosts = [
           ...videoResponse.documents.map(doc => ({ ...doc, type: 'video' })),
           ...audioResponse.documents.map(doc => ({ ...doc, type: 'audio' })),
           ...articleResponse.documents.map(doc => ({ ...doc, type: 'article' })),
           ...questionResponse.documents.map(doc => ({ ...doc, type: 'QnA' })),
+          ...podcastResponse.documents.map(doc => ({ ...doc, type: 'podcast' })),
         ];
 
         updatePosts(combinedPosts);
@@ -82,12 +85,14 @@ export const PostsProvider = ({ children }) => {
     const audioSubscription = subscribeToCollection(audioCollectionId, 'audio');
     const articleSubscription = subscribeToCollection(articleCollectionId, 'article');
     const questionSubscription = subscribeToCollection(questionCollectionId, 'QnA');
+    const podcastSubscription = subscribeToCollection(podcastCollectionId, 'podcast');
 
     return () => {
       if (videoSubscription) videoSubscription();
       if (audioSubscription) audioSubscription();
       if (articleSubscription) articleSubscription();
       if (questionSubscription) questionSubscription();
+      if (podcastSubscription) podcastSubscription();
     };
   }, []);
 
