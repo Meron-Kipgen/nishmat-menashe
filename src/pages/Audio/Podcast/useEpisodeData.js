@@ -1,38 +1,23 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, ID, client } from '../../../db/config'; // Import your DB and client configurations
 
-
 const databaseId = '666aff03003ba124b787';
-const podcastCollectionId = '66b8c030003510531dba';
 const episodeCollectionId = '66bb12500015fb5fbf27';
 
-const PodcastDataContext = createContext();
+const EpisodeDataContext = createContext();
 
-export const usePodcastData = () => {
-    const context = useContext(PodcastDataContext);
+export const useEpisodeData = () => {
+    const context = useContext(EpisodeDataContext);
     if (!context) {
-        throw new Error('usePodcastData must be used within a PodcastDataProvider');
+        throw new Error('useEpisodeData must be used within an EpisodeDataProvider');
     }
     return context;
 };
 
-export const PodcastDataProvider = ({ children }) => {
-    const [podcastData, setPodcastData] = useState([]);
+export const EpisodeDataProvider = ({ children }) => {
     const [episodeData, setEpisodeData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const fetchPodcast = async () => {
-        setLoading(true);
-        try {
-            const response = await db.listDocuments(databaseId, podcastCollectionId);
-            setPodcastData(response.documents);
-        } catch (err) {
-            setError(err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const fetchEpisodes = async () => {
         setLoading(true);
@@ -47,29 +32,7 @@ export const PodcastDataProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        fetchPodcast();
         fetchEpisodes();
-
-        const podcastSubscription = client.subscribe(`databases.${databaseId}.collections.${podcastCollectionId}.documents`, (response) => {
-            const { events, payload } = response;
-
-            if (events.includes('databases.*.collections.*.documents.*.create')) {
-                setPodcastData(prevData => {
-                    if (prevData.find(podcast => podcast.$id === payload.$id)) {
-                        return prevData;
-                    }
-                    return [...prevData, payload];
-                });
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.update')) {
-                setPodcastData(prevData => prevData.map(podcast => podcast.$id === payload.$id ? payload : podcast));
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.delete')) {
-                setPodcastData(prevData => prevData.filter(podcast => podcast.$id !== payload.$id));
-            }
-        });
 
         const episodeSubscription = client.subscribe(`databases.${databaseId}.collections.${episodeCollectionId}.documents`, (response) => {
             const { events, payload } = response;
@@ -93,78 +56,18 @@ export const PodcastDataProvider = ({ children }) => {
         });
 
         return () => {
-            if (podcastSubscription) {
-                podcastSubscription();
-            }
             if (episodeSubscription) {
                 episodeSubscription();
             }
         };
     }, []);
 
-    const addPodcast = async (newPodcast) => {
-        try {
-            await db.createDocument(databaseId, podcastCollectionId, ID.unique(), newPodcast);
-        } catch (err) {
-            setError(err);
-            throw err;
-        }
-    };
-
-    const updatePlayed = async (podcastUrl) => {
-        try {
-            const podcastToUpdate = podcastData.find(podcast => podcast.PodcastUrl === podcastUrl);
-            if (!podcastToUpdate) {
-                throw new Error('Podcast not found');
-            }
-            
-            const updatedPodcast = {
-                ...podcastToUpdate,
-                played: (podcastToUpdate.played || 0) + 1
-            };
-            
-            await db.updateDocument(databaseId, podcastCollectionId, podcastToUpdate.$id, {
-                played: updatedPodcast.played
-            });
-            
-            setPodcastData(prevData => prevData.map(podcast =>
-                podcast.PodcastUrl === podcastUrl ? updatedPodcast : podcast
-            ));
-        } catch (err) {
-            setError(err);
-            throw err;
-        }
-    };
-
-    const updatePodcast = async (podcastId, updatedPodcast) => {
-        try {
-            await db.updateDocument(databaseId, podcastCollectionId, podcastId, updatedPodcast);
-            setPodcastData(prevData => prevData.map(podcast =>
-                podcast.$id === podcastId ? { ...podcast, ...updatedPodcast } : podcast
-            ));
-        } catch (err) {
-            setError(err);
-            throw err;
-        }
-    };
-
-    const deletePodcast = async (podcastUrl) => {
-        try {
-            const documentId = podcastData.find(podcast => podcast.PodcastUrl === podcastUrl).$id;
-            await db.deleteDocument(databaseId, podcastCollectionId, documentId);
-            setPodcastData(podcastData.filter(podcast => podcast.$id !== documentId));
-        } catch (error) {
-            setError(error);
-            throw new Error('Failed to delete Podcast');
-        }
-    };
-
     const addEpisode = async (newEpisode) => {
         try {
             // Create the new episode document
             const createdEpisode = await db.createDocument(databaseId, episodeCollectionId, ID.unique(), newEpisode);
     
-            // Fetch the current podcast document
+            // Find the podcast that should be updated with the new episode
             const podcast = podcastData.find(podcast => podcast.$id === newEpisode.podcastId);
     
             if (!podcast) {
@@ -180,12 +83,12 @@ export const PodcastDataProvider = ({ children }) => {
             });
     
             // Update the local state to include the new episode
-            setPodcastData(prevData => 
-                prevData.map(p => 
+            setPodcastData(prevData =>
+                prevData.map(p =>
                     p.$id === podcast.$id ? { ...p, episodes: updatedEpisodes } : p
                 )
             );
-            
+    
             // Update the episode data state
             setEpisodeData(prevData => [...prevData, createdEpisode]);
     
@@ -219,22 +122,17 @@ export const PodcastDataProvider = ({ children }) => {
     };
 
     return (
-        <PodcastDataContext.Provider
+        <EpisodeDataContext.Provider
             value={{
-                podcastData,
                 episodeData,
                 loading,
                 error,
-                addPodcast,
-                updatePlayed,
-                updatePodcast,
-                deletePodcast,
                 addEpisode,
                 updateEpisode,
                 deleteEpisode,
             }}
         >
             {children}
-        </PodcastDataContext.Provider>
+        </EpisodeDataContext.Provider>
     );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 
-// Direct imports for components
+// pages
 import Layout from "../layouts/Layout";
 import MainError from "./MainError";
 import Feed from "../pages/Feed/Feed";
@@ -9,17 +9,15 @@ import Audio from "../pages/Audio/Audio";
 import Posts from "../pages/Articles/Articles";
 import Videos from "../pages/Video/Videos";
 import Books from "../pages/Books/Books";
-import User from "../Features/User/User";
-import QnA from "../pages/QnA/QnA";
+import QuestionAnswer from "../pages/QuestionAnswer/QuestionAnswer";
 import PcDetails from "../pages/Video/PcDetails";
 import BookDetail from "../pages/Books/BookDetails";
 import PostDetails from "../pages/Articles/PostDetails";
 import Home from "../pages/Home/Home";
 import Results from "../Features/Search/Results";
 import PodcastDetails from "../pages/Audio/Podcast/PodcastDetails";
-
-import AudioDetails from "../pages/Audio/AudioDetails";
-import Podcast from "../pages/Audio/Podcast/Podcast";
+import QuestionAnswerDetails from "../pages/QuestionAnswer/QuestionAnswerDetails";
+import Profile from "../Features/User/Profile";
 
 
 const routers = createBrowserRouter([
@@ -78,17 +76,24 @@ const routers = createBrowserRouter([
         ],
       },
       {
-        path: "/user",
-        element: <User />,
+        path: "/Profile",
+        element: <Profile />,
       },
       {
-        path: "/QnA",
-        element: <QnA />,
+        path: "/QuestionAnswer",
+        element: <QuestionAnswer />,
+        children: [
+          {
+            path: ":id",
+            element: <QuestionAnswerDetails/>
+          }
+        ]
       },
       {
         path: "/search",
         element: <Results/>,
       },
+      
     ],
   },
 ]);

@@ -12,6 +12,7 @@ const UserProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState('');
+  const [userAvatarUrl, setUserAvatarUrl] = useState('');
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -19,11 +20,18 @@ const UserProvider = ({ children }) => {
         const user = await account.get();
         setUserInfo(user);
         setIsLogin(true);
+
         if (user.labels && user.labels.includes("admin")) {
           setIsAdmin(true);
         }
+
         setUsername(user.name || '');
         setUserId(user.$id || '');
+
+        // Set the userAvatarUrl from userInfo.prefs.avatar
+        if (user.prefs && user.prefs.avatar) {
+          setUserAvatarUrl(user.prefs.avatar);
+        } 
       } catch (error) {
         console.error('Error fetching user info:', error);
         setError(error.message);
@@ -43,6 +51,7 @@ const UserProvider = ({ children }) => {
         isAdmin,
         username,
         userId,
+        userAvatarUrl,
         error,
       }}
     >

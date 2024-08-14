@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { usePodcastData } from './usePodcastData';
 import Draggable from 'react-draggable';
+import Podcast from './Podcast';
 
 const FormContainer = styled.div`
   position: absolute; 
@@ -70,7 +71,7 @@ const Button = styled.button`
   }
 `;
 
-const AddNewPodcast = ({ onClose }) => {
+const AddNewPodcast = ({ onClose,}) => {
   const { addPodcast } = usePodcastData();
   const [newPodcast, setNewPodcast] = useState({
     title: '',
@@ -78,9 +79,9 @@ const AddNewPodcast = ({ onClose }) => {
     rabbi: '',
     season: '',
     isComplete: false,
-    played: 0,
     thumbnail: '',
-  });
+    episodes: [] // Set the episodes array as empty initially
+});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -101,8 +102,8 @@ const AddNewPodcast = ({ onClose }) => {
         rabbi: '',
         season: '',
         isComplete: false,
-        played: 0,
         thumbnail: '',
+        eposides: []
       });
       onClose(); 
     } catch (error) {

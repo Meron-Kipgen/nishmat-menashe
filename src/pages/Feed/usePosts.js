@@ -1,12 +1,13 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { db, client } from '../../db/config'; 
+import { db, client } from '../../db/config';
 
 const databaseId = '666aff03003ba124b787';
 const videoCollectionId = '666aff1400318bf6aa6f';
 const audioCollectionId = '66af4006003ae36a8486';
 const articleCollectionId = '666b0186000007f47da9';
-const questionCollectionId = '66af4050002242fd5159';
-const podcastCollectionId = '66af4050002242fd5159';
+const questionCollectionId = '66ba303a002c4c5a6d6a';
+const podcastCollectionId = '66b8c030003510531dba';
+const feedbackCollectionId = "66bb765d00371e7bef17";
 
 const PostsContext = createContext();
 
@@ -21,26 +22,30 @@ export const PostsProvider = ({ children }) => {
   };
 
   const subscribeToCollection = (collectionId, type) => {
+    console.log(`Subscribing to collection: ${collectionId}`);
     return client.subscribe(`databases.${databaseId}.collections.${collectionId}.documents`, (response) => {
+      console.log('Subscription response:', response);
+  
       const { events, payload } = response;
-
+  
       if (events.includes('databases.*.collections.*.documents.*.create')) {
+        console.log('Create event:', payload);
         setPosts(prevPosts => {
           const newPosts = [{ ...payload, type }, ...prevPosts];
           updatePosts(newPosts);
           return newPosts;
         });
       }
-
+  
       if (events.includes('databases.*.collections.*.documents.*.update')) {
         console.log('Update event:', payload);
         setPosts(prevPosts => {
-          const updatedPosts = prevPosts.map(post => post.$id === payload.$id ? payload : post);
+          const updatedPosts = prevPosts.map(post => post.$id === payload.$id ? { ...post, ...payload } : post);
           updatePosts(updatedPosts);
           return updatedPosts;
         });
       }
-
+  
       if (events.includes('databases.*.collections.*.documents.*.delete')) {
         console.log('Delete event:', payload);
         setPosts(prevPosts => {
@@ -51,6 +56,7 @@ export const PostsProvider = ({ children }) => {
       }
     });
   };
+  
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -61,6 +67,7 @@ export const PostsProvider = ({ children }) => {
         const articleResponse = await db.listDocuments(databaseId, articleCollectionId);
         const questionResponse = await db.listDocuments(databaseId, questionCollectionId);
         const podcastResponse = await db.listDocuments(databaseId, podcastCollectionId);
+        const feedbackResponse = await db.listDocuments(databaseId, feedbackCollectionId);
 
         const combinedPosts = [
           ...videoResponse.documents.map(doc => ({ ...doc, type: 'video' })),
@@ -68,6 +75,7 @@ export const PostsProvider = ({ children }) => {
           ...articleResponse.documents.map(doc => ({ ...doc, type: 'article' })),
           ...questionResponse.documents.map(doc => ({ ...doc, type: 'QnA' })),
           ...podcastResponse.documents.map(doc => ({ ...doc, type: 'podcast' })),
+          ...feedbackResponse.documents.map(doc => ({ ...doc, type: 'feedback' })),
         ];
 
         updatePosts(combinedPosts);
@@ -86,13 +94,16 @@ export const PostsProvider = ({ children }) => {
     const articleSubscription = subscribeToCollection(articleCollectionId, 'article');
     const questionSubscription = subscribeToCollection(questionCollectionId, 'QnA');
     const podcastSubscription = subscribeToCollection(podcastCollectionId, 'podcast');
+    const feedbackSubscription = subscribeToCollection(feedbackCollectionId, 'feedback');
 
     return () => {
+      console.log('Unsubscribing from collections...');
       if (videoSubscription) videoSubscription();
       if (audioSubscription) audioSubscription();
       if (articleSubscription) articleSubscription();
       if (questionSubscription) questionSubscription();
       if (podcastSubscription) podcastSubscription();
+      if (feedbackSubscription) feedbackSubscription();
     };
   }, []);
 

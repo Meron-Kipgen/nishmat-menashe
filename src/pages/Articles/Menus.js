@@ -52,6 +52,7 @@ const Menus = ({
   increaseFont,
   decreaseFont,
   onShowUpdateForm,
+handleShare
 }) => {
   const { deleteArticle } = useArticlesData();
   const navigate = useNavigate();
@@ -170,7 +171,7 @@ const Menus = ({
           </svg>
           Save
         </Menu>
-        <Menu>
+        <Menu onClick={handleShare}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

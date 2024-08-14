@@ -56,7 +56,7 @@ const PostDetails = () => {
   const navigate = useNavigate();
   const post = articleData.find((post) => post.$id === id);
 
-  const [fontSize, setFontSize] = useState(16); 
+  const [fontSize, setFontSize] = useState(16);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   if (!post) {
@@ -68,18 +68,36 @@ const PostDetails = () => {
   };
 
   const increaseFontSize = () => {
-    setFontSize((prevSize) => prevSize + 2); 
+    setFontSize((prevSize) => prevSize + 2);
   };
 
   const decreaseFontSize = () => {
-    setFontSize((prevSize) => Math.max(prevSize - 2, 12)); 
+    setFontSize((prevSize) => Math.max(prevSize - 2, 12));
   };
 
   const handleShowUpdateForm = () => {
     setShowUpdateForm(true);
   };
 
-  const { author, category, subcategory } = post;
+  const handleShare = () => {
+    const title = post.title;
+    const url = window.location.href; 
+    if (navigator.share) {
+      navigator.share({
+        title: title || document.title, // Use the passed title or fallback to document title
+        url,
+      })
+      .then(() => console.log('Thanks for sharing!'))
+      .catch((error) => console.log('Something went wrong', error));
+    } else {
+      // Fallback to copy URL if native sharing is not supported
+      navigator.clipboard.writeText(url).then(() => {
+        alert('URL copied to clipboard!');
+      });
+    }
+  };
+
+  const { author, category, subcategory, title } = post;
 
   return (
     <Container>
@@ -91,6 +109,7 @@ const PostDetails = () => {
           decreaseFont={decreaseFontSize}
           articleId={post.$id}
           onShowUpdateForm={handleShowUpdateForm}
+          handleShare={handleShare} 
         />
         <Post>
           <h1>{post.title}</h1>
