@@ -20,16 +20,15 @@ export const DotHorizon = ({ width, height }) => (
   </svg>
 );
 
-export const SaveIcon = () => (
-    <svg width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
-      <path d="M1.5 0a.5.5 0 0 1 .5.5V3h13V.5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 .5.5V3h-1V1H1v2H0V1a.5.5 0 0 1 .5-.5h.5zM0 4v11a.5.5 0 0 0 .5.5H2v-1H1V5H.5A.5.5 0 0 0 0 5.5V4zm4 11V5h8v10H4z"/>
-    </svg>
-  );
+
   
-export const CancelIcon = () => (
-  <svg width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
-    <path d="M1.5 0a.5.5 0 0 1 .5.5V3h13V.5a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 .5.5V3h-1V1H1v2H0V1a.5.5 0 0 1 .5-.5h.5zM0 4v11a.5.5 0 0 0 .5.5H2v-1H1V5H.5A.5.5 0 0 0 0 5.5V4zm4 11V5h8v10H4z"/>
-  </svg>
+export const CancelIcon = ({height, width, stroke}) => (
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-playstation-x" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 21a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9a9 9 0 0 0 -9 9a9 9 0 0 0 9 9z" />
+  <path d="M8.5 8.5l7 7" />
+  <path d="M8.5 15.5l7 -7" />
+</svg>
 );
 
 export const EditIcon = () => (
@@ -59,3 +58,48 @@ export const UserPic = () => (
     <path d="M14 14a5 5 0 0 1 5 5v1a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-1a5 5 0 0 1 5 -5h4z" stroke-width="0" fill="currentColor" />
   </svg>
 )
+
+export const GuestIcon = ({height, width, stroke}) => (
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+  <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
+</svg>
+)
+
+export const CameraIcon = ({height, width, stroke})=> (
+  <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-camera-plus" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M12 20h-7a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v3.5" />
+  <path d="M16 19h6" />
+  <path d="M19 16v6" />
+  <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+</svg>
+)
+export const SaveIcon = ({height, width, stroke})=> (
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checks" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M7 12l5 5l10 -10" />
+  <path d="M2 12l5 5m5 -5l5 -5" />
+</svg>
+)
+
+export const CommentIcon = ({height, width, stroke})=> (
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M8 9h8" />
+  <path d="M8 13h6" />
+  <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+</svg>
+  )
+  export const ShareIcon = ({height, width, stroke})=> (
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  <path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  <path d="M8.7 10.7l6.6 -3.4" />
+  <path d="M8.7 13.3l6.6 3.4" />
+  </svg>
+    )

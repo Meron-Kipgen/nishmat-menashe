@@ -15,30 +15,39 @@ const UserProvider = ({ children }) => {
   const [userAvatarUrl, setUserAvatarUrl] = useState('');
 
   useEffect(() => {
+    let isMounted = true; // Flag to prevent setting state on unmounted component
+
     const getUserInfo = async () => {
       try {
         const user = await account.get();
-        setUserInfo(user);
-        setIsLogin(true);
+        if (isMounted) {
+          setUserInfo(user);
+          setIsLogin(true);
 
-        if (user.labels && user.labels.includes("admin")) {
-          setIsAdmin(true);
+          if (user.labels && user.labels.includes("admin")) {
+            setIsAdmin(true);
+          }
+
+          setUsername(user.name || '');
+          setUserId(user.$id || '');
+
+          if (user.prefs && user.prefs.avatar) {
+            setUserAvatarUrl(user.prefs.avatar);
+          } 
         }
-
-        setUsername(user.name || '');
-        setUserId(user.$id || '');
-
-        // Set the userAvatarUrl from userInfo.prefs.avatar
-        if (user.prefs && user.prefs.avatar) {
-          setUserAvatarUrl(user.prefs.avatar);
-        } 
       } catch (error) {
-        console.error('Error fetching user info:', error);
-        setError(error.message);
+        if (isMounted) {
+          console.error('Error fetching user info:', error);
+          setError(error.message);
+        }
       }
     };
 
     getUserInfo();
+
+    return () => {
+      isMounted = false; // Cleanup flag to prevent state update on unmount
+    };
   }, []);
 
   return (

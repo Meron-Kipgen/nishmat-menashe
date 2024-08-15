@@ -111,7 +111,7 @@ export default function Feedback() {
         <>
           {isLogin ? (
             <FeedbackContainer>
-              <Avatar src={userAvatarUrl} name={username} />
+              <Avatar src={userAvatarUrl} name={username} height={"50px"} width={"50px"}/>
               <textarea
                 placeholder="Any feedback?"
                 value={feedback}

@@ -53,8 +53,6 @@ const routers = createBrowserRouter([
           }, 
         ],
       },
-      
-      
       {
         path: "/articles",
         element: <Posts />,
@@ -76,11 +74,12 @@ const routers = createBrowserRouter([
         ],
       },
       {
-        path: "/Profile",
-        element: <Profile />,
+        path: "/profile", 
+        element: 
+            <Profile />
       },
       {
-        path: "/QuestionAnswer",
+        path: "/questionAnswer",
         element: <QuestionAnswer />,
         children: [
           {
@@ -93,7 +92,6 @@ const routers = createBrowserRouter([
         path: "/search",
         element: <Results/>,
       },
-      
     ],
   },
 ]);

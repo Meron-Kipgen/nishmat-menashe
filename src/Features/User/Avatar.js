@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { generateGradient } from '../../utils/randomGradient';
+import { UserContext } from '../../contexts/UserContext';
+import { GuestIcon } from '../../Assets/Icons';
 
 const AvatarWrapper = styled.div`
-  width: 40px;
-  height: 40px;
+  width: ${({ width }) => width || '40px'};
+  height: ${({ height }) => height || '40px'};
   border-radius: 50%;
+  border: ${({ border }) => border || '2px solid green'};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 6rem;
+  font-size: ${({ fontSize }) => fontSize || '6rem'};
   font-weight: 600;
   color: #fff;
   background-image: ${({ src, name }) => src ? `url(${src})` : generateGradient(name || 'Default Name')};
@@ -18,7 +21,7 @@ const AvatarWrapper = styled.div`
 `;
 
 const Initials = styled.div`
-  font-size: 17px;
+  font-size: ${({ fontSize }) => fontSize || '17px'};
   color: #fff;
 `;
 
@@ -29,10 +32,16 @@ const getInitials = (name) => {
   return initials.toUpperCase();
 };
 
-const Avatar = ({ src, name }) => {
+const Avatar = ({ src, name, width, height, border }) => {
+  const { isLogin } = useContext(UserContext);
+  
   return (
-    <AvatarWrapper src={src} name={name}>
-      {!src && <Initials>{getInitials(name)}</Initials>}
+    <AvatarWrapper src={src} name={name} width={width} height={height} border={border}>
+      {isLogin ? (
+        !src && <Initials>{getInitials(name)}</Initials>
+      ) : (
+        <GuestIcon width="30px" height="30px" stroke="white" />
+      )}
     </AvatarWrapper>
   );
 };

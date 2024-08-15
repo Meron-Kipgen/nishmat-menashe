@@ -1,10 +1,14 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useFeedbackData } from '../../Features/Feedback/useFeedbackData';
+import useCommentsData from '../../Features/Comment/useCommentsData';
 import { UserContext } from '../../contexts/UserContext';
 import Avatar from '../../Features/User/Avatar';
 import TimeAgo from '../../utils/TimeAgo';
-import { DotHorizon, SaveIcon, CancelIcon, EditIcon, DeleteIcon } from '../../Assets/Icons'; 
+import { DotHorizon, SaveIcon, CancelIcon, EditIcon, DeleteIcon, CommentIcon, ShareIcon } from '../../Assets/Icons'; 
+import CommentBox from '../../Features/Comment/CommentBox';
+import CommentList from '../../Features/Comment/CommentList';
+
 
 const PostContainer = styled.div`
   display: flex;
@@ -55,14 +59,15 @@ const DropdownButton = styled.button`
   font-size: 16px;
   color: #000;
   position: absolute;
-  top:-10px;
+  top: -10px;
   right: -7px;
   z-index: 10;
-  &:hover{
-background: #D6D6D6;
-border-radius: 50%;
-width: 30px;
-height: 30px;
+  
+  &:hover {
+    background: #D6D6D6;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
   }
 `;
 
@@ -78,7 +83,6 @@ const DropdownMenu = styled.div`
   z-index: 900;
 
   button {
-
     display: flex;
     align-items: center;
     gap: 20px;
@@ -98,6 +102,7 @@ const DropdownMenu = styled.div`
 const Username = styled.div`
   font-size: 1rem;
   margin-top: 5px;
+  
   p {
     color: grey;
     font-size: 0.8rem;
@@ -110,26 +115,30 @@ const ActionButton = styled.button`
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
-  background-color: #007BFF;
+  background-color: white;
   color: white;
   cursor: pointer;
   display: flex;
+  color: black;
   align-items: center;
   gap: 5px;
+  display: flex;
+  align-items: center;
 
   &:hover {
-    background-color: #0056b3;
+    color: red;
   }
+`;
 
-  svg {
-    width: 16px;
-    height: 16px;
-  }
+const ActionBtnContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 const FeedbackPost = ({ post }) => {
   const { deleteFeedback, updateFeedback } = useFeedbackData();
   const { userId } = useContext(UserContext);
+  const { comments, loading, error , updateComment, deleteComment, createComment } = useCommentsData(post.$id);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedFeedback, setEditedFeedback] = useState(post.feedback);
@@ -176,64 +185,85 @@ const FeedbackPost = ({ post }) => {
   }, []);
 
   return (
-    <PostContainer>
-      <TopSection>
-        <AvatarWrapper>
-          <Avatar src={post.userAvatarUrl} name={post.userName} />
-        </AvatarWrapper>
-        <ContentWrapper>
-          <Username>
-            <strong>{post.userName}</strong>
-            <p><TimeAgo createdAt={post.$createdAt}/></p>
-          </Username>
-        </ContentWrapper>
-        {post.userId === userId && (
-          <DropdownButton onClick={() => setDropdownOpen(!dropdownOpen)}>
-            <DotHorizon width="30px" height="30px"/>
-          </DropdownButton>
-        )}
-        <DropdownMenu ref={dropdownRef} open={dropdownOpen}>
-          <button onClick={handleEditClick}>
-            <EditIcon /> Edit
-          </button>
-          <button onClick={handleDelete}>
-            <DeleteIcon /> Delete
-          </button>
-        </DropdownMenu>
-      </TopSection>
-      <PostContent>
-        {isEditing ? (
-          <>
-            <textarea
-              value={editedFeedback}
-              onChange={(e) => setEditedFeedback(e.target.value)}
-              rows="4"
-              style={{ width: '100%', padding: '8px', borderRadius: '4px' }}
-            />
-            <div>
-              <ActionButton onClick={handleSave}>
-                <SaveIcon /> Save
-              </ActionButton>
-              <ActionButton onClick={handleCancel}>
-                <CancelIcon /> Cancel
-              </ActionButton>
-            </div>
-          </>
-        ) : (
-          <p>{post.feedback}</p>
-        )}
-      </PostContent>
-     
+    <>
+      <PostContainer>
+        <TopSection>
+          <AvatarWrapper>
+            <Avatar src={post.userAvatarUrl} name={post.userName} />
+          </AvatarWrapper>
+          <ContentWrapper>
+            <Username>
+              <strong>{post.userName}</strong>
+              <p><TimeAgo createdAt={post.$createdAt}/></p>
+            </Username>
+          </ContentWrapper>
+          {post.userId === userId && (
+            <DropdownButton onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <DotHorizon width="20px" height="20px"/>
+            </DropdownButton>
+          )}
+          <DropdownMenu ref={dropdownRef} open={dropdownOpen}>
+            <button onClick={handleEditClick}>
+              <EditIcon /> Edit
+            </button>
+            <button onClick={handleDelete}>
+              <DeleteIcon /> Delete
+            </button>
+          </DropdownMenu>
+        </TopSection>
+        <PostContent>
+          {isEditing ? (
+            <>
+              <textarea
+                value={editedFeedback}
+                onChange={(e) => setEditedFeedback(e.target.value)}
+                rows="4"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  outline: 'none',
+                  resize: 'none',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
+                  fontSize: 16,
+                  background: "#D6D6D6",
+                }}
+              />
+              <ActionBtnContainer>
+                <ActionButton onClick={handleSave}>
+                  <SaveIcon height="20px" width="20px" stroke="green"/> Save
+                </ActionButton>
+                <ActionButton onClick={handleCancel}>
+                  <CancelIcon height="20px" width="20px" stroke="red"/> Cancel
+                </ActionButton>
+              </ActionBtnContainer>
+            </>
+          ) : (
+            <p>{post.feedback}</p>
+          )}
+        </PostContent>
         <ActionSection>
           <ActionButton>
-            <SaveIcon /> Comment
+            <CommentIcon height="20px" width="20px" stroke="black" />{comments.length} Comments
           </ActionButton>
           <ActionButton>
-            <SaveIcon /> Share
+            <ShareIcon height="20px" width="20px" stroke="black"/> Share
           </ActionButton>
         </ActionSection>
+      </PostContainer>
+      <CommentBox postId={post.$id}/>
+      <CommentList
+      comments={comments}
+      loading={loading}
+      error={error}
+      updateComment={updateComment}
+      deleteComment={deleteComment}
+      createComment={createComment} 
      
-    </PostContainer>
+    />
+    </>
   );
 };
 

@@ -9,7 +9,9 @@ import PcBtn from "./PcBtn";
 import { useVideosData } from "../../pages/Video/useVideosData";
 import Delete from "./Delete";
 import Update from "./Update";
-
+import CommentBox from "../../Features/Comment/CommentBox";
+import CommentList from "../../Features/Comment/CommentList";
+import useCommentsData from "../../Features/Comment/useCommentsData";
 const Container = styled.section`
   display: flex;
   justify-content: space-between;
@@ -68,7 +70,7 @@ export default function PcDetails() {
   const { id } = useParams();
   const { videoData } = useVideosData();
   const video = videoData.find((v) => v.$id === id);
-
+  const { comments, loading, error , updateComment, deleteComment } = useCommentsData(video.$id);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   if (!video) {
@@ -104,7 +106,15 @@ export default function PcDetails() {
         
         </DetailsContainer>
   {isUpdateModalOpen && <Update videoId={id} onClose={handleCloseUpdateModal} />}
-        <CommentContainer>hello</CommentContainer>
+        <CommentBox postId={video.$id}/>
+        <CommentList
+      comments={comments}
+      loading={loading}
+      error={error}
+      updateComment={updateComment}
+      deleteComment={deleteComment}
+     
+    />
       </VideoSection>
 
       <PcSuggestionsSection>

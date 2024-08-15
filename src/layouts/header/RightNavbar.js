@@ -1,39 +1,42 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import styled from "styled-components";
-import User from "../../Features/User/User"
+import User from "../../Features/User/User";
 import { UserContext } from "../../contexts/UserContext";
 import Avatar from "../../Features/User/Avatar";
-import { UserPic } from "../../Assets/Icons";
+
 const Container = styled.div`
   margin-right: 100px;
-border: 2px solid white;
-border-radius: 50%;
-cursor: pointer;
-`;
-
-const Menu = styled.div`
-
-  &:hover {
-    color: #4A6E71;
-  }
+  cursor: pointer;
+  position: relative;
 `;
 
 const RightNavbar = () => {
-  const { userAvatarUrl, isLogin, username } = useContext(UserContext);
+  const { userAvatarUrl, username } = useContext(UserContext);
+  const [userMenu, setUserMenu] = useState(false);
+  const containerRef = useRef(null);
 
-  const [UserMenu, setUserMenu] = useState(false);
-
-  const handleShowMenu = () => {
-    setUserMenu(!UserMenu);
+  const handleShowMenu = (event) => {
+    event.stopPropagation();
+    setUserMenu(!userMenu);
   };
 
-  return (
-    <Container onClick={handleShowMenu}>
-   
-         {isLogin ? <Avatar src={userAvatarUrl} name={username}/>: <UserPic/>
-          }
+  const handleClickOutside = (event) => {
+    if (containerRef.current && !containerRef.current.contains(event.target)) {
+      setUserMenu(false);
+    }
+  };
 
-      {UserMenu && <User/>}
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <Container ref={containerRef} onClick={handleShowMenu}>
+      <Avatar src={userAvatarUrl} name={username} height={"35px"} width={"35px"} border={"2px solid white"}/>
+      {userMenu && <User />}
     </Container>
   );
 };

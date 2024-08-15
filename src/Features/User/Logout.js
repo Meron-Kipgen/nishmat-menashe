@@ -5,23 +5,24 @@ import { account } from '../../db/config'; // Ensure this import is correct
 const Logout = () => {
   const { setUserInfo, setIsLogin } = useContext(UserContext);
 
-  const handleLogout = async () => {
-    try {
+  const handleLogout = async (event) => {
+    event.preventDefault(); // Prevent default behavior
 
+    try {
       await account.deleteSession('current');
 
       setUserInfo(null);
       setIsLogin(false);
 
-      localStorage.removeItem('userToken'); 
-     
+      window.location.reload();
+
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
   return (
-    <button onClick={handleLogout}>Logout</button>
+    <button type="button" onClick={handleLogout}>Logout</button>
   );
 };
 
