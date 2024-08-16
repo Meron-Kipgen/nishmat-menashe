@@ -3,6 +3,7 @@ import styled from "styled-components";
 import User from "../../Features/User/User";
 import { UserContext } from "../../contexts/UserContext";
 import Avatar from "../../Features/User/Avatar";
+import { GuestIcon } from "../../Assets/Icons";
 
 const Container = styled.div`
   margin-right: 100px;
@@ -11,7 +12,7 @@ const Container = styled.div`
 `;
 
 const RightNavbar = () => {
-  const { userAvatarUrl, username } = useContext(UserContext);
+  const { userAvatarUrl, username, isLogin } = useContext(UserContext);
   const [userMenu, setUserMenu] = useState(false);
   const containerRef = useRef(null);
 
@@ -35,7 +36,8 @@ const RightNavbar = () => {
 
   return (
     <Container ref={containerRef} onClick={handleShowMenu}>
-      <Avatar src={userAvatarUrl} name={username} height={"35px"} width={"35px"} border={"2px solid white"}/>
+      {isLogin ?<Avatar src={userAvatarUrl} name={username} height={"35px"} width={"35px"} border={"2px solid white"}/>  : <GuestIcon width="35px" height="35px" stroke="orange" />}
+      
       {userMenu && <User />}
     </Container>
   );

@@ -2,13 +2,13 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { generateGradient } from '../../utils/randomGradient';
 import { UserContext } from '../../contexts/UserContext';
-import { GuestIcon } from '../../Assets/Icons';
+
 
 const AvatarWrapper = styled.div`
   width: ${({ width }) => width || '40px'};
   height: ${({ height }) => height || '40px'};
   border-radius: 50%;
-  border: ${({ border }) => border || '2px solid green'};
+  border: ${({ border }) => border};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,11 +37,9 @@ const Avatar = ({ src, name, width, height, border }) => {
   
   return (
     <AvatarWrapper src={src} name={name} width={width} height={height} border={border}>
-      {isLogin ? (
+      {isLogin  && (
         !src && <Initials>{getInitials(name)}</Initials>
-      ) : (
-        <GuestIcon width="30px" height="30px" stroke="white" />
-      )}
+      ) }
     </AvatarWrapper>
   );
 };

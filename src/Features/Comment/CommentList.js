@@ -1,53 +1,53 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import Avatar from '../User/Avatar';
-import TimeAgo from '../../utils/TimeAgo';
 import { UserContext } from '../../contexts/UserContext';
+import AvatarSection from './AvatarSection';
+import DropdownMenu from './DropdownMenu';
+import CommentActions from './CommentActions';
+import CommentContent from './CommentContent';
+import { DotHorizon } from '../../Assets/Icons';
 
-const CommentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-left: 50px;
+const Container = styled.div`
+  margin-left: 90px;
   padding: 10px 0;
-  border-top: 1px solid #ddd;
   width: 80%;
+
 `;
 
 const CommentItem = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
 `;
 
-const CommentContent = styled.div`
-  margin-left: 10px;
+const TopContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  width: 100%;
+
 `;
 
-const Button = styled.button`
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
+const DropdownButton = styled.button`
+ background: transparent;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  color: #000;
+  position: absolute;
+  top: -10px;
+  right: 0;
+  z-index: 10;
+  
   &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-const EditButton = styled(Button)`
-  background-color: #ffc107;
-  &:hover {
-    background-color: #e0a800;
-  }
-`;
-
-const DeleteButton = styled(Button)`
-  background-color: #dc3545;
-  &:hover {
-    background-color: #c82333;
+    background: #D6D6D6;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
   }
 `;
 
@@ -55,16 +55,14 @@ const CommentList = ({ comments, loading, error, updateComment, deleteComment })
   const [visibleCount, setVisibleCount] = useState(2);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [newCommentText, setNewCommentText] = useState('');
-  const {userId} = useContext(UserContext)
+  const { userId } = useContext(UserContext);
+  const [dropdownOpen, setDropdownOpen] = useState(null);
+  const dropdownRef = useRef(null);
 
-  if (loading) return <p>Loading comments...</p>;
-  if (error) return <p>Error loading comments: {error.message}</p>;
-  if (comments.length === 0) return <p>No comments yet.</p>;
+  const MAX_COMMENT_LENGTH = 400;
+  const [expandedComments, setExpandedComments] = useState({});
 
-  // Reverse the order of comments
   const reversedComments = [...comments].reverse();
-  
-  // Determine comments to display
   const displayedComments = reversedComments.slice(0, visibleCount);
 
   const handleShowMore = () => {
@@ -78,60 +76,115 @@ const CommentList = ({ comments, loading, error, updateComment, deleteComment })
   const handleEditClick = (commentId, commentText) => {
     setEditingCommentId(commentId);
     setNewCommentText(commentText);
+    setDropdownOpen(null);
   };
-
-  const handleSaveEdit = async (commentId) => {
-    await updateComment(commentId, newCommentText);
+  
+  const handleCancelEdit = () => {
     setEditingCommentId(null);
     setNewCommentText('');
   };
 
+  const handleSaveEdit = async (commentId) => {
+    try {
+      await updateComment(commentId, newCommentText);
+      setEditingCommentId(null);
+      setNewCommentText('');
+    } catch (error) {
+      console.error("Error updating comment:", error);
+    }
+ 
+  };
+  
   const handleDeleteClick = async (commentId) => {
-    if (window.confirm("Are you sure you want to delete this comment?")) {
-      await deleteComment(commentId);
+    try {
+      if (window.confirm("Are you sure you want to delete this comment?")) {
+        await deleteComment(commentId);
+      }
+      setDropdownOpen(null);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+  
+  
+
+  const toggleExpandComment = (commentId) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: (prev[commentId] || MAX_COMMENT_LENGTH) + MAX_COMMENT_LENGTH,
+    }));
+  };
+
+  const handleThreeDotsClick = (commentId) => {
+    setDropdownOpen(dropdownOpen === commentId ? null : commentId);
+  };
+
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setDropdownOpen(null);
     }
   };
 
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
-      <CommentContainer>
+      <Container>
         {displayedComments.map(comment => (
           <CommentItem key={comment.$id}>
-            <Avatar src={comment.avatarUrl} name={comment.userName} />
-            <CommentContent>
-              {editingCommentId === comment.$id ? (
-                <>
-                  <textarea
-                    value={newCommentText}
-                    onChange={(e) => setNewCommentText(e.target.value)}
-                  />
-                  <Button onClick={() => handleSaveEdit(comment.$id)}>Save</Button>
-                </>
-              ) : (
-                <>
-                  <p>{comment.comment}</p>
-                  <TimeAgo createdAt={comment.$createdAt} />
-                  {comment.userId === userId && (
-                    <>
-                      <EditButton onClick={() => handleEditClick(comment.$id, comment.comment)}>Edit</EditButton>
-                      <DeleteButton onClick={() => handleDeleteClick(comment.$id)}>Delete</DeleteButton>
-                    </>
+            <TopContainer>
+              <AvatarSection 
+                avatarUrl={comment.avatarUrl} 
+                userName={comment.userName} 
+                createdAt={comment.$createdAt} 
+              />
+              {comment.userId === userId && (
+                <div ref={dropdownRef}>
+                  <DropdownButton onClick={() => handleThreeDotsClick(comment.$id)}>
+                  <DotHorizon width="20px" height="20px" />
+                  </DropdownButton>
+                  {dropdownOpen === comment.$id && (
+                    <DropdownMenu 
+                      onEditClick={() => handleEditClick(comment.$id, comment.comment)} 
+                      onDeleteClick={() => handleDeleteClick(comment.$id)} 
+                    />
                   )}
-                </>
+                </div>
               )}
-            </CommentContent>
+            </TopContainer>
+
+            <CommentContent 
+              text={comment.comment} 
+              expandedLength={expandedComments[comment.$id]} 
+              maxLength={MAX_COMMENT_LENGTH} 
+            />
+
+            <CommentActions 
+              isEditing={editingCommentId === comment.$id}
+              newCommentText={newCommentText}
+              onSaveEdit={handleSaveEdit}
+              onCancelEdit = {handleCancelEdit}
+              onChange={(e) => setNewCommentText(e.target.value)}
+              onShowMore={() => toggleExpandComment(comment.$id)}
+              onShowLess={() => setExpandedComments((prev) => ({ ...prev, [comment.$id]: MAX_COMMENT_LENGTH }))}
+              commentId={comment.$id}
+              commentLength={comment.comment.length}
+              maxLength={MAX_COMMENT_LENGTH}
+              expandedLength={expandedComments[comment.$id]}
+            />
           </CommentItem>
         ))}
-      </CommentContainer>
-      {comments.length > 2 && (
-        <>
-          {visibleCount < comments.length && (
-            <Button onClick={handleShowMore}>Show More</Button>
-          )}
-          {visibleCount > 2 && (
-            <Button onClick={handleShowLess}>Show Less</Button>
-          )}
-        </>
+      </Container>
+      {comments.length > visibleCount && (
+        <button onClick={handleShowMore}>Show More</button>
+      )}
+      {visibleCount > 2 && (
+        <button onClick={handleShowLess}>Show Less</button>
       )}
     </div>
   );

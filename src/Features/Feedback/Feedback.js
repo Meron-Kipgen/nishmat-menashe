@@ -5,7 +5,7 @@ import { UserContext } from '../../contexts/UserContext';
 import { useFeedbackData } from './useFeedbackData';
 import Loading from '../../components/Loading';
 import Avatar from '../../Features/User/Avatar';
-
+import { GuestIcon } from '../../Assets/Icons';
 const Container = styled.section`
   display: flex;
   flex-direction: column;
@@ -34,6 +34,10 @@ const FeedbackContainer = styled.section`
     resize: none;
     height: 50px;
     overflow: hidden;
+    // Disable textarea if not logged in
+    &:disabled {
+      background-color: #E0E0E0; // Change color to indicate disabled state
+    }
   }
 
   button {
@@ -49,9 +53,10 @@ const FeedbackContainer = styled.section`
     align-items: center;
     justify-content: center;
     border: none;
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')}; // Conditional cursor style
     padding: 0;
-
+    opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+    
     svg {
       width: 24px;
       height: 24px;
@@ -71,7 +76,7 @@ export default function Feedback() {
   const [editingFeedback, setEditingFeedback] = useState(null);
   const [error, setError] = useState('');
   const outlet = useOutlet();
-  const { userAvatarUrl,username, userId, isLogin, } = useContext(UserContext); // Ensure userInfo is included
+  const { userAvatarUrl, username, userId, isLogin } = useContext(UserContext); 
   const { addFeedback, updateFeedback } = useFeedbackData();
 
   const handleSubmit = async (e) => {
@@ -90,7 +95,7 @@ export default function Feedback() {
         } else {
           await addFeedback({
             feedback,
-            userAvatarUrl: userAvatarUrl,
+            userAvatarUrl,
             userId,
             userName: username,
           });
@@ -109,30 +114,34 @@ export default function Feedback() {
     <Container>
       {!outlet && (
         <>
-          {isLogin ? (
-            <FeedbackContainer>
-              <Avatar src={userAvatarUrl} name={username} height={"50px"} width={"50px"}/>
-              <textarea
-                placeholder="Any feedback?"
-                value={feedback}
-                onChange={(e) => {
-                  setFeedback(e.target.value);
-                  setError('');
-                }}
-              />
-              <button type="submit" onClick={handleSubmit} disabled={loading}>
-                {loading ? <Loading /> : (
-                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M10 14l11 -11" />
-                    <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
-                  </svg>
-                )}
-              </button>
-            </FeedbackContainer>
-          ) : (
-            <p>Please log in to submit feedback.</p>
-          )}
+          <FeedbackContainer>
+            {isLogin ?  <Avatar src={userAvatarUrl} name={username} height={"50px"} width={"50px"} />:<GuestIcon width="45px" height="45px" stroke="orange" />}
+           
+            <textarea
+              placeholder={isLogin ? "Any feedback?" : "Please log in to provide feedback"}
+              value={feedback}
+              onChange={(e) => {
+                setFeedback(e.target.value);
+                setError('');
+              }}
+              disabled={!isLogin} // Disables textarea if not logged in
+            />  
+            
+            <button 
+              type="submit" 
+              onClick={handleSubmit} 
+              disabled={!isLogin || loading} // Disables button if not logged in or if loading
+            >
+              {loading ? <Loading /> : (
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M10 14l11 -11" />
+                  <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
+                </svg>
+              )}
+            </button>
+          </FeedbackContainer>
+        
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </>
       )}

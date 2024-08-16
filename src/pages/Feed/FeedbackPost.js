@@ -9,7 +9,6 @@ import { DotHorizon, SaveIcon, CancelIcon, EditIcon, DeleteIcon, CommentIcon, Sh
 import CommentBox from '../../Features/Comment/CommentBox';
 import CommentList from '../../Features/Comment/CommentList';
 
-
 const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,6 +16,7 @@ const PostContainer = styled.div`
   background: #f9f9f9;
   position: relative; 
   padding: 15px;
+  border-bottom: 1px solid #ccc;
 `;
 
 const TopSection = styled.div`
@@ -50,6 +50,7 @@ const ActionSection = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
+  padding: 0 20px 0 20px;
 `;
 
 const DropdownButton = styled.button`
@@ -135,14 +136,25 @@ const ActionBtnContainer = styled.div`
   justify-content: flex-end;
 `;
 
+const FeedbackContainer = styled.div`
+ 
+  padding: 0 30px 0 30px;
+  word-wrap: break-word;     
+  overflow-wrap: break-word;
+  word-break: break-word; 
+`;
+
 const FeedbackPost = ({ post }) => {
   const { deleteFeedback, updateFeedback } = useFeedbackData();
   const { userId } = useContext(UserContext);
-  const { comments, loading, error , updateComment, deleteComment, createComment } = useCommentsData(post.$id);
+  const { comments, loading, error, updateComment, deleteComment, createComment } = useCommentsData(post.$id);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedFeedback, setEditedFeedback] = useState(post.feedback);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [expandedLength, setExpandedLength] = useState(700); // Start with 400 characters
+
+  const MAX_FEEDBACK_LENGTH = post.feedback.length; // Maximum length of the feedback
 
   const dropdownRef = useRef(null);
 
@@ -184,6 +196,10 @@ const FeedbackPost = ({ post }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleShowMore = () => {
+    setExpandedLength((prevLength) => Math.min(prevLength + 700, MAX_FEEDBACK_LENGTH));
+  };
+
   return (
     <>
       <PostContainer>
@@ -194,12 +210,12 @@ const FeedbackPost = ({ post }) => {
           <ContentWrapper>
             <Username>
               <strong>{post.userName}</strong>
-              <p><TimeAgo createdAt={post.$createdAt}/></p>
+              <p><TimeAgo createdAt={post.$createdAt} /></p>
             </Username>
           </ContentWrapper>
           {post.userId === userId && (
             <DropdownButton onClick={() => setDropdownOpen(!dropdownOpen)}>
-              <DotHorizon width="20px" height="20px"/>
+              <DotHorizon width="20px" height="20px" />
             </DropdownButton>
           )}
           <DropdownMenu ref={dropdownRef} open={dropdownOpen}>
@@ -233,36 +249,44 @@ const FeedbackPost = ({ post }) => {
               />
               <ActionBtnContainer>
                 <ActionButton onClick={handleSave}>
-                  <SaveIcon height="20px" width="20px" stroke="green"/> Save
+                  <SaveIcon height="20px" width="20px" stroke="green" /> Save
                 </ActionButton>
                 <ActionButton onClick={handleCancel}>
-                  <CancelIcon height="20px" width="20px" stroke="red"/> Cancel
+                  <CancelIcon height="20px" width="20px" stroke="red" /> Cancel
                 </ActionButton>
               </ActionBtnContainer>
             </>
           ) : (
-            <p>{post.feedback}</p>
+            <FeedbackContainer>
+              {post.feedback.length > expandedLength
+                ? `${post.feedback.slice(0, expandedLength)}...`
+                : post.feedback}
+              {post.feedback.length > expandedLength && (
+                <ActionButton onClick={handleShowMore}>
+                  Show More
+                </ActionButton>
+              )}
+            </FeedbackContainer>
           )}
         </PostContent>
         <ActionSection>
           <ActionButton>
-            <CommentIcon height="20px" width="20px" stroke="black" />{comments.length} Comments
+            <CommentIcon height="20px" width="20px" stroke="black" /> {comments.length} Comments
           </ActionButton>
           <ActionButton>
-            <ShareIcon height="20px" width="20px" stroke="black"/> Share
+            <ShareIcon height="20px" width="20px" stroke="black" /> Share
           </ActionButton>
         </ActionSection>
       </PostContainer>
-      <CommentBox postId={post.$id}/>
+      <CommentBox postId={post.$id} />
       <CommentList
-      comments={comments}
-      loading={loading}
-      error={error}
-      updateComment={updateComment}
-      deleteComment={deleteComment}
-      createComment={createComment} 
-     
-    />
+        comments={comments}
+        loading={loading}
+        error={error}
+        updateComment={updateComment}
+        deleteComment={deleteComment}
+        createComment={createComment}
+      />
     </>
   );
 };
