@@ -7,7 +7,7 @@ const collections = [
   { name: 'video', databaseId: '666aff03003ba124b787', collectionId: '666aff1400318bf6aa6f' },
   { name: 'audio', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_AUDIO_COLLECTION_ID' },
   { name: 'library', databaseId: '666aff03003ba124b787', collectionId: '668d39710005c04f99c6' },
-  { name: 'questionAndAnswer', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_QA_COLLECTION_ID' },
+  { name: 'questionAndAnswer', databaseId: '666aff03003ba124b787', collectionId: '66ba303a002c4c5a6d6a' },
   { name: 'article', databaseId: '666aff03003ba124b787', collectionId: '666b0186000007f47da9' },
 ];
 

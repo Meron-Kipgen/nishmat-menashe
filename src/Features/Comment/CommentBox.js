@@ -11,6 +11,9 @@ const Container = styled.div`
   padding: 0 30px;
   width: 100%;
   gap: 10px;
+  @media (max-width: 768px) {
+   padding: 10px;
+    }
 `;
 
 const TextAreaContainer = styled.div`
@@ -82,7 +85,7 @@ const CommentBox = ({ postId }) => {
     <>
       {userId ? (
         <Container>
-          <Avatar src={userAvatarUrl} name={username} width="43px" height="40px" border="none"/>
+          <Avatar src={userAvatarUrl} name={username} width="40px" height="35px" border="none"/>
           <TextAreaContainer>
             <TextArea
               value={comment}

@@ -9,6 +9,9 @@ const Container = styled.div`
   margin-right: 100px;
   cursor: pointer;
   position: relative;
+  @media (max-width: 768px) {
+   margin-right: 15px;
+  }
 `;
 
 const RightNavbar = () => {
@@ -36,7 +39,7 @@ const RightNavbar = () => {
 
   return (
     <Container ref={containerRef} onClick={handleShowMenu}>
-      {isLogin ?<Avatar src={userAvatarUrl} name={username} height={"35px"} width={"35px"} border={"2px solid white"}/>  : <GuestIcon width="35px" height="35px" stroke="orange" />}
+      {isLogin ?<Avatar src={userAvatarUrl} name={username} height={"35px"} width={"35px"} border={"2px solid white"}/>  : <GuestIcon width="35px" height="35px"  />}
       
       {userMenu && <User />}
     </Container>

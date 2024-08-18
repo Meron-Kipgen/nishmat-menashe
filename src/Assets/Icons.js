@@ -59,7 +59,7 @@ export const UserPic = () => (
   </svg>
 )
 
-export const GuestIcon = ({height, width, stroke}) => (
+export const GuestIcon = ({height, width, stroke="#F47838"}) => (
   <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
   <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -103,3 +103,17 @@ export const CommentIcon = ({height, width, stroke})=> (
   <path d="M8.7 13.3l6.6 3.4" />
   </svg>
     )
+export const SearchIcon = ({height, width,stroke="white"}) => (
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+  <path d="M21 21l-6 -6" />
+</svg>
+)
+
+export const BackIcon = ({height,width,stroke="black"}) => (
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width={width} height={height} viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M15 6l-6 6l6 6" />
+</svg>
+)

@@ -14,6 +14,9 @@ const collections = [
 const Wrapper = styled.section`
   width: 500px;
   position: relative;
+  @media (max-width: 768px) {
+   width: 100%;
+  }
 `;
 
 const GlassInput = styled.input`
@@ -50,6 +53,7 @@ const GlassInput = styled.input`
     background-size: contain;
     cursor: pointer;
   }
+
 `;
 
 const SearchButton = styled.button`
@@ -66,6 +70,9 @@ const SearchButton = styled.button`
   svg {
     color: #04252F;
     font-size: 20px;
+  }
+  @media (max-width: 768px) {
+    top: 15px;
   }
 `;
 
@@ -91,6 +98,13 @@ const SuggestionsList = styled.ul`
   
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+  @media (max-width: 768px) {
+    width: 100%;
+    border-radius: 0;
+    margin: 0;
+  
+
+  }
 `;
 
 const SuggestionItem = styled.li`
@@ -102,7 +116,7 @@ const SuggestionItem = styled.li`
   }
 `;
 
-export default function Search() {
+export default function Search({ closeSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [data, setData] = useState([]);
@@ -134,11 +148,13 @@ export default function Search() {
   const handleSuggestionClick = (suggestion) => {
     setSearchTerm(suggestion.title);
     setSuggestions([]);
+    closeSearch(); // Close the search overlay
     navigate(`/search?q=${suggestion.title}`);
   };
 
   const handleSearchButtonClick = () => {
     if (searchTerm.trim()) {
+      closeSearch(); // Close the search overlay
       navigate(`/search?q=${searchTerm}`);
     }
   };

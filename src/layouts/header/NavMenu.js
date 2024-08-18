@@ -30,10 +30,10 @@ const StyledNavLink = styled(NavLink)`
 
   &.active,
   &:hover {
-    color: #D6D6D6;
+    color: #FFA555;
 
     svg {
-      stroke: #4A6E71;
+      stroke: #FFA555;
     }
   }
 

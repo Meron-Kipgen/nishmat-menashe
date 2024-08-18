@@ -6,11 +6,15 @@ import { useFeedbackData } from './useFeedbackData';
 import Loading from '../../components/Loading';
 import Avatar from '../../Features/User/Avatar';
 import { GuestIcon } from '../../Assets/Icons';
+
 const Container = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0 20px 20px 20px;
+  @media (max-width: 768px) {
+    padding: 0 2px 10px 2px;
+  }
 `;
 
 const FeedbackContainer = styled.section`
@@ -23,6 +27,11 @@ const FeedbackContainer = styled.section`
   border-radius: 8px;
   gap: 20px;
 
+  @media (max-width: 768px) {
+    width: 100%;  
+    padding: 10px;
+  }
+
   textarea {
     flex: 1;
     padding: 15px 50px 0 20px;
@@ -34,7 +43,7 @@ const FeedbackContainer = styled.section`
     resize: none;
     height: 50px;
     overflow: hidden;
-    // Disable textarea if not logged in
+
     &:disabled {
       background-color: #E0E0E0; // Change color to indicate disabled state
     }
@@ -53,15 +62,20 @@ const FeedbackContainer = styled.section`
     align-items: center;
     justify-content: center;
     border: none;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')}; // Conditional cursor style
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     padding: 0;
     opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-    
+
+    @media (max-width: 768px) {
+  
+    right: 20px;
+  }
     svg {
       width: 24px;
       height: 24px;
       color: #fff;
     }
+    
   }
 `;
 
@@ -76,7 +90,7 @@ export default function Feedback() {
   const [editingFeedback, setEditingFeedback] = useState(null);
   const [error, setError] = useState('');
   const outlet = useOutlet();
-  const { userAvatarUrl, username, userId, isLogin } = useContext(UserContext); 
+  const { userAvatarUrl, username, userId, isLogin } = useContext(UserContext);
   const { addFeedback, updateFeedback } = useFeedbackData();
 
   const handleSubmit = async (e) => {
@@ -115,7 +129,7 @@ export default function Feedback() {
       {!outlet && (
         <>
           <FeedbackContainer>
-            {isLogin ?  <Avatar src={userAvatarUrl} name={username} height={"50px"} width={"50px"} />:<GuestIcon width="45px" height="45px" stroke="orange" />}
+            {isLogin ? <Avatar src={userAvatarUrl} name={username} height="45px" width="45px" /> : <GuestIcon width="45px" height="45px" />}
            
             <textarea
               placeholder={isLogin ? "Any feedback?" : "Please log in to provide feedback"}
@@ -133,7 +147,7 @@ export default function Feedback() {
               disabled={!isLogin || loading} // Disables button if not logged in or if loading
             >
               {loading ? <Loading /> : (
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-send" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                   <path d="M10 14l11 -11" />
                   <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />

@@ -1,4 +1,4 @@
-// QuestionPost.js
+
 import React from 'react';
 
 const QnAPost = ({ post }) => (

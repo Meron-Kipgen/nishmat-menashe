@@ -8,10 +8,17 @@ const CommentContainer = styled.p`
   word-break: break-word;  
 `;
 
-const CommentContent = ({ text, expandedLength, maxLength }) => (
-  <CommentContainer>
-    {text.length > maxLength ? text.slice(0, expandedLength || maxLength) : text}
-  </CommentContainer>
-);
+const CommentContent = ({ text = '', expandedLength = 0, maxLength = 400 }) => {
+  // Ensure text is a string and provide a default value if not
+  const safeText = typeof text === 'string' ? text : '';
+
+  return (
+    <CommentContainer>
+      {safeText.length > maxLength
+        ? safeText.slice(0, expandedLength || maxLength)
+        : safeText}
+    </CommentContainer>
+  );
+};
 
 export default CommentContent;

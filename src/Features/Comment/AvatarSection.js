@@ -6,7 +6,7 @@ import TimeAgo from '../../utils/TimeAgo';
 const AvatarContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px; /* Adjust gap as needed */
+  gap: 10px;
 `;
 
 const NameContainer = styled.section`
@@ -27,7 +27,7 @@ const Timestamp = styled.span`
 
 const AvatarSection = ({ avatarUrl, userName, createdAt }) => (
   <AvatarContainer>
-    <Avatar src={avatarUrl} name={userName} />
+    <Avatar src={avatarUrl} name={userName} height="30px" width="30px"/>
     <NameContainer>
       <Username>{userName}</Username>
       <Timestamp><TimeAgo createdAt={createdAt} /></Timestamp>

@@ -29,6 +29,10 @@ const TopSection = styled.div`
 const AvatarWrapper = styled.div`
   margin-right: 20px;
   margin-left: 25px;
+  @media (max-width: 768px) {
+   
+    margin-left: 0;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -142,6 +146,9 @@ const FeedbackContainer = styled.div`
   word-wrap: break-word;     
   overflow-wrap: break-word;
   word-break: break-word; 
+  @media (max-width: 768px) {  
+    padding:0 ;
+  }
 `;
 
 const FeedbackPost = ({ post }) => {
@@ -205,7 +212,7 @@ const FeedbackPost = ({ post }) => {
       <PostContainer>
         <TopSection>
           <AvatarWrapper>
-            <Avatar src={post.userAvatarUrl} name={post.userName} />
+            <Avatar src={post.userAvatarUrl} name={post.userName}/>
           </AvatarWrapper>
           <ContentWrapper>
             <Username>

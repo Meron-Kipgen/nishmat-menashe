@@ -110,7 +110,8 @@ export const PostsProvider = ({ children }) => {
   const contextValue = {
     posts,
     loading,
-    error
+    error,
+  
   };
 
   return (

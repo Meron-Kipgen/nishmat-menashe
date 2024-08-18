@@ -11,7 +11,10 @@ const Container = styled.div`
   margin-left: 90px;
   padding: 10px 0;
   width: 80%;
-
+  @media (max-width: 768px) {
+    margin-left: 20px;
+    width: 90%;
+  }
 `;
 
 const CommentItem = styled.div`

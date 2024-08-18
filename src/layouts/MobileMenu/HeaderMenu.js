@@ -3,19 +3,30 @@ import Logo from "../header/Logo";
 import Search from "../../Features/Search/Search";
 import RightNavbar from "../header/RightNavbar";
 import styled from "styled-components";
+import MobileSearch from "../../Features/Search/MobileSearch";
 
 const Container = styled.nav`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  width: 100%;
   background: #04252F;
+  height: 45px;
+justify-content: space-between;
+  align-items: center;
 `;
-export default function NavMenu() {
+const RightSide = styled.div`
+display: flex;
+align-items: center;
+gap: 10px;
+`
+export default function HeaderMenu() {
   return (
     <Container>
       <Logo />
-      <Search />
+      <RightSide>
+         <MobileSearch />
       <RightNavbar />
+      </RightSide>
+     
     </Container>
   );
 }

@@ -3,8 +3,9 @@ import Navbar from "./header/Navbar";
 import Main from "./main/Main";
 import Footer from "./footer/Footer";
 import useMediaQuery from "./../hooks/useMediaQuery";
-import NavMenu from "./mobile/NavMenu";
-import FooterMenu from "./mobile/FooterMenu";
+
+import FooterMenu from "./MobileMenu/FooterMenu";
+import HeaderMenu from "./MobileMenu/HeaderMenu";
 
 export default function Layout() {
   // Use useRef to persist the lastScrollY value across renders
@@ -29,7 +30,7 @@ export default function Layout() {
     <>
       {isMobile ? (
         <>
-          <NavMenu />
+          <HeaderMenu />
           <Main />
           <Footer />
           <FooterMenu />
