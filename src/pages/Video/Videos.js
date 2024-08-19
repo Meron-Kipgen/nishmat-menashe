@@ -183,24 +183,6 @@ const Videos = () => {
   const [toggleCategories, setToggleCategories] = useState(false);
   const [addNew, setAddNew] = useState(false);
   const [showBtn, setShowBtn] = useState(true); 
-  const [lastScrollTop, setLastScrollTop] = useState(0); 
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollTop = window.scrollY;
-      if (currentScrollTop > lastScrollTop) {
-        // Scrolling down
-        setShowBtn(false);
-      } else {
-        // Scrolling up
-        setShowBtn(true);
-      }
-      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollTop]);
 
   useEffect(() => {
     if (selectedCategory !== null) {
@@ -340,7 +322,7 @@ const Videos = () => {
          
         </Container>
       )}
-      <Outlet />
+     {!isMobile && <Outlet /> } 
     </>
   );
 };

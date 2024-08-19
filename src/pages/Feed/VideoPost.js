@@ -22,14 +22,13 @@ display: flex;
 align-items: center;
 justify-content: space-between;
 padding: 10px 40px;
-`
-const SeeMore = styled.div`
 color: blue;
 cursor: pointer;
 &:hover{
   color: darkblue;
 }
 `
+
 const VideoPost = ({ post, maxPosts = 2 }) => {
   const navigate = useNavigate();
   const { updateViews } = useVideosData();
@@ -61,11 +60,11 @@ const VideoPost = ({ post, maxPosts = 2 }) => {
       <Player src={post.videoUrl} poster={post.poster} />
       <TextWrapper onClick={handleClick}>
         <h2>{post.title}</h2>
-        <p>{post.category} | {post.subcategory} | {post.views}</p>
+        <p>{post.category} ⁃ {post.subcategory} ⁃ {post.views} views</p>
         <p>{post.description}</p>
       </TextWrapper>
       <CommentContainer>
-        <CommentButton>{comments.length} {comments.length > 0 ? "comments": "comment"}  <SeeMore onClick={handleClick}> see more {comments.length > 0 ? "comments": "comment"} </SeeMore></CommentButton> 
+        <CommentButton onClick={handleClick}>{comments.length} {comments.length > 0 ? "comments": "comment"}  </CommentButton> 
         <CommentBox postId={post.$id} />
         <CommentList
           comments={latestComments}

@@ -1,57 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import NavMenu from "./NavMenu";
 import LeftNavbar from "./LeftNavbar";
 import RightNavbar from "./RightNavbar";
 
 const Wrapper = styled.div`
-  position: sticky;
+  position: fixed; /* Make the navbar fixed */
   top: 0;
+  left: 0;
   width: 100%;
   z-index: 1000;
-  transform: ${(props) => (props.hide ? "translateY(-100%)" : "translateY(0)")};
+  background: #142B42; /* Ensure background color is set */
   transition: transform 0.3s ease-in-out;
 `;
 
 const Container = styled.nav`
-  width: 100%;
-  background: #142B42;
   height: 45px;
   display: flex;
- 
   align-items: center;
   justify-content: space-between;
 `;
 
 const Navbar = () => {
-  const [hide, setHide] = useState(false);
-  const [prevScrollPos, setPrevScrollPos] = useState(0);
-
-  const handleScroll = () => {
-    const currentScrollPos = window.pageYOffset;
-    if (currentScrollPos > prevScrollPos) {
-      setHide(true);
-    } else {
-      setHide(false);
-    }
-    setPrevScrollPos(currentScrollPos);
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [prevScrollPos]);
-
   return (
-    <Wrapper hide={hide}>
-        <Container>
-          <LeftNavbar />
-          <NavMenu />
-          <RightNavbar />
-        </Container>
+    <Wrapper>
+      <Container>
+        <LeftNavbar />
+        <NavMenu />
+        <RightNavbar />
+      </Container>
     </Wrapper>
   );
 };

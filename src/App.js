@@ -11,8 +11,12 @@ import { QuestionAnswerDataProvider } from "./pages/QuestionAnswer/useQuestionAn
 import { FeedbackDataProvider } from "./Features/Feedback/useFeedbackData";
 
 
+
+
+
 const App = () => {
   return (
+
     <PostsProvider>
       <FeedbackDataProvider>
     <VideosDataProvider>
@@ -32,6 +36,7 @@ const App = () => {
     </VideosDataProvider>
     </FeedbackDataProvider>
     </PostsProvider>
+   
   );
 };
 

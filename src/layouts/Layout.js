@@ -32,14 +32,12 @@ export default function Layout() {
         <>
           <HeaderMenu />
           <Main />
-          <Footer />
           <FooterMenu />
         </>
       ) : (
         <>
           <Navbar />
           <Main />
-          <Footer />
         </>
       )}
     </>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import styled from "styled-components";
-import { fetchDataFromCollections } from '../../utils/allData';
+import { fetchDataFromCollections } from './allData';
 
 const collections = [
   { name: 'video', databaseId: '666aff03003ba124b787', collectionId: '666aff1400318bf6aa6f' },
   { name: 'audio', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_AUDIO_COLLECTION_ID' },
   { name: 'library', databaseId: '666aff03003ba124b787', collectionId: '668d39710005c04f99c6' },
-  { name: 'questionAndAnswer', databaseId: '666aff03003ba124b787', collectionId: '66ba303a002c4c5a6d6a' },
+  { name: 'questionAndAnswer', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_QA_COLLECTION_ID' },
   { name: 'article', databaseId: '666aff03003ba124b787', collectionId: '666b0186000007f47da9' },
 ];
 
@@ -49,6 +49,17 @@ const ResultsContainer = styled.div`
   border-radius: 8px;
   background: #f9f9f9;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto; 
+
+  @media (max-width: 768px) {
+    width: 100vw; 
+    height: 100vh; 
+    padding: 10px; 
+    overflow-y: auto;
+   
+  
+    border-radius: 0; /* Remove border-radius on mobile */
+  }
 `;
 
 const SearchResultItem = styled.li`

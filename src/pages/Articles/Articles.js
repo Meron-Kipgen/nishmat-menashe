@@ -56,7 +56,7 @@ const Articles = () => {
   const [toggleCategories, setToggleCategories] = useState(false);
   const [addNew, setAddNew] = useState(false);
   const [showBtn, setShowBtn] = useState(true);
-  const [lastScrollTop, setLastScrollTop] = useState(0);
+ 
   const [flipped, setFlipped] = useState(false);
   const outlet = useOutlet();
   const { isAdmin } = useContext(UserContext);
@@ -67,20 +67,6 @@ const Articles = () => {
     }
   }, [selectedCategory]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollTop = window.scrollY;
-      if (currentScrollTop > lastScrollTop) {
-        setShowBtn(false);
-      } else {
-        setShowBtn(true);
-      }
-      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollTop]);
 
   const filteredPosts = articleData
     .filter(

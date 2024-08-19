@@ -12,10 +12,10 @@ import CommentList from '../../Features/Comment/CommentList';
 const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   background: #f9f9f9;
   position: relative; 
-  padding: 15px;
+  padding: 20px;
   border-bottom: 1px solid #ccc;
 `;
 
@@ -27,8 +27,8 @@ const TopSection = styled.div`
 `;
 
 const AvatarWrapper = styled.div`
-  margin-right: 20px;
-  margin-left: 25px;
+  margin-right: 10px;
+
   @media (max-width: 768px) {
    
     margin-left: 0;
@@ -54,7 +54,7 @@ const ActionSection = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
-  padding: 0 20px 0 20px;
+
 `;
 
 const DropdownButton = styled.button`
@@ -141,8 +141,6 @@ const ActionBtnContainer = styled.div`
 `;
 
 const FeedbackContainer = styled.div`
- 
-  padding: 0 30px 0 30px;
   word-wrap: break-word;     
   overflow-wrap: break-word;
   word-break: break-word; 

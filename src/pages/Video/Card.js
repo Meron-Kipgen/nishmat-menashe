@@ -48,7 +48,7 @@ const Card = ({
       <TextContainer>
         <h1>{title}</h1>
         <p>
-          <TimeAgo createdAt={createdAt} /> | {category}
+          <TimeAgo createdAt={createdAt} /> ⁃ {category}
         </p>
         <CardFooter>
           <h3>{rabbi}</h3><span>{views}</span>

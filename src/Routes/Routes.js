@@ -18,6 +18,7 @@ import Results from "../Features/Search/Results";
 import PodcastDetails from "../pages/Audio/Podcast/PodcastDetails";
 import QuestionAnswerDetails from "../pages/QuestionAnswer/QuestionAnswerDetails";
 import Profile from "../Features/User/Profile";
+import Alon from "../pages/Alon/Alon";
 
 
 const routers = createBrowserRouter([
@@ -28,6 +29,10 @@ const routers = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/Alon",
+        element: <Alon/>
       },
       {
         path: "/feed",

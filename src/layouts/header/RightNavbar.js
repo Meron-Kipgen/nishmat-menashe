@@ -6,7 +6,7 @@ import Avatar from "../../Features/User/Avatar";
 import { GuestIcon } from "../../Assets/Icons";
 
 const Container = styled.div`
-  margin-right: 100px;
+  margin-right: 40px;
   cursor: pointer;
   position: relative;
   @media (max-width: 768px) {

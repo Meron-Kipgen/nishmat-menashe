@@ -11,7 +11,7 @@ const Container = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 20px 20px 20px;
+  padding: 10px 0 20px 0;
   @media (max-width: 768px) {
     padding: 0 2px 10px 2px;
   }
@@ -22,14 +22,15 @@ const FeedbackContainer = styled.section`
   background-color: white;
   display: flex;
   align-items: center;
-  width: 700px;
+  width: 100%;
   padding: 20px;
   border-radius: 8px;
-  gap: 20px;
+  gap: 10px;
 
   @media (max-width: 768px) {
     width: 100%;  
     padding: 10px;
+    margin-top: 10px;
   }
 
   textarea {
@@ -45,7 +46,7 @@ const FeedbackContainer = styled.section`
     overflow: hidden;
 
     &:disabled {
-      background-color: #E0E0E0; // Change color to indicate disabled state
+      background-color: #E0E0E0; 
     }
   }
 

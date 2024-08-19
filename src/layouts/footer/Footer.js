@@ -1,49 +1,34 @@
 import styled from "styled-components";
 
 const Container = styled.footer`
-  height: 80px;
-  margin-top: 20px;
+  height: auto;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  background:  #142B42;
-  color: #ffffff;
-  font-size: 1.2rem;
-  position: relative;
-  overflow: hidden;
+
+  color: #000;
+  font-size: 1rem;
   z-index: 1;
-
+  padding: 20px;
   @media (max-width: 768px) {
-    height: auto;
-    padding: 20px;
+    background: #142B42;
   }
 `;
 
-const Content = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 80%;
-  max-width: 1200px;
-  position: relative;
-  z-index: 2;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-`;
-
-const FooterText = styled.p`
-  margin: 0;
-`;
-
+const LinksContainer = styled.div`  
+display: flex;
+margin-top: 30px;
+justify-content: space-between;
+gap: 30px;
+`
 const Link = styled.a`
-  color: #ffffff;
+  color: #000;
+font-size: 0.8rem;
   text-decoration: none;
-  margin-left: 20px;
   transition: color 0.3s ease;
-
+  @media (max-width: 768px) {
+    color: white;
+  }
   &:hover {
     color: #00ffff;
   }
@@ -56,14 +41,13 @@ const Link = styled.a`
 export default function Footer() {
   return (
     <Container>
-      <Content>
-        <FooterText>© 2024 Nishmat Menashe. All rights reserved.</FooterText>
-        <div>
-          <Link href="/privacy-policy">Privacy Policy</Link>
-          <Link href="/terms-and-conditions">Terms and Conditions</Link>
-        </div>
-      </Content>
-      
+      <p>Nishmat Menashe</p> 
+      <p>© All rights reserved</p>
+      <LinksContainer>     
+        <Link href="/privacy-policy">Privacy Policy</Link>
+        <Link href="/terms-and-conditions">Terms and Conditions</Link>
+      </LinksContainer>
+ 
     </Container>
   );
 }

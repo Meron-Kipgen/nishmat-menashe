@@ -27,7 +27,12 @@ const Body = styled.div`
   color: #666;
   line-height: 1.6;
   height: 160px;
-  text-align: justify;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+
 `;
 const Wrapper = styled.div`
   font-size: 13px;
@@ -74,7 +79,7 @@ const ArticlePost = ({post}) => {
       <Title>{post.title}</Title>
       {post.category}
       <Wrapper>
-        {post.writer} | <TimeAgo createdAt={post.$createdAt} /> | views: {post.views}
+        {post.writer} ⁃ <TimeAgo createdAt={post.$createdAt} /> ⁃ views: {post.views}
       </Wrapper>
       <Body dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body) }} />
       <ReadMoreButton onClick={handleReadMore}>Read More</ReadMoreButton>

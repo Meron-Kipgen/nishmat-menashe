@@ -253,11 +253,11 @@ const Card = ({ title, category, subcategory, rabbi, played, audioUrl, onPlay, t
             </DropdownContent>
           </DropMenu>
           <h1>{title}</h1>
-          <h5>{category} | {subcategory}</h5>
-          <p>By: {rabbi} | <TimeAgo createdAt={createdAt} /></p>
+          <h5>{category} ⁃ {subcategory}</h5>
+          <p>By: {rabbi} ⁃ <TimeAgo createdAt={createdAt} /></p>
         </Header>
         <FooterContainer>
-          <FooterText>{played} Played | 33 Comments</FooterText>
+          <FooterText>{played} Played ⁃ 33 Comments</FooterText>
           <PlayButton onClick={() => onPlay(audioUrl)}>
             <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-player-play-filled" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#ffffff" fill="none" strokeLinecap="round" strokeLinejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />

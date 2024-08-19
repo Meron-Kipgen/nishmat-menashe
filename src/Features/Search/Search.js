@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { fetchDataFromCollections } from '../../utils/allData';
+import { fetchDataFromCollections } from './allData';
+import { SearchIcon } from "../../Assets/Icons";
 
 const collections = [
   { name: 'video', databaseId: '666aff03003ba124b787', collectionId: '666aff1400318bf6aa6f' },
@@ -14,12 +15,10 @@ const collections = [
 const Wrapper = styled.section`
   width: 500px;
   position: relative;
-  @media (max-width: 768px) {
-   width: 100%;
-  }
 `;
 
 const GlassInput = styled.input`
+  position: relative;
   width: 100%;
   padding: 6px 16px;
   padding-right: 40px;
@@ -39,13 +38,11 @@ const GlassInput = styled.input`
     color: black;
   }
 
-  /* Hide the default clear button */
   &::-webkit-search-cancel-button {
     -webkit-appearance: none;
     appearance: none;
   }
 
-  /* Custom clear button styles */
   &::-webkit-search-cancel-button {
     height: 16px;
     width: 16px;
@@ -53,13 +50,12 @@ const GlassInput = styled.input`
     background-size: contain;
     cursor: pointer;
   }
-
 `;
 
 const SearchButton = styled.button`
   position: absolute;
   right: 10px;
-  top: 55%;
+  top: 16px;
   transform: translateY(-50%);
   border: none;
   background: none;
@@ -70,9 +66,6 @@ const SearchButton = styled.button`
   svg {
     color: #04252F;
     font-size: 20px;
-  }
-  @media (max-width: 768px) {
-    top: 15px;
   }
 `;
 
@@ -90,33 +83,39 @@ const SuggestionsList = styled.ul`
   backdrop-filter: blur(10px);
   padding: 0;
   cursor: pointer;
-  
-  /* Hide scrollbar */
+  z-index: 40;
+
   &::-webkit-scrollbar {
     display: none;
   }
   
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-  @media (max-width: 768px) {
-    width: 100%;
-    border-radius: 0;
-    margin: 0;
-  
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
 
+  @media (max-width: 768px) {
+    right: 0;
+    top: 40;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    max-height: none; 
   }
 `;
 
 const SuggestionItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 20px;
   padding: 8px 16px;
   cursor: pointer;
-
+  padding: 10px 10px;
   &:hover {
     background: #f0f0f0;
   }
 `;
 
-export default function Search({ closeSearch }) {
+export default function Search({ onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [data, setData] = useState([]);
@@ -148,14 +147,14 @@ export default function Search({ closeSearch }) {
   const handleSuggestionClick = (suggestion) => {
     setSearchTerm(suggestion.title);
     setSuggestions([]);
-    closeSearch(); // Close the search overlay
     navigate(`/search?q=${suggestion.title}`);
+    if (onClose) onClose(); // Close the search overlay
   };
 
   const handleSearchButtonClick = () => {
     if (searchTerm.trim()) {
-      closeSearch(); // Close the search overlay
       navigate(`/search?q=${searchTerm}`);
+      if (onClose) onClose(); // Close the search overlay
     }
   };
 
@@ -188,7 +187,7 @@ export default function Search({ closeSearch }) {
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              {suggestion.title} ({suggestion.collection})
+             <SearchIcon height={15} width={15} stroke="black"/> {suggestion.title} ({suggestion.collection})
             </SuggestionItem>
           ))}
         </SuggestionsList>

@@ -4,66 +4,72 @@ import Card from './Card';
 import { Outlet, useOutlet } from 'react-router-dom';
 import { useQuestionAnswerData } from './useQuestionAnswerData'; // Adjust the import path as needed
 import { UserContext } from '../../contexts/UserContext';
+import AskContainer from './AskContainer'; // Import the reusable AskContainer component
 
 const Container = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-`;
-
-const AskContainer = styled.section`
-  background-color: aliceblue;
-  display: flex;
-  flex-direction: column;
-  width: 700px;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-
-  input, textarea {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-  }
-
-  button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #0056b3;
-    }
+  padding: 0 16px;
+  box-sizing: border-box;
+margin: 40px 0;
+  @media (max-width: 768px) {
+    padding: 0 8px;
   }
 `;
 
 const QuestionAnswerContainer = styled.section`
-  width: 600px;
+  width: 100%;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
+  margin-top: 16px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+  }
 `;
+
+const categoryOptions = {
+  Halakha: ['Shabbat', 'Kashrut', 'Family Purity', 'General'],
+  Mussar: ['Ethics', 'Character Development', 'Repentance','General'],
+  Parasha: ['Genesis', 'Exodus', 'Leviticus'],
+  Tanakh: ['Prophets', 'Writings', 'Historical Books','General'],
+  General:['General']
+};
+
 export default function QuestionAnswer() {
   const { QuestionAnswerData, addQuestionAnswer } = useQuestionAnswerData();
   const [question, setQuestion] = useState('');
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [subcategory, setSubcategory] = useState('');
   const outlet = useOutlet();
-const {isAdmin, username, userId, isLogin} = useContext(UserContext)
+  const { isAdmin, username, userAvatarUrl, userId, isLogin } = useContext(UserContext);
+
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+    setSubcategory(''); // Reset subcategory when category changes
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (question.trim()) {
+    if (question.trim() && title.trim() && category.trim() && subcategory.trim()) {
       try {
         await addQuestionAnswer({ 
+          title,
           question, 
+          category,
+          subcategory,
           userId: userId, 
-          userName: username 
+          userName: username,
+          avatarUrl: userAvatarUrl,
         }); 
         setQuestion(''); 
-        
+        setTitle('');
+        setCategory('');
+        setSubcategory('');
       } catch (error) {
         console.error('Error adding question:', error);
       }
@@ -74,19 +80,25 @@ const {isAdmin, username, userId, isLogin} = useContext(UserContext)
     <Container>
       {!outlet && (
         <>
-        {isLogin ?(
-          <AskContainer>
-            <textarea 
-              placeholder="Ask anything..." 
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
+          {isLogin ? (
+            <AskContainer 
+              title={title} 
+              setTitle={setTitle} 
+              category={category} 
+              setCategory={setCategory} 
+              subcategory={subcategory} 
+              setSubcategory={setSubcategory} 
+              question={question} 
+              setQuestion={setQuestion} 
+              categoryOptions={categoryOptions} 
+              handleSubmit={handleSubmit} 
+              handleCategoryChange={handleCategoryChange} 
+              username={username} 
+              userAvatarUrl={userAvatarUrl} 
             />
-            <button type="submit" onClick={handleSubmit}>Ask</button>
-          </AskContainer>
-        ):
-        (
-          <p>please login to ask </p>
-        )}
+          ) : (
+            <p>Please login to ask</p>
+          )}
           
           <QuestionAnswerContainer>
             {[...QuestionAnswerData].reverse().map((QuestionAnswer) => (
@@ -96,6 +108,11 @@ const {isAdmin, username, userId, isLogin} = useContext(UserContext)
                 userId={QuestionAnswer.userId}
                 userName={QuestionAnswer.userName}
                 question={QuestionAnswer.question}
+                title={QuestionAnswer.title}
+                category={QuestionAnswer.category}
+                subcategory={QuestionAnswer.subcategory}
+                avatarUrl={QuestionAnswer.avatarUrl}
+                createdAt={QuestionAnswer.$createdAt}
               />
             ))}
           </QuestionAnswerContainer>

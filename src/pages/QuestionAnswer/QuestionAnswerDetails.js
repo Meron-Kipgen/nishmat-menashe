@@ -4,55 +4,86 @@ import { useQuestionAnswerData } from './useQuestionAnswerData'; // Adjust the i
 import styled from 'styled-components';
 
 const Container = styled.div`
-  padding: 30px;
-  width: 700px;
+  padding: 20px;
+  width: 100%;
+  max-width: 700px;
   background-color: #ffffff;
+  margin: auto;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 const Title = styled.h2`
-  font-size: 2em;
+  font-size: 1.8em;
   color: #1d4ed8;
-  margin-bottom: 20px;
-  
+  margin-bottom: 15px;
+
+  @media (max-width: 768px) {
+    font-size: 1.5em;
+  }
 `;
 
 const QuestionText = styled.p`
-  font-size: 1.4em;
-  color: #333;
-  margin-bottom: 30px;
-  
-`;
-
-const AnswerSection = styled.div`
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #f3f4f6;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-`;
-
-const AnswerTitle = styled.h3`
-  font-size: 1.5em;
-  color: #2563eb;
-  margin-bottom: 15px;
-`;
-
-const AnswerText = styled.p`
   font-size: 1.2em;
   color: #333;
   margin-bottom: 20px;
-  line-height: 1.6;
+
+  @media (max-width: 768px) {
+    font-size: 1em;
+  }
+`;
+
+const AnswerSection = styled.div`
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+`;
+
+const AnswerTitle = styled.h3`
+  font-size: 1.3em;
+  color: #2563eb;
+  margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 1.2em;
+  }
+`;
+
+const AnswerText = styled.p`
+  font-size: 1.1em;
+  color: #333;
+  margin-bottom: 15px;
+  line-height: 1.5;
+
+  @media (max-width: 768px) {
+    font-size: 1em;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 20px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
 `;
 
 const Button = styled.button`
-  padding: 12px 20px;
+  padding: 10px 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -74,12 +105,18 @@ const Button = styled.button`
 const Textarea = styled.textarea`
   width: 100%;
   height: 120px;
-  padding: 15px;
+  padding: 12px;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 1em;
   margin-bottom: 15px;
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    height: 100px;
+    font-size: 0.9em;
+    padding: 10px;
+  }
 `;
 
 const ErrorMessage = styled.p`

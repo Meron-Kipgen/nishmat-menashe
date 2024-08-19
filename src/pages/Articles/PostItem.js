@@ -77,7 +77,7 @@ const PostItem = ({
       </SubcategoryPoster>
       <Title>{title}</Title>
       <Wrapper>
-        {writer} | <TimeAgo createdAt={createdAt} /> | views: {views}
+        {writer} ⁃ <TimeAgo createdAt={createdAt} /> ⁃ views: {views}
       </Wrapper>
       <Body dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body) }} />
       <ReadMoreButton onClick={handleReadMore}>Read More</ReadMoreButton>

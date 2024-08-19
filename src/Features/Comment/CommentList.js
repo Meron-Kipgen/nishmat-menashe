@@ -8,8 +8,8 @@ import CommentContent from './CommentContent';
 import { DotHorizon } from '../../Assets/Icons';
 
 const Container = styled.div`
-  margin-left: 90px;
-  padding: 10px 0;
+  margin-left: 60px;
+ padding-bottom: 5px;
   width: 80%;
   @media (max-width: 768px) {
     margin-left: 20px;
@@ -21,9 +21,7 @@ const CommentItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
 `;
 
 const TopContainer = styled.div`
