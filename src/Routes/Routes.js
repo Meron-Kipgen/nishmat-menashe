@@ -19,7 +19,8 @@ import PodcastDetails from "../pages/Audio/Podcast/PodcastDetails";
 import QuestionAnswerDetails from "../pages/QuestionAnswer/QuestionAnswerDetails";
 import Profile from "../Features/User/Profile";
 import Alon from "../pages/Alon/Alon";
-
+import AudioDetails from "../pages/Audio/AudioDetails"
+import Podcast from "../pages/Audio/Podcast/Podcast";
 
 const routers = createBrowserRouter([
   {
@@ -53,9 +54,22 @@ const routers = createBrowserRouter([
         element: <Audio />,
         children: [
           {
+            path: "podcast",
+            element: <Podcast />,
+            children:[
+               {
+         
             path: ":id",
             element: <PodcastDetails />,
           }, 
+            ]
+          }, 
+          {
+            path: ":id",
+            element: <AudioDetails />,
+          }, 
+         
+          
         ],
       },
       {

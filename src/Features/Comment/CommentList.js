@@ -9,7 +9,7 @@ import { DotHorizon } from '../../Assets/Icons';
 
 const Container = styled.div`
   margin-left: 60px;
- padding-bottom: 5px;
+  padding-bottom: 5px;
   width: 80%;
   @media (max-width: 768px) {
     margin-left: 20px;
@@ -30,11 +30,10 @@ const TopContainer = styled.div`
   gap: 15px;
   position: relative;
   width: 100%;
-
 `;
 
 const DropdownButton = styled.button`
- background: transparent;
+  background: transparent;
   border: none;
   cursor: pointer;
   font-size: 16px;
@@ -53,33 +52,23 @@ const DropdownButton = styled.button`
 `;
 
 const CommentList = ({ comments, loading, error, updateComment, deleteComment }) => {
-  const [visibleCount, setVisibleCount] = useState(2);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [newCommentText, setNewCommentText] = useState('');
   const { userId } = useContext(UserContext);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const dropdownRef = useRef(null);
 
-  const MAX_COMMENT_LENGTH = 400;
+  const MAX_COMMENT_LENGTH = 500;
   const [expandedComments, setExpandedComments] = useState({});
 
   const reversedComments = [...comments].reverse();
-  const displayedComments = reversedComments.slice(0, visibleCount);
-
-  const handleShowMore = () => {
-    setVisibleCount(prevCount => prevCount + 5);
-  };
-
-  const handleShowLess = () => {
-    setVisibleCount(2);
-  };
 
   const handleEditClick = (commentId, commentText) => {
     setEditingCommentId(commentId);
     setNewCommentText(commentText);
     setDropdownOpen(null);
   };
-  
+
   const handleCancelEdit = () => {
     setEditingCommentId(null);
     setNewCommentText('');
@@ -93,9 +82,8 @@ const CommentList = ({ comments, loading, error, updateComment, deleteComment })
     } catch (error) {
       console.error("Error updating comment:", error);
     }
- 
   };
-  
+
   const handleDeleteClick = async (commentId) => {
     try {
       if (window.confirm("Are you sure you want to delete this comment?")) {
@@ -106,8 +94,6 @@ const CommentList = ({ comments, loading, error, updateComment, deleteComment })
       console.error("Error deleting comment:", error);
     }
   };
-  
-  
 
   const toggleExpandComment = (commentId) => {
     setExpandedComments((prev) => ({
@@ -134,60 +120,52 @@ const CommentList = ({ comments, loading, error, updateComment, deleteComment })
   }, []);
 
   return (
-    <div>
-      <Container>
-        {displayedComments.map(comment => (
-          <CommentItem key={comment.$id}>
-            <TopContainer>
-              <AvatarSection 
-                avatarUrl={comment.avatarUrl} 
-                userName={comment.userName} 
-                createdAt={comment.$createdAt} 
-              />
-              {comment.userId === userId && (
-                <div ref={dropdownRef}>
-                  <DropdownButton onClick={() => handleThreeDotsClick(comment.$id)}>
+    <Container>
+      {reversedComments.map(comment => (
+        <CommentItem key={comment.$id}>
+          <TopContainer>
+            <AvatarSection 
+              avatarUrl={comment.avatarUrl} 
+              userName={comment.userName} 
+              createdAt={comment.$createdAt} 
+            />
+            {comment.userId === userId && (
+              <div ref={dropdownRef}>
+                <DropdownButton onClick={() => handleThreeDotsClick(comment.$id)}>
                   <DotHorizon width="20px" height="20px" />
-                  </DropdownButton>
-                  {dropdownOpen === comment.$id && (
-                    <DropdownMenu 
-                      onEditClick={() => handleEditClick(comment.$id, comment.comment)} 
-                      onDeleteClick={() => handleDeleteClick(comment.$id)} 
-                    />
-                  )}
-                </div>
-              )}
-            </TopContainer>
+                </DropdownButton>
+                {dropdownOpen === comment.$id && (
+                  <DropdownMenu 
+                    onEditClick={() => handleEditClick(comment.$id, comment.comment)} 
+                    onDeleteClick={() => handleDeleteClick(comment.$id)} 
+                  />
+                )}
+              </div>
+            )}
+          </TopContainer>
 
-            <CommentContent 
-              text={comment.comment} 
-              expandedLength={expandedComments[comment.$id]} 
-              maxLength={MAX_COMMENT_LENGTH} 
-            />
+          <CommentContent 
+            text={comment.comment} 
+            expandedLength={expandedComments[comment.$id]} 
+            maxLength={MAX_COMMENT_LENGTH} 
+          />
 
-            <CommentActions 
-              isEditing={editingCommentId === comment.$id}
-              newCommentText={newCommentText}
-              onSaveEdit={handleSaveEdit}
-              onCancelEdit = {handleCancelEdit}
-              onChange={(e) => setNewCommentText(e.target.value)}
-              onShowMore={() => toggleExpandComment(comment.$id)}
-              onShowLess={() => setExpandedComments((prev) => ({ ...prev, [comment.$id]: MAX_COMMENT_LENGTH }))}
-              commentId={comment.$id}
-              commentLength={comment.comment.length}
-              maxLength={MAX_COMMENT_LENGTH}
-              expandedLength={expandedComments[comment.$id]}
-            />
-          </CommentItem>
-        ))}
-      </Container>
-      {comments.length > visibleCount && (
-        <button onClick={handleShowMore}>Show More</button>
-      )}
-      {visibleCount > 2 && (
-        <button onClick={handleShowLess}>Show Less</button>
-      )}
-    </div>
+          <CommentActions 
+            isEditing={editingCommentId === comment.$id}
+            newCommentText={newCommentText}
+            onSaveEdit={() => handleSaveEdit(comment.$id)}
+            onCancelEdit={handleCancelEdit}
+            onChange={(e) => setNewCommentText(e.target.value)}
+            onShowMore={() => toggleExpandComment(comment.$id)}
+            onShowLess={() => setExpandedComments((prev) => ({ ...prev, [comment.$id]: MAX_COMMENT_LENGTH }))}
+            commentId={comment.$id}
+            commentLength={comment.comment.length}
+            maxLength={MAX_COMMENT_LENGTH}
+            expandedLength={expandedComments[comment.$id]}
+          />
+        </CommentItem>
+      ))}
+    </Container>
   );
 };
 

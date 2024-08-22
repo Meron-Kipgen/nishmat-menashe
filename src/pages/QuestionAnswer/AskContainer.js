@@ -79,7 +79,7 @@ export default function AskContainer({
   setSubcategory, 
   question, 
   setQuestion, 
-  categoryOptions, 
+  selectOption, 
   handleSubmit, 
   handleCategoryChange, 
   username, 
@@ -95,7 +95,7 @@ export default function AskContainer({
       />
       <select value={category} onChange={handleCategoryChange}>
         <option value="">Select Category</option>
-        {Object.keys(categoryOptions).map((cat) => (
+        {Object.keys(selectOption).map((cat) => (
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>
@@ -105,7 +105,7 @@ export default function AskContainer({
           onChange={(e) => setSubcategory(e.target.value)}
         >
           <option value="">Select Subcategory</option>
-          {categoryOptions[category].map((subcat) => (
+          {selectOption[category].map((subcat) => (
             <option key={subcat} value={subcat}>{subcat}</option>
           ))}
         </select>

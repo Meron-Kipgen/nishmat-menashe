@@ -12,7 +12,12 @@ const Container = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
+  padding-top: 20px;
   gap: 50px;
+  @media (max-width: 768px) {
+     flex-direction: column;
+     width: 100%;
+    }
 `;
 
 const PostContainer = styled.div`
@@ -20,10 +25,18 @@ const PostContainer = styled.div`
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  @media (max-width: 768px) {
+  
+     width: 100%;
+    }
 `;
 
 const Post = styled.div`
   padding: 40px;
+  @media (max-width: 768px) {
+    
+     width: 100%;
+    }
   h1 {
     margin-bottom: 7px;
   }

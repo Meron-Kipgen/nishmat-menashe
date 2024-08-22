@@ -1,121 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuestionAnswerData } from './useQuestionAnswerData'; // Adjust the import path as needed
+import { useQuestionAnswerData } from './useQuestionAnswerData';
 import styled from 'styled-components';
+import Avatar from '../../Features/User/Avatar';
+import TimeAgo from '../../utils/TimeAgo';
+import AnswerForm from './AnswerForm'; 
+import QuestionEditForm from './QuestionEditForm';
+import { UserContext } from '../../contexts/UserContext';
 
+// Styled components
 const Container = styled.div`
   padding: 20px;
-  width: 100%;
-  max-width: 700px;
+  max-width: 900px;
+  margin: 0 auto;
   background-color: #ffffff;
-  margin: auto;
-  box-sizing: border-box;
+  margin-top: 20px;
 
   @media (max-width: 768px) {
-    padding: 15px;
+  width: 100%;
   }
 `;
 
-const Title = styled.h2`
-  font-size: 1.8em;
-  color: #1d4ed8;
-  margin-bottom: 15px;
-
-  @media (max-width: 768px) {
-    font-size: 1.5em;
-  }
-`;
-
-const QuestionText = styled.p`
-  font-size: 1.2em;
-  color: #333;
+const HeaderSection = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 20px;
   margin-bottom: 20px;
 
   @media (max-width: 768px) {
-    font-size: 1em;
+ 
+  }
+
+  p {
+    font-size: 1rem;
+
+    @media (max-width: 768px) {
+      font-size: 1.2em;
+    }
   }
 `;
 
+const QuestionSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+    }
+  }
+
+  p {
+    font-size: 1rem;
+    
+    @media (max-width: 768px) {
+      font-size: 1em;
+    }
+  }
+
+  button {
+    align-self: start;
+    margin-top: 10px;
+
+    @media (max-width: 768px) {
+      margin-top: 5px;
+    }
+  }
+`;
+const QuestionConatiner = styled.div`
+  word-wrap: break-word;     
+  overflow-wrap: break-word;
+  word-break: break-word; 
+`
 const AnswerSection = styled.div`
-  margin-top: 20px;
-  padding: 15px;
+  padding: 20px;
   background-color: #f3f4f6;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
+  word-wrap: break-word;     
+  overflow-wrap: break-word;
+  word-break: break-word; 
   @media (max-width: 768px) {
-    padding: 10px;
-  }
-`;
-
-const AnswerTitle = styled.h3`
-  font-size: 1.3em;
-  color: #2563eb;
-  margin-bottom: 10px;
-
-  @media (max-width: 768px) {
-    font-size: 1.2em;
-  }
-`;
-
-const AnswerText = styled.p`
-  font-size: 1.1em;
-  color: #333;
-  margin-bottom: 15px;
-  line-height: 1.5;
-
-  @media (max-width: 768px) {
-    font-size: 1em;
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  margin-top: 15px;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
-`;
-
-const Button = styled.button`
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: ${({ variant }) => (variant === 'submit' ? '#2563eb' : variant === 'delete' ? '#ef4444' : '#9ca3af')};
-  color: #ffffff;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: ${({ variant }) => (variant === 'submit' ? '#1d4ed8' : variant === 'delete' ? '#dc2626' : '#6b7280')};
+    padding: 15px;
   }
 
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-`;
+  button {
+    margin-top: 10px;
 
-const Textarea = styled.textarea`
-  width: 100%;
-  height: 120px;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1em;
-  margin-bottom: 15px;
-  box-sizing: border-box;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    font-size: 0.9em;
-    padding: 10px;
+    @media (max-width: 768px) {
+      margin-top: 5px;
+    }
   }
 `;
 
@@ -124,42 +103,74 @@ const ErrorMessage = styled.p`
   font-size: 1em;
   margin-top: 20px;
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 0.9em;
+  }
 `;
 
-export default function QnADetails() {
+export default function QuestionAnswerDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { QuestionAnswerData, updateQuestionAnswer, deleteQuestionAnswer } = useQuestionAnswerData();
-  const [answer, setAnswer] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingQuestion, setIsEditingQuestion] = useState(false);
+  const [isEditingAnswer, setIsEditingAnswer] = useState(false);
+  const { userId, isAdmin } = useContext(UserContext);
+  const [question, setQuestion] = useState(null);
+  const [editFields, setEditFields] = useState({
+    category: '',
+    subcategory: '',
+    title: '',
+    question: '',
+  });
 
-  const question = QuestionAnswerData.find((qna) => qna.$id === id);
+  useEffect(() => {
+    if (QuestionAnswerData.length) {
+      const foundQuestion = QuestionAnswerData.find((qna) => qna.$id === id);
+      if (foundQuestion) {
+        setQuestion(foundQuestion);
+        setEditFields({
+          category: foundQuestion.category || '',
+          subcategory: foundQuestion.subcategory || '',
+          title: foundQuestion.title || '',
+          question: foundQuestion.question || '',
+        });
+      }
+    }
+  }, [QuestionAnswerData, id]);
 
   if (!question) {
-    return (
-      <Container>
-        <div>Question not found</div>
-      </Container>
-    );
+    return <div>Question not found</div>;
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmitQuestion = async (e) => {
     e.preventDefault();
-    if (answer.trim()) {
-      setLoading(true);
-      setError(null);
-      try {
-        await updateQuestionAnswer(question.$id, { answer });
-        setAnswer('');
-        setIsEditing(false);
-      } catch (error) {
-        console.error('Error updating answer:', error);
-        setError('Failed to update answer.');
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    setError(null);
+    try {
+      await updateQuestionAnswer(question.$id, editFields);
+      setIsEditingQuestion(false);
+    } catch (error) {
+      console.error('Error updating question:', error);
+      setError('Failed to update question.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmitAnswer = async (answer) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await updateQuestionAnswer(question.$id, { answer });
+      setIsEditingAnswer(false);
+    } catch (error) {
+      console.error('Error updating answer:', error);
+      setError('Failed to update answer.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -169,7 +180,7 @@ export default function QnADetails() {
       setError(null);
       try {
         await deleteQuestionAnswer(question.$id);
-        navigate('/questions');
+        navigate('/QuestionAnswer');
       } catch (error) {
         console.error('Error deleting question:', error);
         setError('Failed to delete question.');
@@ -179,47 +190,84 @@ export default function QnADetails() {
     }
   };
 
+  const handleFieldChange = (e) => {
+    const { name, value } = e.target;
+    setEditFields((prevFields) => ({
+      ...prevFields,
+      [name]: value,
+    }));
+  };
+
+  // Determine if the user can edit the question
+  const canEditQuestion = userId === question.userId && !question.answer;
+
   return (
     <Container>
-      <Title>{question.userName} asked:</Title>
-      <p>category | subcategory</p>
-      <p>2 months ago | 33 views</p>
-      <QuestionText>{question.question}</QuestionText>
+      <HeaderSection>
+        <Avatar src={question.avatarUrl} />
+        <div>
+          <p>{question.userName}</p>
+          <p>
+            <TimeAgo createdAt={question.$createdAt} /> | {question.views} views
+          </p>
+        </div>
+      </HeaderSection>
+
+      <QuestionSection>
+        {isEditingQuestion ? (
+          <QuestionEditForm
+            editFields={editFields}
+            handleFieldChange={handleFieldChange}
+            handleSubmit={handleSubmitQuestion}
+            loading={loading}
+            setIsEditing={setIsEditingQuestion}
+          />
+        ) : (
+          <QuestionConatiner>
+            <p>{question.category} - {question.subcategory}</p>
+            <h1>{question.title}</h1>
+            <p>{question.question}</p>
+            {canEditQuestion && (
+              <button
+                type="button"
+                onClick={() => setIsEditingQuestion(true)}
+              >
+                Edit Question
+              </button>
+            )}
+          </QuestionConatiner>
+        )}
+      </QuestionSection>
+
       <AnswerSection>
-        <AnswerTitle>Answer:</AnswerTitle>
-        {isEditing ? (
-          <form onSubmit={handleSubmit}>
-            <Textarea
-              placeholder="Provide an answer..."
-              value={answer || question.answer}
-              onChange={(e) => setAnswer(e.target.value)}
-            />
-            <ButtonGroup>
-              <Button type="submit" variant="submit" disabled={loading}>
-                {loading ? 'Submitting...' : 'Submit Answer'}
-              </Button>
-              <Button type="button" onClick={() => setIsEditing(false)}>
-                Cancel
-              </Button>
-            </ButtonGroup>
-          </form>
+        <h1>Answer:</h1>
+        {isEditingAnswer ? (
+          <AnswerForm
+            initialAnswer={question.answer}
+            onSubmit={handleSubmitAnswer}
+            onCancel={() => setIsEditingAnswer(false)}
+            loading={loading}
+          />
         ) : (
           <div>
-            <AnswerText>{question.answer || 'No answer provided yet.'}</AnswerText>
-            <ButtonGroup>
-              <Button
-                type="button"
-                onClick={() => {
-                  setAnswer(question.answer || '');
-                  setIsEditing(true);
-                }}
-              >
-                Edit Answer
-              </Button>
-              <Button type="button" variant="delete" onClick={handleDelete} disabled={loading}>
-                {loading ? 'Deleting...' : 'Delete Question'}
-              </Button>
-            </ButtonGroup>
+            <p>{question.answer || 'No answer provided yet.'}</p>
+            {isAdmin && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingAnswer(true)}
+                >
+                  Edit Answer
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={loading}
+                >
+                  {loading ? 'Deleting...' : 'Delete Question'}
+                </button>
+              </>
+            )}
           </div>
         )}
       </AnswerSection>

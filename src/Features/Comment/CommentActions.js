@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const Button = styled.button`
@@ -24,7 +24,7 @@ const Textarea = styled.textarea`
   border-radius: 4px;
   outline: none;
   resize: none; /* Hide resize control */
-  overflow-y: hidden; /* Hide scrollbar */
+  overflow: hidden; /* Hide scrollbar */
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   &:focus {
     border-color: #007bff;
@@ -56,31 +56,46 @@ const CommentActions = ({
   commentLength, 
   maxLength, 
   expandedLength 
-}) => (
-  <>
-    {isEditing ? (
-      <>
-        <Textarea 
-          value={newCommentText} 
-          onChange={onChange} 
-          rows={4} // Set initial height
-        />
-        <ButtonContainer>
-          <Button onClick={() => onSaveEdit(commentId)}>Save</Button>
-          <CancelButton onClick={onCancelEdit}>Cancel</CancelButton>
-        </ButtonContainer>
-      </>
-    ) : (
-      <>
-        {commentLength > maxLength && (
-          <Button onClick={onShowMore}>Show More</Button>
-        )}
-        {expandedLength > maxLength && (
-          <Button onClick={onShowLess}>Show Less</Button>
-        )}
-      </>
-    )}
-  </>
-);
+}) => {
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // Reset height to auto
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height based on scroll height
+    }
+  }, [newCommentText, isEditing]);
+
+  const hasMoreText = commentLength > maxLength;
+  const isExpanded = expandedLength > maxLength;
+
+  return (
+    <>
+      {isEditing ? (
+        <>
+          <Textarea 
+            ref={textareaRef}
+            value={newCommentText} 
+            onChange={onChange} 
+            rows={1} // Set initial height to auto
+          />
+          <ButtonContainer>
+            <Button onClick={() => onSaveEdit(commentId)}>Save</Button>
+            <CancelButton onClick={onCancelEdit}>Cancel</CancelButton>
+          </ButtonContainer>
+        </>
+      ) : (
+        <>
+          {hasMoreText && !isExpanded && (
+            <Button onClick={onShowMore}>Show More</Button>
+          )}
+          {isExpanded && (
+            <Button onClick={onShowLess}>Show Less</Button>
+          )}
+        </>
+      )}
+    </>
+  );
+};
 
 export default CommentActions;

@@ -10,10 +10,15 @@ const GlobalPlayer = ({ audioUrl, shouldPlay, thumbnail, title, onClose, rabbi }
   const [isMaximized, setIsMaximized] = useState(false);
 
   useEffect(() => {
+    console.log('GlobalPlayer mounted or updated with audioUrl:', audioUrl);
     if (audioUrl) {
       setIsVisible(true);
     }
   }, [audioUrl]);
+
+  useEffect(() => {
+    console.log('GlobalPlayer shouldPlay:', shouldPlay);
+  }, [shouldPlay]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -34,12 +39,12 @@ const GlobalPlayer = ({ audioUrl, shouldPlay, thumbnail, title, onClose, rabbi }
       <Content isMaximized={isMaximized}>
         <Title>{title}</Title>
         <AudioContainer>
-        <AudioPlayer 
-          key={audioUrl} 
-          audioUrl={audioUrl} 
-          shouldPlay={shouldPlay} 
-          playerVars={playerVars} 
-        />
+          <AudioPlayer 
+            key={audioUrl} 
+            audioUrl={audioUrl} 
+            shouldPlay={shouldPlay} 
+            playerVars={playerVars} 
+          />
         </AudioContainer>
         <Rabbi>By: {rabbi}</Rabbi>
       </Content>
@@ -58,7 +63,6 @@ const GlobalPlayer = ({ audioUrl, shouldPlay, thumbnail, title, onClose, rabbi }
     PlayerContent
   );
 };
-
 
 const Container = styled.div`
   position: fixed;

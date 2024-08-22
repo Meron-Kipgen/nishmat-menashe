@@ -5,6 +5,8 @@ import { Outlet, useOutlet } from 'react-router-dom';
 import { useQuestionAnswerData } from './useQuestionAnswerData'; // Adjust the import path as needed
 import { UserContext } from '../../contexts/UserContext';
 import AskContainer from './AskContainer'; // Import the reusable AskContainer component
+import selectOption from './SelectOption';
+
 
 const Container = styled.section`
   display: flex;
@@ -14,7 +16,8 @@ const Container = styled.section`
   box-sizing: border-box;
 margin: 40px 0;
   @media (max-width: 768px) {
-    padding: 0 8px;
+    padding: 0;
+    margin-top: 40px;
   }
 `;
 
@@ -30,14 +33,6 @@ const QuestionAnswerContainer = styled.section`
     max-width: 100%;
   }
 `;
-
-const categoryOptions = {
-  Halakha: ['Shabbat', 'Kashrut', 'Family Purity', 'General'],
-  Mussar: ['Ethics', 'Character Development', 'Repentance','General'],
-  Parasha: ['Genesis', 'Exodus', 'Leviticus'],
-  Tanakh: ['Prophets', 'Writings', 'Historical Books','General'],
-  General:['General']
-};
 
 export default function QuestionAnswer() {
   const { QuestionAnswerData, addQuestionAnswer } = useQuestionAnswerData();
@@ -90,7 +85,7 @@ export default function QuestionAnswer() {
               setSubcategory={setSubcategory} 
               question={question} 
               setQuestion={setQuestion} 
-              categoryOptions={categoryOptions} 
+              selectOption={selectOption} 
               handleSubmit={handleSubmit} 
               handleCategoryChange={handleCategoryChange} 
               username={username} 
@@ -113,6 +108,7 @@ export default function QuestionAnswer() {
                 subcategory={QuestionAnswer.subcategory}
                 avatarUrl={QuestionAnswer.avatarUrl}
                 createdAt={QuestionAnswer.$createdAt}
+                views={QuestionAnswer.views}
               />
             ))}
           </QuestionAnswerContainer>

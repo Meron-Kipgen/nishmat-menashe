@@ -12,6 +12,7 @@ import Update from "./Update";
 import CommentBox from "../../Features/Comment/CommentBox";
 import CommentList from "../../Features/Comment/CommentList";
 import useCommentsData from "../../Features/Comment/useCommentsData";
+
 const Container = styled.section`
   display: flex;
   justify-content: space-between;
@@ -24,9 +25,9 @@ const VideoSection = styled.div`
   flex: 3;
   max-width: 65%;
 `;
-const VideoWrapper = styled.div`
 
-`;
+const VideoWrapper = styled.div``;
+
 const DetailsContainer = styled.section`
   background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(30px);
@@ -68,13 +69,17 @@ const PcSuggestionsSection = styled.div`
 
 export default function PcDetails() {
   const { id } = useParams();
-  const { videoData } = useVideosData();
-  const video = videoData.find((v) => v.$id === id);
-  const { comments, loading, error , updateComment, deleteComment } = useCommentsData(video.$id);
+  const { videoData, loading: videosLoading, error: videosError } = useVideosData();
+  const video = videoData?.find((v) => v.$id === id);
+  const { comments, loading: commentsLoading, error: commentsError, updateComment, deleteComment } = useCommentsData(video?.$id);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-  if (!video) {
-    return <div>Video not found</div>;
+  if (videosLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (videosError || !video) {
+    return <div>{videosError ? "Error loading video data." : "Video not found"}</div>;
   }
 
   const handleOpenUpdateModal = () => {
@@ -89,8 +94,7 @@ export default function PcDetails() {
 
   return (
     <Container>
-     
-      <VideoSection> 
+      <VideoSection>
         <VideoWrapper>
           <Player src={video.videoUrl} poster={video.poster} />
         </VideoWrapper>
@@ -103,18 +107,16 @@ export default function PcDetails() {
           <p>{video.date}</p>
           <Delete videoId={id} />
           <button onClick={handleOpenUpdateModal}>Update Video</button>
-        
         </DetailsContainer>
-  {isUpdateModalOpen && <Update videoId={id} onClose={handleCloseUpdateModal} />}
-        <CommentBox postId={video.$id}/>
+        {isUpdateModalOpen && <Update videoId={id} onClose={handleCloseUpdateModal} />}
+        <CommentBox postId={video.$id} />
         <CommentList
-      comments={comments}
-      loading={loading}
-      error={error}
-      updateComment={updateComment}
-      deleteComment={deleteComment}
-     
-    />
+          comments={comments}
+          loading={commentsLoading}
+          error={commentsError}
+          updateComment={updateComment}
+          deleteComment={deleteComment}
+        />
       </VideoSection>
 
       <PcSuggestionsSection>

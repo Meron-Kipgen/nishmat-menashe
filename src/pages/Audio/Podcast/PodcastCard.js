@@ -5,20 +5,31 @@ import { useNavigate } from 'react-router-dom';
 // Styled components for PodcastCard
 const Container = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   margin: 15px;
-  width: 230px;
+  width: 230px; /* Default width for desktop */
   max-width: 100%;
   padding: 20px;
   gap: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 300px; /* Full width on smaller screens */
+    /* Maximum width on smaller screens */
+    flex-direction: column; /* Ensure items stack vertically */
+    padding: 10px; /* Adjust padding for mobile */
+  }
+
+  @media (max-width: 480px) {
+    width: 100%; /* Full width on very small screens */
+    max-width: 100%; /* Ensures full width is used */
+    padding: 8px; /* Smaller padding for very small screens */
+  }
 
   &:hover {
     transform: translateY(-5px);
@@ -70,7 +81,7 @@ const PodcastCard = ({ id, title, description, thumbnail, rabbi, season, isCompl
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/Audio/${id}`);
+    navigate(`podcast/${id}`);
   };
 
   return (
@@ -82,7 +93,6 @@ const PodcastCard = ({ id, title, description, thumbnail, rabbi, season, isCompl
       <Info>Season: {season}</Info>
       <Info>Played: {played}</Info>
       <Info>Status: {isComplete ? 'Completed' : 'Running'}</Info>
-     
     </Container>
   );
 };

@@ -13,6 +13,7 @@ import { UserContext } from "../../contexts/UserContext";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  padding-top: 40px;
 `;
 
 const PostContainer = styled.div`

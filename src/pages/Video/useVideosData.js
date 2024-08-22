@@ -1,4 +1,3 @@
-// VideosDataProvider.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { db, ID, client } from "../../db/config";
 
@@ -35,37 +34,52 @@ export const VideosDataProvider = ({ children }) => {
   useEffect(() => {
     fetchVideos();
 
-    const videosSubscription = client.subscribe(`databases.${DatabaseId}.collections.${CollectionId}.documents`, (response) => {
-      const { events, payload } = response;
+    const videoSubscription = client.subscribe(
+      `databases.${DatabaseId}.collections.${CollectionId}.documents`,
+      (response) => {
+        const { events, payload } = response;
 
-      if (events.includes('databases.*.collections.*.documents.*.create')) {
-        setVideoData(prevData => {
-          if (prevData.find(video => video.$id === payload.$id)) {
-            return prevData;
-          }
-          return [...prevData, payload];
-        });
-      }
+        if (events.includes("databases.*.collections.*.documents.*.create")) {
+          setVideoData((prevData) => {
+            if (prevData.find((video) => video.$id === payload.$id)) {
+              return prevData;
+            }
+            return [...prevData, payload];
+          });
+        }
 
-      if (events.includes('databases.*.collections.*.documents.*.update')) {
-        setVideoData(prevData => prevData.map(video => video.$id === payload.$id ? payload : video));
-      }
+        if (events.includes("databases.*.collections.*.documents.*.update")) {
+          setVideoData((prevData) =>
+            prevData.map((video) =>
+              video.$id === payload.$id ? payload : video
+            )
+          );
+        }
 
-      if (events.includes('databases.*.collections.*.documents.*.delete')) {
-        setVideoData(prevData => prevData.filter(video => video.$id !== payload.$id));
+        if (events.includes("databases.*.collections.*.documents.*.delete")) {
+          setVideoData((prevData) =>
+            prevData.filter((video) => video.$id !== payload.$id)
+          );
+        }
       }
-    });
+    );
 
     return () => {
-      if (videosSubscription) {
-        videosSubscription();
+      if (videoSubscription) {
+        videoSubscription();
       }
     };
   }, []);
 
   const addVideo = async (newVideo) => {
     try {
-      await db.createDocument(DatabaseId, CollectionId, ID.unique(), newVideo);
+      const createdVideo = await db.createDocument(
+        DatabaseId,
+        CollectionId,
+        ID.unique(),
+        newVideo
+      );
+      setVideoData((prevData) => [...prevData, createdVideo]);
     } catch (err) {
       setError(err);
       throw err;
@@ -74,23 +88,25 @@ export const VideosDataProvider = ({ children }) => {
 
   const updateViews = async (videoId) => {
     try {
-      const videoToUpdate = videoData.find(video => video.$id === videoId);
+      const videoToUpdate = videoData.find((video) => video.$id === videoId);
       if (!videoToUpdate) {
         throw new Error("Video not found");
       }
 
       const updatedVideo = {
         ...videoToUpdate,
-        views: (videoToUpdate.views || 0) + 1
+        views: (videoToUpdate.views || 0) + 1,
       };
 
       await db.updateDocument(DatabaseId, CollectionId, videoId, {
-        views: updatedVideo.views
+        views: updatedVideo.views,
       });
 
-      setVideoData(prevData => prevData.map(video =>
-        video.$id === videoId ? updatedVideo : video
-      ));
+      setVideoData((prevData) =>
+        prevData.map((video) =>
+          video.$id === videoId ? updatedVideo : video
+        )
+      );
     } catch (err) {
       setError(err);
       throw err;
@@ -100,9 +116,11 @@ export const VideosDataProvider = ({ children }) => {
   const updateVideo = async (videoId, updatedData) => {
     try {
       await db.updateDocument(DatabaseId, CollectionId, videoId, updatedData);
-      setVideoData(prevData => prevData.map(video =>
-        video.$id === videoId ? { ...video, ...updatedData } : video
-      ));
+      setVideoData((prevData) =>
+        prevData.map((video) =>
+          video.$id === videoId ? { ...video, ...updatedData } : video
+        )
+      );
     } catch (err) {
       setError(err);
       throw err;
@@ -112,7 +130,9 @@ export const VideosDataProvider = ({ children }) => {
   const deleteVideo = async (videoId) => {
     try {
       await db.deleteDocument(DatabaseId, CollectionId, videoId);
-      setVideoData(prevData => prevData.filter(video => video.$id !== videoId));
+      setVideoData((prevData) =>
+        prevData.filter((video) => video.$id !== videoId)
+      );
     } catch (err) {
       setError(err);
       throw err;

@@ -68,21 +68,26 @@ const FeedbackContainer = styled.section`
     opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 
     @media (max-width: 768px) {
-  
-    right: 20px;
-  }
+      right: 20px;
+    }
+    
     svg {
       width: 24px;
       height: 24px;
       color: #fff;
     }
-    
   }
 `;
 
 const ErrorMessage = styled.p`
   color: red;
   margin-top: 10px;
+`;
+
+const WarningMessage = styled.p`
+  color: orange;
+  margin-top: 10px;
+  font-size: 14px;
 `;
 
 export default function Feedback() {
@@ -102,7 +107,7 @@ export default function Feedback() {
         return;
       }
 
-      setLoading(true);
+      setLoading(true); // Disable the button immediately
       try {
         if (editingFeedback) {
           await updateFeedback(editingFeedback.$id, { feedback });
@@ -119,11 +124,23 @@ export default function Feedback() {
         setError('');
       } catch (error) {
         console.error('Error submitting feedback:', error);
+        setError('An error occurred. Please try again.');
       } finally {
-        setLoading(false);
+        setLoading(false); // Re-enable the button when done
       }
     }
   };
+
+  // Determine the text direction based on the feedback content
+  const getTextDirection = (text) => {
+    const rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB1D-\uFB4F\uFE70-\uFEFF]/;
+    return rtlPattern.test(text) ? 'rtl' : 'ltr';
+  };
+
+  // Calculate the remaining characters and the warning threshold
+  const maxLength = 5000;
+  const remainingCharacters = maxLength - feedback.length;
+  const warningThreshold = 100; // Show warning when 100 characters remain
 
   return (
     <Container>
@@ -133,22 +150,24 @@ export default function Feedback() {
             {isLogin ? <Avatar src={userAvatarUrl} name={username} height="45px" width="45px" /> : <GuestIcon width="45px" height="45px" />}
            
             <textarea
+              dir={getTextDirection(feedback)}
               placeholder={isLogin ? "Any feedback?" : "Please log in to provide feedback"}
               value={feedback}
               onChange={(e) => {
                 setFeedback(e.target.value);
                 setError('');
               }}
-              disabled={!isLogin} // Disables textarea if not logged in
+              disabled={!isLogin}
+              maxLength={maxLength} // Limit to 5000 characters
             />  
             
             <button 
               type="submit" 
               onClick={handleSubmit} 
-              disabled={!isLogin || loading} // Disables button if not logged in or if loading
+              disabled={!isLogin || loading}
             >
               {loading ? <Loading /> : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-send" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/5000/svg" className="icon icon-tabler icon-tabler-send" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                   <path d="M10 14l11 -11" />
                   <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
@@ -156,6 +175,10 @@ export default function Feedback() {
               )}
             </button>
           </FeedbackContainer>
+
+          {remainingCharacters <= warningThreshold && (
+            <WarningMessage> {remainingCharacters} characters remaining.</WarningMessage>
+          )}
         
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </>

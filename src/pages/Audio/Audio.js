@@ -11,14 +11,18 @@ import ExploreBtn from "../../components/ExploreBtn";
 import AddNewBtn from "../../components/AddNewBtn";
 import { UserContext } from "../../contexts/UserContext";
 import Podcast from "../Audio/Podcast/Podcast";
-import { Outlet, useOutlet } from "react-router-dom";
+import { Link, Outlet, useOutlet } from "react-router-dom";
+import PodcastCard from "./Podcast/PodcastCard";
 
 const Container = styled.div`
   display: flex;
   gap: 30px;
   height: 100vh;
   overflow: hidden;
-  
+  @media (max-width: 768px) {
+     width: 100%;
+     flex-direction: column;
+    }
 `;
 
 const AudioContainer = styled.div`
@@ -31,7 +35,11 @@ const AudioContainer = styled.div`
   scrollbar-width: none;
   -ms-overflow-style: none; 
 
-
+  @media (max-width: 768px) {
+    width: 100%;
+  
+ 
+    }
   ::-webkit-scrollbar {
     display: none;
   }
@@ -56,6 +64,9 @@ const ItemContainer = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
+  @media (max-width: 768px) {
+      width: 100%;
+    }
 `;
 
 const CategoriesContainer = styled.div`
@@ -81,7 +92,7 @@ height: 30px;
 display: flex;
 align-items: center;
 gap: 20px;
-margin: 10px 0 0 70px;
+margin: 50px 0 0 70px;
 h1{
   font-size: 20px;
 }
@@ -89,6 +100,9 @@ h1{
 const LeftSide = styled.section`
 display: flex;
 flex-direction: column;
+@media (max-width: 768px) {
+      display: none;
+    }
 `
 const Heading = styled.section`
 display: flex;
@@ -99,6 +113,23 @@ h1{
   font-size: 20px;
 }
 `
+const MobilePodcast = styled.section`
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 768px) {
+      display: none;
+    }
+`;
 const Audio = () => {
   const { audioData, deleteAudio, updatePlayed, fetchAudioData } = useAudioData();
   const { isAdmin } = useContext(UserContext);
@@ -194,8 +225,22 @@ const Audio = () => {
 
   return (
     <Container>
+
     {!outlet && (
-      <>
+      <>      <p><Link to="/podcast"/>Podcast</p>
+<MobilePodcast>
+ 
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+<PodcastCard/>
+</MobilePodcast>
       <CategoriesBtn show={showBtn}>
         <ExploreBtn onClick={handleToggleCategories} flipped={flipped} />
       </CategoriesBtn>
@@ -220,6 +265,7 @@ const Audio = () => {
             }}
           />
         </CategoriesContainer>
+
 
        <AudioHeading>
        <h1> Audio</h1>

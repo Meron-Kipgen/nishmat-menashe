@@ -3,25 +3,21 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../../Features/User/Avatar';
 import TimeAgo from '../../utils/TimeAgo';
+import { useQuestionAnswerData } from './useQuestionAnswerData';
 
 const CardContainer = styled.div`
-  padding: 16px;
+
   margin-bottom: 16px;
   background: #ffffff;
   width: 100%;
   max-width: 700px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
+padding: 20px;
 
   @media (max-width: 768px) {
     padding: 12px;
     margin-bottom: 12px;
+    width: 100%;
+
   }
 `;
 
@@ -54,7 +50,9 @@ const QuestionContainer = styled.section`
   font-size: 1.1rem;
   line-height: 1.6rem;
   margin-bottom: 16px;
-
+  word-wrap: break-word;     
+  overflow-wrap: break-word;
+  word-break: break-word; 
   p {
     margin: 0 0 8px;
     
@@ -84,7 +82,7 @@ const AnswerButton = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+
 
   &:hover {
     background-color: #0056b3;
@@ -124,10 +122,12 @@ const UserName = styled.div`
   }
 `;
 
-export default function Card({ id, avatarUrl, createdAt, userName, question, title, category, subcategory }) {
+export default function Card({ id, avatarUrl, createdAt, userName, question,views, title, category, subcategory }) {
   const navigate = useNavigate();
+  const {updateViews} = useQuestionAnswerData()
   const handleClick = () => {
     navigate(`/QuestionAnswer/${id}`);
+    updateViews(id)
   };
 
   return (
@@ -137,7 +137,7 @@ export default function Card({ id, avatarUrl, createdAt, userName, question, tit
           <Avatar src={avatarUrl} />
           <UserName>
             <h1>{userName}</h1>
-            <p><TimeAgo createdAt={createdAt} /> ⁃ 33 views</p>
+            <p><TimeAgo createdAt={createdAt} /> ⁃ {views} views</p>
           </UserName>
         </UserInfo>
         <p>{category} ⁃ {subcategory}</p>

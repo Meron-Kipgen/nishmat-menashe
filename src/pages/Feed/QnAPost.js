@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../../Features/User/Avatar';
 import TimeAgo from '../../utils/TimeAgo';
+import CommentsSection from '../../Features/Comment/CommentSection';
+import useCommentsData from '../../Features/Comment/useCommentsData';
+import { CommentIcon } from '../../Assets/Icons';
 
 const CardContainer = styled.div`
   padding: 20px;
@@ -10,6 +13,7 @@ const CardContainer = styled.div`
   background: #ffffff;
   width: 100%;
   border-radius: 8px;
+  cursor: pointer;
  
 `;
 
@@ -43,33 +47,7 @@ const QuestionContainer = styled.section`
 
 `;
 
-const FooterText = styled.section`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
 
-  p {
-    margin: 0;
-    color: #777;
-    font-size: 0.9rem;
-  }
-`;
-
-const AnswerButton = styled.button`
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
 const UserInfo = styled.div`
 display: flex;
 gap: 10px;
@@ -84,7 +62,8 @@ p{
 
 `
 
-export default function Card({post}) {
+export default function Card({post,maxPosts = 1}) {
+  const { comments, loading, error, createComment, updateComment, deleteComment } = useCommentsData(post.$id);
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -92,14 +71,17 @@ export default function Card({post}) {
   };
 
   return (
-    <CardContainer>
+    <>
+  
+    <CardContainer onClick={handleClick}>
      
       <TopText>
         <UserInfo>
           <Avatar src={post.avatarUrl}/> 
           <UserName>
              <h4>{post.userName}</h4>
-           <p> <TimeAgo createdAt={post.$createdAt}/> ⁃  33 views </p>
+           <p> <TimeAgo createdAt={post.$createdAt}/> ⁃ {post.views} views </p>
+           <p>{!post.answer ? "not answered" : "answered"} |  <CommentIcon height="20px" width="20px" stroke="red" />  {post.description} {comments.length} {comments.length > 0 ? "Comments": "Comment"}</p>
           </UserName>
          
         </UserInfo>
@@ -111,10 +93,19 @@ export default function Card({post}) {
         <p>{post.title}</p>
         <p>{post.question}</p>
       </QuestionContainer>
-      <FooterText>
-        
-        <AnswerButton onClick={handleClick}>Answer</AnswerButton>
-      </FooterText>
-    </CardContainer>
+     
+      
+    </CardContainer> 
+    <CommentsSection
+        postId={post.$id}
+        comments={comments}
+        loading={loading}
+        error={error}
+        createComment={createComment}
+        updateComment={updateComment}
+        deleteComment={deleteComment}
+        maxPosts={maxPosts}
+      />
+     </>
   );
 }

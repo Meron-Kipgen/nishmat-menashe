@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaUser, FaCog, FaInfoCircle } from 'react-icons/fa'; 
+import { FaUser, FaInfoCircle, FaPodcast } from 'react-icons/fa'; 
 import { GrArticle } from "react-icons/gr";
 import Footer from '../../layouts/footer/Footer';
 
@@ -57,8 +57,8 @@ const SidebarLeft = () => (
         <SidebarLink to="/profile">
           <FaUser /> Profile
         </SidebarLink>
-        <SidebarLink to="/settings">
-          <FaCog /> Settings
+        <SidebarLink to="/Audio/podcast">
+          <FaPodcast /> Audio Podcast
         </SidebarLink>
         <SidebarLink to="/about">
           <FaInfoCircle /> About

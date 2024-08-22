@@ -14,6 +14,9 @@ const CardContainer = styled.div`
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
+  @media (max-width: 768px) {
+     width: 100%;
+    }
 `;
 
 const Thumbnail = styled.div`

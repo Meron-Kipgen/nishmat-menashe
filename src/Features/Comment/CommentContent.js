@@ -8,7 +8,7 @@ const CommentContainer = styled.p`
   word-break: break-word;  
 `;
 
-const CommentContent = ({ text = '', expandedLength = 0, maxLength = 400 }) => {
+const CommentContent = ({ text = '', expandedLength = 0, maxLength = 500 }) => {
   // Ensure text is a string and provide a default value if not
   const safeText = typeof text === 'string' ? text : '';
 

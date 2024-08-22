@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { usePosts } from './usePosts';
+import { useAllPosts } from './useAllPost';
 import VideoPost from './VideoPost';
 import AudioPost from './AudioPost';
 import ArticlePost from './ArticlePost';
@@ -14,7 +14,7 @@ import RightSidebar from './RightSidebar';
 import { useSwipeable } from 'react-swipeable';
 
 const Container = styled.section`
-margin-top: 45px;
+  margin-top: 45px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -113,17 +113,17 @@ const StyledSVG = styled.svg`
 `;
 
 const Feed = () => {
-  const { posts, loading, error } = usePosts();
+  const { posts, loading, error } = useAllPosts();
   const [visiblePosts, setVisiblePosts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false); // Sidebar hidden by default
+  const [showSidebar, setShowSidebar] = useState(false); 
   const containerRef = useRef(null);
 
   const postsPerPage = 10;
-
+  console.log("Posts:", posts);
   useEffect(() => {
-    if (posts.length > 0) {
+    if (posts && posts.length > 0) {
       setVisiblePosts(posts.slice(0, postsPerPage));
     }
   }, [posts]);
@@ -133,7 +133,6 @@ const Feed = () => {
 
     setLoadingMore(true);
 
-    // Simulate fetching more posts
     setTimeout(() => {
       const nextPosts = posts.slice(visiblePosts.length, visiblePosts.length + postsPerPage);
       setVisiblePosts(prev => [...prev, ...nextPosts]);
@@ -143,7 +142,7 @@ const Feed = () => {
       }
 
       setLoadingMore(false);
-    }, 1000); // Simulate network delay
+    }, 1000);
   };
 
   useEffect(() => {
@@ -196,22 +195,26 @@ const Feed = () => {
 
       <Middle ref={containerRef}>
         <Feedback />
-        {visiblePosts.map(post => (
-          <PostContainer key={post.$id}>
-            <PostWrapper>
-              {post.type === 'video' && <VideoPost post={post} />}
-              {post.type === 'audio' && <AudioPost post={post} />}
-              {post.type === 'article' && <ArticlePost post={post} />}
-              {post.type === 'QnA' && <QnAPost post={post} />}
-              {post.type === 'podcast' && <PodcastPost post={post} />}
-              {post.type === 'feedback' && <FeedbackPost post={post} />}
-            </PostWrapper>
-          </PostContainer>
-        ))}
+        {visiblePosts.map(post => {
+
+  return (
+    <PostContainer key={post.$id}>
+      <PostWrapper>
+        {post.type === 'video' && <VideoPost post={post} />}
+        {post.type === 'audio' && <AudioPost post={post} />}
+        {post.type === 'article' && <ArticlePost post={post} />}
+        {post.type === 'QnA' && <QnAPost post={post} />}
+        {post.type === 'podcast' && <PodcastPost post={post} />}
+        {post.type === 'feedback' && <FeedbackPost post={post} />}
+
+      </PostWrapper>
+    </PostContainer>
+  );
+})}
         {loadingMore && <LoadingMessage>Loading more posts...</LoadingMessage>}
-        {!hasMore && <LoadingMessage>No more posts to load</LoadingMessage>}
+        {!hasMore && <LoadingMessage>No more posts to load.</LoadingMessage>}
       </Middle>
-      
+
       <Right>
         <RightSidebar />
       </Right>

@@ -12,11 +12,9 @@ import CommentList from '../../Features/Comment/CommentList';
 const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 5px;
   background: #f9f9f9;
   position: relative; 
-  padding: 20px;
-  border-bottom: 1px solid #ccc;
+  padding:10px 20px 0 20px;
 `;
 
 const TopSection = styled.div`
@@ -30,7 +28,6 @@ const AvatarWrapper = styled.div`
   margin-right: 10px;
 
   @media (max-width: 768px) {
-   
     margin-left: 0;
   }
 `;
@@ -51,10 +48,10 @@ const PostContent = styled.div`
 
 const ActionSection = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   margin-top: 10px;
-
+padding-top: 10px;
+  border-top:1px solid #ccc;
 `;
 
 const DropdownButton = styled.button`
@@ -64,15 +61,15 @@ const DropdownButton = styled.button`
   font-size: 16px;
   color: #000;
   position: absolute;
-  top: -10px;
+  top: 0px;
   right: -7px;
-  z-index: 10;
+
   
   &:hover {
     background: #D6D6D6;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
   }
 `;
 
@@ -127,8 +124,6 @@ const ActionButton = styled.button`
   color: black;
   align-items: center;
   gap: 5px;
-  display: flex;
-  align-items: center;
 
   &:hover {
     color: red;
@@ -149,7 +144,24 @@ const FeedbackContainer = styled.div`
   }
 `;
 
-const FeedbackPost = ({ post }) => {
+const CommentButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #000;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+p{
+  font-size: 0.9rem;
+}
+  &:hover {
+    color: #007bff;
+  }
+`;
+
+const FeedbackPost = ({ post, maxPosts = 1}) => {
   const { deleteFeedback, updateFeedback } = useFeedbackData();
   const { userId } = useContext(UserContext);
   const { comments, loading, error, updateComment, deleteComment, createComment } = useCommentsData(post.$id);
@@ -157,11 +169,29 @@ const FeedbackPost = ({ post }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedFeedback, setEditedFeedback] = useState(post.feedback);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [expandedLength, setExpandedLength] = useState(700); // Start with 400 characters
+  const [expandedLength, setExpandedLength] = useState(1000);
+  const [showAllComments, setShowAllComments] = useState(false);
 
-  const MAX_FEEDBACK_LENGTH = post.feedback.length; // Maximum length of the feedback
-
+  const MAX_FEEDBACK_LENGTH = post.feedback.length;
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const sortedComments = [...comments].sort((a, b) => new Date(a.$createdAt) - new Date(b.$createdAt));
+  const visibleComments = showAllComments ? sortedComments : sortedComments.slice(Math.max(sortedComments.length - maxPosts, 0));
+
+  if (!post) {
+    return <div>Loading...</div>;
+  }
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -190,19 +220,12 @@ const FeedbackPost = ({ post }) => {
     }
   };
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setDropdownOpen(false);
-    }
+  const handleShowMore = () => {
+    setExpandedLength((prevLength) => Math.min(prevLength + 1000, MAX_FEEDBACK_LENGTH));
   };
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleShowMore = () => {
-    setExpandedLength((prevLength) => Math.min(prevLength + 700, MAX_FEEDBACK_LENGTH));
+  const handleToggleComments = () => {
+    setShowAllComments((prevState) => !prevState);
   };
 
   return (
@@ -210,7 +233,7 @@ const FeedbackPost = ({ post }) => {
       <PostContainer>
         <TopSection>
           <AvatarWrapper>
-            <Avatar src={post.userAvatarUrl} name={post.userName}/>
+            <Avatar src={post.userAvatarUrl} name={post.userName} />
           </AvatarWrapper>
           <ContentWrapper>
             <Username>
@@ -275,23 +298,18 @@ const FeedbackPost = ({ post }) => {
           )}
         </PostContent>
         <ActionSection>
-          <ActionButton>
-            <CommentIcon height="20px" width="20px" stroke="black" /> {comments.length} Comments
-          </ActionButton>
-          <ActionButton>
-            <ShareIcon height="20px" width="20px" stroke="black" /> Share
-          </ActionButton>
+           <CommentButton onClick={handleToggleComments}>
+            <CommentIcon height="20px" width="20px" stroke="red" /> 
+            {showAllComments ? <p>Show Less</p> : <p>{`View ${comments.length} Comment${comments.length > 1 ? 's' : ''}`}</p> }
+        </CommentButton>
+         <div>
+          <CommentBox postId={post.$id} createComment={createComment} />
+        <CommentList comments={visibleComments} deleteComment={deleteComment} updateComment={updateComment} />
+         </div>
         </ActionSection>
+       
+        
       </PostContainer>
-      <CommentBox postId={post.$id} />
-      <CommentList
-        comments={comments}
-        loading={loading}
-        error={error}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-        createComment={createComment}
-      />
     </>
   );
 };

@@ -5,6 +5,9 @@ import SubcategoryPoster from "../Articles/SubcategoryPoster";
 import { useArticlesData } from "../Articles/useArticlesData";
 import DOMPurify from "dompurify";
 import TimeAgo from "../../utils/TimeAgo";
+import useCommentsData from "../../Features/Comment/useCommentsData";
+import CommentsSection from "../../Features/Comment/CommentSection";
+import { CommentIcon } from "../../Assets/Icons";
 
 const PostItemContainer = styled.div`
   width: 100%;
@@ -54,7 +57,8 @@ const ReadMoreButton = styled.button`
   }
 `;
 
-const ArticlePost = ({post}) => {
+const ArticlePost = ({post, maxPosts=1}) => {
+  const { comments, loading, error, createComment, updateComment, deleteComment } = useCommentsData(post.$id);
   const navigate = useNavigate();
   const { updateViews } = useArticlesData();
 
@@ -72,18 +76,31 @@ const ArticlePost = ({post}) => {
   };
 
   return (
-    <PostItemContainer>
+    <>
+    <PostItemContainer onClick={handleReadMore}>
       <SubcategoryPoster subcategory={post.subcategory}>
         {post.subcategory}
       </SubcategoryPoster>
       <Title>{post.title}</Title>
       {post.category}
       <Wrapper>
-        {post.writer} ⁃ <TimeAgo createdAt={post.$createdAt} /> ⁃ views: {post.views}
+        {post.writer} ⁃ <TimeAgo createdAt={post.$createdAt} /> ⁃ views: {post.views}  
+        <p> <CommentIcon height="20px" width="20px" stroke="red" /> {post.description} {comments.length} {comments.length > 0 ? "Comments": "Comment"}</p>
       </Wrapper>
       <Body dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body) }} />
-      <ReadMoreButton onClick={handleReadMore}>Read More</ReadMoreButton>
+      <p>...Read More</p>
     </PostItemContainer>
+    <CommentsSection
+        postId={post.$id}
+        comments={comments}
+        loading={loading}
+        error={error}
+        createComment={createComment}
+        updateComment={updateComment}
+        deleteComment={deleteComment}
+        maxPosts={maxPosts}
+      />
+    </>
   );
 };
 
