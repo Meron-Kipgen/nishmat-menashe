@@ -41,7 +41,11 @@ const StyledNavLink = styled(NavLink)`
   &.active,
   &:hover {
     color: #FFA555;
-
+    @media (max-width: 768px) {
+   &:hover{
+    color: none;
+   }
+  }
     svg {
       stroke: #FFA555;
     }
@@ -72,17 +76,18 @@ export default function NavMenu() {
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/Audio" activeClassName="active">
-            <AudioIcon />
-            audios
-          </StyledNavLink>
-        </li>
-        <li>
           <StyledNavLink to="/Articles" activeClassName="active">
             <ArticleIcon />
             articles
           </StyledNavLink>
         </li>
+        <li>
+          <StyledNavLink to="/Audio" activeClassName="active">
+            <AudioIcon />
+            audios
+          </StyledNavLink>
+        </li>
+       
         <li>
           <StyledNavLink to="/Books" activeClassName="active">
             <LibraryIcon />

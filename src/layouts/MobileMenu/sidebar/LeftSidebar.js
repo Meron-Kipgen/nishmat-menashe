@@ -1,14 +1,15 @@
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { FaUser, FaInfoCircle, FaPodcast } from 'react-icons/fa'; 
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { FaUser, FaInfoCircle, FaPodcast } from "react-icons/fa";
 import { GrArticle } from "react-icons/gr";
-import Footer from '../../layouts/footer/Footer';
+import Footer from "../footer/Footer";
+import { FcFeedback } from "react-icons/fc";
 
 const SidebarContainer = styled.section`
   width: 300px;
   height: 50vh;
- background: white;
- 
+  background: white;
+
   overflow: hidden;
   @media (max-width: 768px) {
     width: 100%;
@@ -46,13 +47,13 @@ const SidebarHeader = styled.h1`
   font-size: 22px;
 `;
 
-const SidebarLeft = () => (
+const LeftSidebar = () => (
   <div>
     <SidebarContainer>
       <SidebarHeader>Application</SidebarHeader>
       <SidebarNav>
         <SidebarLink to="/Alon">
-        <GrArticle /> Nishmat Menashe Alon
+          <GrArticle /> Nishmat Menashe Alon
         </SidebarLink>
         <SidebarLink to="/profile">
           <FaUser /> Profile
@@ -63,10 +64,13 @@ const SidebarLeft = () => (
         <SidebarLink to="/about">
           <FaInfoCircle /> About
         </SidebarLink>
+        <SidebarLink to="/feedback">
+          <FcFeedback /> Feedback
+        </SidebarLink>
       </SidebarNav>
     </SidebarContainer>
     <Footer />
   </div>
 );
 
-export default SidebarLeft;
+export default LeftSidebar;

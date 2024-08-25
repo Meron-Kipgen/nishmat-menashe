@@ -5,10 +5,16 @@ import styled from 'styled-components';
 import SearchBar from './SearchBar';
 import AddNewPodcast from './AddNewPodcast';
 
+const PodcastContainer = styled.div`
+margin: 45px 0;
+display: flex;
+flex-direction: column;
+width: 100%;
+`
 const FilterContainer = styled.section`
-margin-top: 10px;
+
   background: white;
-  width: 96%;
+  width: 100%;
   height: 40px;
   border-radius: 5px;
   display: flex;
@@ -37,9 +43,12 @@ const FilterButton = styled.div`
   }
 `;
 
-const Container = styled.section`
+const CardContainer = styled.section`
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
 `;
 
 const AddFormContainer = styled.div`
@@ -68,7 +77,7 @@ export default function Podcast() {
   };
 
   return (
-    <>
+    <PodcastContainer>
       <FilterContainer>
       <FilterButton
   active={filter === 'All'}
@@ -111,7 +120,7 @@ export default function Podcast() {
         </AddFormContainer>
       )}
 
-      <Container>
+      <CardContainer>
         {filteredPodcasts.map(item => (
           <PodcastCard 
             key={item.$id}
@@ -125,7 +134,7 @@ export default function Podcast() {
             played={item.played}
           />
         ))}
-      </Container>
-    </>
+      </CardContainer>
+    </PodcastContainer>
   );
 }

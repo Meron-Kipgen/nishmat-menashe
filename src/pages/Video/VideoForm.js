@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useVideosData } from "../../pages/Video/useVideosData";
-import Draggable from "react-draggable";
 
 const FormContainer = styled.form`
-  position: absolute;
-  top: 60px;
-  width: 800px;
+  position: fixed;
+  top: 50px;
+  right: 0;
+  width: 90%;
+  max-width: 600px;
   z-index: 1000;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
   background-color: #ffffff;
   border: 1px solid #ced4da;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    width: 95%;
+    padding: 15px;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -25,6 +31,7 @@ const FormGroup = styled.div`
 const Label = styled.label`
   display: block;
   margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 `;
 
 const Input = styled.input`
@@ -48,6 +55,11 @@ const Button = styled.button`
   &:hover {
     background-color: #0056b3;
   }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -65,6 +77,11 @@ const CloseButton = styled.button`
 
   &:hover {
     background-color: #bd2130;
+  }
+
+  @media (max-width: 768px) {
+    padding: 4px 8px;
+    font-size: 16px;
   }
 `;
 
@@ -107,7 +124,6 @@ const VideoForm = ({ onClose }) => {
   };
 
   return (
-    <Draggable>
     <FormContainer onSubmit={handleSubmit}>
       <CloseButton type="button" onClick={onClose}>
         &times;
@@ -194,7 +210,6 @@ const VideoForm = ({ onClose }) => {
       </FormGroup>
       <Button type="submit">Add Video</Button>
     </FormContainer>
-    </Draggable>
   );
 };
 

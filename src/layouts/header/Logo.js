@@ -6,10 +6,11 @@ const Wrapper = styled.section`
   font-size: 2.7rem;
   color: white;
   margin-top: -8px;
+  margin-left: 40px;
 
   @media (max-width: 768px) {
     margin-top: -3px;
-    margin-left: 60px;
+margin-left: 0;
     font-size: 2rem;
   }
 `;

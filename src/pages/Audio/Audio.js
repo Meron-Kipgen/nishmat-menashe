@@ -1,331 +1,93 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import styled from "styled-components";
-import Categories from "../../components/Categories";
-import Subcategories from "../../components/Subcategories";
-import Card from './Card';
-import GlobalPlayer from './GlobalPlayer';
-import AddAudioForm from './AddAudioForm'; 
-import EditAudioForm from "./EditAudioForm";
-import { useAudioData } from "./useAudioData";
-import ExploreBtn from "../../components/ExploreBtn";
-import AddNewBtn from "../../components/AddNewBtn";
-import { UserContext } from "../../contexts/UserContext";
-import Podcast from "../Audio/Podcast/Podcast";
-import { Link, Outlet, useOutlet } from "react-router-dom";
 import PodcastCard from "./Podcast/PodcastCard";
+import AudioCard from "./AudioCard";
 
 const Container = styled.div`
   display: flex;
-  gap: 30px;
-  height: 100vh;
-  overflow: hidden;
+  margin: 50px 0;
+  justify-content: space-between;
   @media (max-width: 768px) {
-     width: 100%;
-     flex-direction: column;
-    }
+    flex-direction: column-reverse;
+  }
 `;
 
-const AudioContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+const SermonContainer = styled.div`
   width: 1000px;
-  justify-content: flex-end;
-  overflow-y: auto; 
-  height: 100vh; 
-  scrollbar-width: none;
-  -ms-overflow-style: none; 
-
-  @media (max-width: 768px) {
-    width: 100%;
-  
- 
-    }
-  ::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const PodcastContainer = styled.section`
-  width: 550px;
-  flex-wrap: wrap;
-  display: flex;
   height: 100vh;
-  overflow-y: auto; 
-  scrollbar-width: none;
-  -ms-overflow-style: none; 
-
-  ::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const ItemContainer = styled.div`
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
-  @media (max-width: 768px) {
-      width: 100%;
-    }
-`;
-
-const CategoriesContainer = styled.div`
-  position: fixed;
-  top: 45px;
-  left: ${({ toggleCategories }) => (toggleCategories ? "0" : "-300px")};
-  width: 300px;
-  transition: left 0.3s ease-in-out;
-  z-index: 1000;
-`;
-
-const CategoriesBtn = styled.div`
-  position: fixed;
-  top: ${({ show }) => (show ? "0px" : "-40px")};
-  left: 10px;
-  z-index: 1000;
-  transition: top 0.3s ease-in-out;
-`;
-
-const AudioHeading = styled.section`
-width: 100%;
-height: 30px;
-display: flex;
-align-items: center;
-gap: 20px;
-margin: 50px 0 0 70px;
-h1{
-  font-size: 20px;
-}
-`
-const LeftSide = styled.section`
-display: flex;
-flex-direction: column;
-@media (max-width: 768px) {
-      display: none;
-    }
-`
-const Heading = styled.section`
-display: flex;
-align-items: center;
-gap: 20px;
-margin: 10px 0 0 30px;
-h1{
-  font-size: 20px;
-}
-`
-const MobilePodcast = styled.section`
-  display: flex;
-  flex-direction: row;
-  margin-top: 20px;
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     display: none;
   }
-  @media (min-width: 768px) {
-      display: none;
-    }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto; /* Allow height to adjust based on content */
+    overflow-y: hidden; /* Hide vertical overflow */
+  }
 `;
-const Audio = () => {
-  const { audioData, deleteAudio, updatePlayed, fetchAudioData } = useAudioData();
-  const { isAdmin } = useContext(UserContext);
-  const categories = [...new Set(audioData.map(audio => audio.category))];
-  const subcategories = [...new Set(audioData.map(audio => audio.subcategory))];
-  const [selectedCategory, setSelectedCategory] = useState(null); 
-  const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
-  const [toggleCategories, setToggleCategories] = useState(false);
-  const [addNew, setAddNew] = useState(false);
-  const [showBtn, setShowBtn] = useState(true);
-  const [flipped, setFlipped] = useState(false);
-  const [currentAudioUrl, setCurrentAudioUrl] = useState(null);
-  const [shouldPlay, setShouldPlay] = useState(false);
-  const [currentThumbnail, setCurrentThumbnail] = useState('');
-  const [currentTitle, setCurrentTitle] = useState('');
-  const [currentRabbi, setCurrentRabbi] = useState('');
-  const [editingAudio, setEditingAudio] = useState(null);
-  const outlet = useOutlet()
 
-  const uniqueAudioData = Array.from(new Set(audioData.map(a => a.audioUrl)))
-    .map(url => audioData.find(audio => audio.audioUrl === url));
+const PodcastContainer = styled.div`
+  width: 500px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
-  const filteredAudios = uniqueAudioData
-    .filter(audio =>
-      (selectedCategory === null || audio.category === selectedCategory) &&
-      (selectedSubcategories.includes("All") || selectedSubcategories.includes(audio.subcategory))
-    )
-    .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
-  const filteredSubcategories =
-    selectedCategory === null
-      ? ["All", ...subcategories]
-      : [
-          "All",
-          ...subcategories.filter(subcategory =>
-            audioData.some(
-              audio =>
-                audio.category === selectedCategory &&
-                audio.subcategory === subcategory
-            )
-          ),
-        ];
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    gap: 15px; /* Adjust the gap between items */
+  }
 
+  /* Ensure that the cards maintain their original size */
+  & > * {
+    min-width: 200px; /* Set this to the same as the card's width */
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+`;
 
-
-  useEffect(() => {
-    if (selectedCategory === null) {
-      setSelectedSubcategories(["All"]);
-    } else {
-      setSelectedSubcategories(["All"]); 
-    }
-  }, [selectedCategory]);
-
-  const handleEditAudio = (audio) => setEditingAudio(audio);
-
-  const handleDeleteAudio = async (audioUrl) => {
-    try {
-      await deleteAudio(audioUrl);
-      await fetchAudioData();
-    } catch (error) {
-      console.error("Failed to delete audio", error);
-    }
-  };
-
-  const handlePlayAudio = async (audioUrl, thumbnail, title, rabbi) => {
-    try {
-      if (currentAudioUrl === audioUrl) {
-        setShouldPlay(prev => !prev);
-      } else {
-        setCurrentAudioUrl(audioUrl);
-        setCurrentThumbnail(thumbnail);
-        setCurrentTitle(title);
-        setCurrentRabbi(rabbi);
-        setShouldPlay(true);
-        await updatePlayed(audioUrl);
-      }
-    } catch (error) {
-      console.error("Failed to update played count", error);
-    }
-  };
-
-  const handleAddNew = () => setAddNew(prev => !prev);
-
-  const handleCloseForm = () => {
-    setAddNew(false);
-    setFlipped(false); 
-  };
-
-  const handleToggleCategories = () => {
-    setToggleCategories(prev => !prev);
-    setFlipped(prev => !prev); 
-  };
-
+export default function Audio() {
   return (
     <Container>
-
-    {!outlet && (
-      <>      <p><Link to="/podcast"/>Podcast</p>
-<MobilePodcast>
- 
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-<PodcastCard/>
-</MobilePodcast>
-      <CategoriesBtn show={showBtn}>
-        <ExploreBtn onClick={handleToggleCategories} flipped={flipped} />
-      </CategoriesBtn>
-      <AudioContainer>
-        {selectedCategory !== null && (
-          <Subcategories
-            subcategories={filteredSubcategories} 
-            selectedSubcategories={selectedSubcategories}
-            setSelectedSubcategories={setSelectedSubcategories}
-          />
-        )}
-        {addNew && <AddAudioForm onClose={handleCloseForm} onAdd={fetchAudioData} />}
-        <CategoriesContainer toggleCategories={toggleCategories}>
-          {isAdmin && <AddNewBtn onClick={handleAddNew} />}
-          <Categories
-            categories={[ ...categories]}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            onClose={() => {
-              setToggleCategories(false);
-              setFlipped(false); 
-            }}
-          />
-        </CategoriesContainer>
-
-
-       <AudioHeading>
-       <h1> Audio</h1>
-        </AudioHeading>
-      
-           <ItemContainer>  
-         
-          {editingAudio && <EditAudioForm audio={editingAudio} onClose={() => setEditingAudio(null)} />}
-          {filteredAudios.map((audio) => (
-            <Card
-              key={audio.audioUrl}
-              id={audio.$id}
-              thumbnail={audio.thumbnail}
-              title={audio.title}
-              createdAt={audio.$createdAt}
-              played={audio.played}
-              category={audio.category}
-              subcategory={audio.subcategory}
-              rabbi={audio.rabbi}
-              onPlay={() => handlePlayAudio(audio.audioUrl, audio.thumbnail, audio.title, audio.rabbi)}
-              onEdit={() => handleEditAudio(audio)}
-              onDelete={() => handleDeleteAudio(audio.audioUrl)}
-              onClick={() => handlePlayAudio(audio.audioUrl, audio.thumbnail, audio.title, audio.rabbi)}
-              isPlaying={currentAudioUrl === audio.audioUrl && shouldPlay}
-            />
-          ))}
-        </ItemContainer>
-     
-      
-      </AudioContainer>
-       <Outlet/>
-      {currentAudioUrl && (
-        <GlobalPlayer
-          audioUrl={currentAudioUrl}
-          thumbnail={currentThumbnail}
-          title={currentTitle}
-          rabbi={currentRabbi}
-          shouldPlay={shouldPlay}
-          onClose={() => setCurrentAudioUrl(null)}
-        />
-      )}
-
-
-      <LeftSide>
-     
-      <Heading>
-
-        <h1> Podcast</h1>
-      </Heading>
-    
-       <PodcastContainer>
-        <Podcast/>
-      </PodcastContainer>  
-      </LeftSide>
-  
-  </>
-)}
-      <Outlet/>
+      <SermonContainer>
+        {/* AudioCard components go here */}
+        <AudioCard />
+        <AudioCard />
+        <AudioCard />
+        <AudioCard />
+        <AudioCard />
+        <AudioCard />
+        {/* Repeat as needed */}
+      </SermonContainer>
+      <PodcastContainer>
+        {/* PodcastCard components go here */}
+        <PodcastCard title="Podcast 1" description="Description 1" rabbi="Rabbi 1" season="Season 1" played="50" isComplete={true} thumbnail="https://via.placeholder.com/200" />
+        <PodcastCard title="Podcast 2" description="Description 2" rabbi="Rabbi 2" season="Season 2" played="30" isComplete={false} thumbnail="https://via.placeholder.com/200" />
+        <PodcastCard title="Podcast 3" description="Description 3" rabbi="Rabbi 3" season="Season 3" played="70" isComplete={true} thumbnail="https://via.placeholder.com/200" />
+        <PodcastCard title="Podcast 4" description="Description 4" rabbi="Rabbi 4" season="Season 4" played="20" isComplete={false} thumbnail="https://via.placeholder.com/200" />
+        <PodcastCard title="Podcast 5" description="Description 5" rabbi="Rabbi 5" season="Season 5" played="40" isComplete={true} thumbnail="https://via.placeholder.com/200" />
+        <PodcastCard title="Podcast 6" description="Description 6" rabbi="Rabbi 6" season="Season 6" played="60" isComplete={false} thumbnail="https://via.placeholder.com/200" />
+        <PodcastCard title="Podcast 7" description="Description 7" rabbi="Rabbi 7" season="Season 7" played="90" isComplete={true} thumbnail="https://via.placeholder.com/200" />
+        {/* Repeat as needed */}
+      </PodcastContainer>
     </Container>
   );
-};
-
-export default Audio;
+}

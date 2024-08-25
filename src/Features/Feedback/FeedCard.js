@@ -1,13 +1,12 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { useFeedbackData } from '../../Features/Feedback/useFeedbackData';
+import { useFeedbackData } from './useFeedbackData';
 import useCommentsData from '../../Features/Comment/useCommentsData';
 import { UserContext } from '../../contexts/UserContext';
 import Avatar from '../../Features/User/Avatar';
 import TimeAgo from '../../utils/TimeAgo';
 import { DotHorizon, SaveIcon, CancelIcon, EditIcon, DeleteIcon, CommentIcon, ShareIcon } from '../../Assets/Icons'; 
-import CommentsSection from '../../Features/Comment/CommentSection';
-import FeedCard from "../../Features/Feedback/FeedCard"
+import { useNavigate } from 'react-router-dom';
 
 const PostContainer = styled.div`
   display: flex;
@@ -45,6 +44,7 @@ const PostContent = styled.div`
     margin: 0;
   }
 `;
+
 
 
 const DropdownButton = styled.button`
@@ -137,18 +137,17 @@ const FeedbackContainer = styled.div`
   }
 `;
 
-const FeedbackPost = ({ post, maxPosts = 1}) => {
+
+
+const FeedbackPost = ({userAvatarUrl,feedback, userName, id, createdAt}) => {
   const { deleteFeedback, updateFeedback } = useFeedbackData();
   const { userId } = useContext(UserContext);
-  const { comments, loading, error, updateComment, deleteComment, createComment } = useCommentsData(post.$id);
-
+  const { comments } = useCommentsData(id);
+    const navigate = useNavigate()
   const [isEditing, setIsEditing] = useState(false);
-  const [editedFeedback, setEditedFeedback] = useState(post.feedback);
+  const [editedFeedback, setEditedFeedback] = useState(feedback);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [expandedLength, setExpandedLength] = useState(1000);
 
-
-  const MAX_FEEDBACK_LENGTH = post.feedback.length;
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -163,31 +162,99 @@ const FeedbackPost = ({ post, maxPosts = 1}) => {
   }, []);
 
 
-  if (!post) {
-    return <div>Loading...</div>;
-  }
+const handleClick = ()=>{
+    navigate(`/feedback/${id}`)
+}
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setDropdownOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedFeedback(feedback);
+  };
+
+  const handleSave = async () => {
+    try {
+      await updateFeedback(id, { feedback: editedFeedback });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating feedback:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteFeedback(id);
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+    }
+  };
 
   return (
     <>
       <PostContainer>
-      <FeedCard
-            id={post.$id}
-            key={post.$id} 
-            feedback={post.feedback} 
-            createdAt={post.$createdAt}
-            userName={post.userName}
-            userAvatarUrl={post.userAvatarUrl}
-          />
-        <CommentsSection
-        postId={post.$id}
-        comments={comments}
-        loading={loading}
-        error={error}
-        createComment={createComment}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-        maxPosts={maxPosts}
-      />
+        <TopSection>
+          <AvatarWrapper>
+            <Avatar src={userAvatarUrl} />
+          </AvatarWrapper>
+          <ContentWrapper>
+            <Username>
+              <strong>{userName}</strong>
+              <p><TimeAgo createdAt={createdAt} /></p>
+            </Username>
+            <p>{` ${comments.length} Comment${comments.length > 1 ? 's' : ''}`}</p>
+          </ContentWrapper>
+          {userId === userId && (
+            <DropdownButton onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <DotHorizon width="20px" height="20px" />
+            </DropdownButton>
+          )}
+          <DropdownMenu ref={dropdownRef} open={dropdownOpen}>
+            <button onClick={handleEditClick}>
+              <EditIcon /> Edit
+            </button>
+            <button onClick={handleDelete}>
+              <DeleteIcon /> Delete
+            </button>
+          </DropdownMenu>
+        </TopSection>
+        <PostContent>
+          {isEditing ? (
+            <>
+              <textarea
+                value={editedFeedback}
+                onChange={(e) => setEditedFeedback(e.target.value)}
+                rows="4"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  outline: 'none',
+                  resize: 'none',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
+                  fontSize: 16,
+                  background: "#D6D6D6",
+                }}
+              />
+              <ActionBtnContainer>
+                <ActionButton onClick={handleSave}>
+                  <SaveIcon height="20px" width="20px" stroke="green" /> Save
+                </ActionButton>
+                <ActionButton onClick={handleCancel}>
+                  <CancelIcon height="20px" width="20px" stroke="red" /> Cancel
+                </ActionButton>
+              </ActionBtnContainer>
+            </>
+          ) : (
+            <FeedbackContainer  onClick={handleClick}>
+             <p>{feedback}</p>
+            </FeedbackContainer>
+          )}
+        </PostContent>
       </PostContainer>
     </>
   );

@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { db, ID, client } from "../../db/config";
+import React, { createContext, useContext, useState } from "react";
+import { db, ID } from "../../db/config";
+import useRealTimeSubscription from "../../db/useRealTimeSubscription";
 
 const DatabaseId = "666aff03003ba124b787";
 const CollectionId = "666aff1400318bf6aa6f";
@@ -15,61 +16,8 @@ export const useVideosData = () => {
 };
 
 export const VideosDataProvider = ({ children }) => {
-  const [videoData, setVideoData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [videoData, setVideoData] = useRealTimeSubscription(DatabaseId, CollectionId);
   const [error, setError] = useState(null);
-
-  const fetchVideos = async () => {
-    setLoading(true);
-    try {
-      const response = await db.listDocuments(DatabaseId, CollectionId);
-      setVideoData(response.documents);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchVideos();
-
-    const videoSubscription = client.subscribe(
-      `databases.${DatabaseId}.collections.${CollectionId}.documents`,
-      (response) => {
-        const { events, payload } = response;
-
-        if (events.includes("databases.*.collections.*.documents.*.create")) {
-          setVideoData((prevData) => {
-            if (prevData.find((video) => video.$id === payload.$id)) {
-              return prevData;
-            }
-            return [...prevData, payload];
-          });
-        }
-
-        if (events.includes("databases.*.collections.*.documents.*.update")) {
-          setVideoData((prevData) =>
-            prevData.map((video) =>
-              video.$id === payload.$id ? payload : video
-            )
-          );
-        }
-
-        if (events.includes("databases.*.collections.*.documents.*.delete")) {
-          setVideoData((prevData) =>
-            prevData.filter((video) => video.$id !== payload.$id)
-          );
-        }
-      }
-    );
-
-    return () => {
-      if (videoSubscription) {
-        videoSubscription();
-      }
-    };
-  }, []);
 
   const addVideo = async (newVideo) => {
     try {
@@ -141,7 +89,6 @@ export const VideosDataProvider = ({ children }) => {
 
   const contextValue = {
     videoData,
-    loading,
     error,
     addVideo,
     updateVideo,

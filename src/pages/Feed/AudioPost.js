@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import TimeAgo from '../../utils/TimeAgo';
-import GlobalPlayer from '../Audio/GlobalPlayer';
-import { useAudioData } from '../Audio/useAudioData';
-import useCommentsData from '../../Features/Comment/useCommentsData';
-import CommentsSection from '../../Features/Comment/CommentSection';
-import { CommentIcon } from '../../Assets/Icons';
+import React, { useState } from "react";
+import styled from "styled-components";
+import TimeAgo from "../../utils/TimeAgo";
+import GlobalPlayer from "../Audio/GlobalPlayer";
+import { useAudioData } from "../Audio/useAudioData";
+import useCommentsData from "../../Features/Comment/useCommentsData";
+import CommentsSection from "../../Features/Comment/CommentSection";
+import { CommentIcon } from "../../Assets/Icons";
 
 const CardContainer = styled.div`
   display: flex;
@@ -111,21 +111,28 @@ const AudioPost = ({ post, maxPosts = 1 }) => {
   const { updatePlayed } = useAudioData();
   const [currentAudioUrl, setCurrentAudioUrl] = useState(null);
   const [shouldPlay, setShouldPlay] = useState(false);
-  const { comments, loading, error, createComment, updateComment, deleteComment } = useCommentsData(post.$id);
+  const {
+    comments,
+    loading,
+    error,
+    createComment,
+    updateComment,
+    deleteComment,
+  } = useCommentsData(post.$id);
 
   if (!post) {
     return <div>Loading...</div>; // Handle undefined post gracefully
   }
 
-  const handlePlay = (audioUrl) => {
-    console.log('Playing audio:', audioUrl); // Debugging
+  const handlePlay = audioUrl => {
+    console.log("Playing audio:", audioUrl); // Debugging
     setCurrentAudioUrl(audioUrl);
     setShouldPlay(true);
     updatePlayed(audioUrl);
   };
 
   const handleClosePlayer = () => {
-    console.log('Closing player'); // Debugging
+    console.log("Closing player"); // Debugging
     setCurrentAudioUrl(null);
     setShouldPlay(false);
   };
@@ -139,11 +146,19 @@ const AudioPost = ({ post, maxPosts = 1 }) => {
         <Content>
           <Header>
             <h1>{post.title}</h1>
-            <h5>{post.category} ⁃ {post.subcategory}</h5>
-            <p>By: {post.rabbi} ⁃ <TimeAgo createdAt={post.$createdAt} /></p>
+            <h5>
+              {post.category} ⁃ {post.subcategory}
+            </h5>
+            <p>
+              By: {post.rabbi} ⁃ <TimeAgo createdAt={post.$createdAt} />
+            </p>
           </Header>
           <FooterContainer>
-            <FooterText>{post.played} Played ⁃ <CommentIcon height="20px" width="20px" stroke="red" /> {comments.length} {comments.length > 0 ? "Comments" : "Comment"}</FooterText>
+            <FooterText>
+              {post.played} Played ⁃{" "}
+              <CommentIcon height="20px" width="20px" stroke="red" />{" "}
+              {comments.length} {comments.length > 0 ? "Comments" : "Comment"}
+            </FooterText>
             <PlayButton onClick={() => handlePlay(post.audioUrl)}>
               play
             </PlayButton>

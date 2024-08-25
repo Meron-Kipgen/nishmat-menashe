@@ -10,7 +10,7 @@ const Container = styled.div`
   cursor: pointer;
   position: relative;
   @media (max-width: 768px) {
-   margin-right: 15px;
+   margin-right:0;
   }
 `;
 

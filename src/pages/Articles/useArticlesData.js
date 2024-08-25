@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db, ID, client } from '../../db/config'; 
+import { db, ID } from '../../db/config'; 
+import useRealTimeSubscription from '../../db/useRealTimeSubscription';
 
 const databaseId = '666aff03003ba124b787';
 const articlesCollectionId = '666b0186000007f47da9';
@@ -15,52 +16,15 @@ export const useArticlesData = () => {
 };
 
 export const ArticlesDataProvider = ({ children }) => {
-    const [articleData, setArticleData] = useState([]);
+    const [articleData, setArticleData] = useRealTimeSubscription(databaseId, articlesCollectionId);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-   
-        const fetchArticles = async () => {
-            setLoading(true);
-            try {
-                const response = await db.listDocuments(databaseId, articlesCollectionId);
-                setArticleData(response.documents);
-            } catch (err) {
-                setError(err);
-            } finally {
-                setLoading(false);
-            }
-        };
- useEffect(() => {
-        fetchArticles();
-
-        const articlesSubscription = client.subscribe(`databases.${databaseId}.collections.${articlesCollectionId}.documents`, (response) => {
-            const { events, payload } = response;
-
-            if (events.includes('databases.*.collections.*.documents.*.create')) {
-                setArticleData(prevData => {
-                    if (prevData.find(article => article.$id === payload.$id)) {
-                        return prevData;
-                    }
-                    return [...prevData, payload];
-                });
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.update')) {
-                setArticleData(prevData => prevData.map(article => article.$id === payload.$id ? payload : article));
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.delete')) {
-                setArticleData(prevData => prevData.filter(article => article.$id !== payload.$id));
-            }
-        });
-
-        return () => {
-            if (articlesSubscription) {
-                articlesSubscription();
-            }
-        };
-    }, []);
+    useEffect(() => {
+        if (articleData.length > 0) {
+            setLoading(false);
+        }
+    }, [articleData]);
 
     const addArticle = async (newArticle) => {
         try {

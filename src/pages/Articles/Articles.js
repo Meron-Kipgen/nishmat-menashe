@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import Categories from "../../components/Categories";
-import Subcategories from "../../components/Subcategories";
+import CategorySelector from "../../components/CategorySelector";
+import SubcategorySelector from "../../components/SubcategorySelector";
 import PostItem from "./PostItem";
 import { Outlet, useOutlet } from "react-router-dom";
 import { useArticlesData } from "./useArticlesData";
@@ -13,7 +13,7 @@ import { UserContext } from "../../contexts/UserContext";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 40px;
+  margin: 45px 0;
 `;
 
 const PostContainer = styled.div`
@@ -21,6 +21,13 @@ const PostContainer = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
+  @media (max-width: 768px) {
+    justify-content: none;
+    width: 100%;
+    gap: 0;
+   
+  }
+  
 `;
 
 const ItemContainer = styled.div`
@@ -31,128 +38,101 @@ const ItemContainer = styled.div`
   margin-top: 10px;
 `;
 
-const CategoriesContainer = styled.div`
-  position: fixed;
-  top: 45px;
-  left: ${({ toggleCategories }) => (toggleCategories ? "0" : "-300px")};
-  width: 300px;
-  transition: left 0.3s ease-in-out;
-  z-index: 1000;
+const CatContainer = styled.div`
+  display: flex;
+  height: 50px;
+  margin-bottom: 10px;
 `;
 
-const CategoriesBtn = styled.div`
-  position: fixed;
-  top: ${({ show }) => (show ? "0px" : "-40px")};
-  left: 10px;
-  z-index: 1000;
-  transition: top 0.3s ease-in-out;
-`;
+const SubCatContainer = styled.div``;
 
 const Articles = () => {
   const { articleData, loading, error } = useArticlesData();
-  const categories = [...new Set(articleData.map((post) => post.category))];
-  const subcategories = [...new Set(articleData.map((post) => post.subcategory))];
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
-  const [toggleCategories, setToggleCategories] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+  const [showSubcategories, setShowSubcategories] = useState(true);
   const [addNew, setAddNew] = useState(false);
-  const [showBtn, setShowBtn] = useState(true);
- 
-  const [flipped, setFlipped] = useState(false);
+
   const outlet = useOutlet();
   const { isAdmin } = useContext(UserContext);
 
-  useEffect(() => {
-    if (selectedCategory !== null) {
-      setSelectedSubcategories(["All"]);
-    }
-  }, [selectedCategory]);
+  const sortedArticles = [...articleData].sort(
+    (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt)
+  );
 
-
-  const filteredPosts = articleData
-    .filter(
-      (post) =>
-        (selectedCategory === null || post.category === selectedCategory) &&
-        (selectedSubcategories.includes("All") ||
-          selectedSubcategories.includes(post.subcategory))
-    )
-    .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
-
-  const filteredSubcategories =
-    selectedCategory === null
-      ? ["All", ...subcategories]
-      : [
-          "All",
-          ...subcategories.filter((subcategory) =>
-            articleData.some(
-              (post) =>
-                post.category === selectedCategory &&
-                post.subcategory === subcategory
-            )
+  const categories = [...new Set(sortedArticles.map(article => article.category))];
+  const subcategories =
+    selectedCategories.length > 0
+      ? [
+          ...new Set(
+            sortedArticles
+              .filter(article => selectedCategories.includes(article.category))
+              .map(article => article.subcategory)
           ),
-        ];
+        ]
+      : [];
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  const filteredArticles = sortedArticles.filter(article => {
+    return (
+      (selectedCategories.length === 0 ||
+        selectedCategories.includes(article.category)) &&
+      (selectedSubcategories.length === 0 ||
+        selectedSubcategories.includes(article.subcategory))
+    );
+  });
 
   const handleAddNew = () => {
-    setAddNew(!addNew);
+    setAddNew(true);
   };
 
   const handleCloseForm = () => {
     setAddNew(false);
-    setFlipped(false); 
   };
 
-  const handleToggleCategories = () => {
-    setToggleCategories(!toggleCategories);
-    setFlipped(!flipped); 
+  const handleExploreClick = () => {
+    setShowSubcategories(!showSubcategories);
   };
 
   return (
     <Container>
-      <CategoriesBtn show={showBtn}>
-        <ExploreBtn onClick={handleToggleCategories} flipped={flipped} />
-      </CategoriesBtn>
-
-      {selectedCategory !== null && (
-        <Subcategories
-          subcategories={filteredSubcategories}
-          selectedSubcategories={selectedSubcategories}
-          setSelectedSubcategories={setSelectedSubcategories}
+      {addNew && <AddArticleForm onClose={handleCloseForm} />}
+      <CatContainer>
+        {isAdmin && <AddNewBtn onClick={handleAddNew} />}
+        <ExploreBtn onClick={handleExploreClick} />
+        <CategorySelector
+          categories={categories}
+          selectedCategories={selectedCategories}
+          onSelectCategory={setSelectedCategories}
         />
-      )}
-
+      </CatContainer>
       <PostContainer>
-        {addNew && <AddArticleForm onClose={handleCloseForm} />}
-        <CategoriesContainer toggleCategories={toggleCategories}>
-          {isAdmin ? <AddNewBtn onClick={handleAddNew} /> : ""}
-          <Categories
-            categories={categories}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            onClose={() => {
-              setToggleCategories(false);
-              setFlipped(false); 
-            }}
-          />
-        </CategoriesContainer>
-
         {!outlet && (
-          <ItemContainer>
-            {filteredPosts.map((post) => (
-              <PostItem
-                key={post.$id}
-                id={post.$id}
-                title={post.title}
-                views={post.views}
-                writer={post.writer}
-                createdAt={post.$createdAt}
-                body={post.body.substring(0, 300) + " ....."}
-                subcategory={post.subcategory}
-              />
-            ))}
-          </ItemContainer>
+          <>
+            <SubCatContainer>
+              {showSubcategories && selectedCategories.length > 0 && (
+                <SubcategorySelector
+                  subcategories={subcategories}
+                  selectedSubcategories={selectedSubcategories}
+                  onSelectSubcategory={setSelectedSubcategories}
+                  onClose={() => setShowSubcategories(false)}
+                />
+              )}
+            </SubCatContainer>
+            <ItemContainer>
+              {filteredArticles.map(article => (
+                <PostItem
+                  key={article.$id}
+                  id={article.$id}
+                  title={article.title}
+                  views={article.views}
+                  writer={article.writer}
+                  createdAt={article.$createdAt}
+                  body={article.body.substring(0, 300) + " ....."}
+                  subcategory={article.subcategory}
+                />
+              ))}
+            </ItemContainer>
+          </>
         )}
         <Outlet />
       </PostContainer>

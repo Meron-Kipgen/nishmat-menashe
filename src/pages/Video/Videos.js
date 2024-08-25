@@ -1,34 +1,51 @@
-import React, { useState, useRef, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
-import { Outlet, useNavigate, useOutlet } from "react-router-dom";
-import useMediaQuery from "../../hooks/useMediaQuery";
-import MobileDetails from "./MobileDetails";
-import { useVideosData } from "./useVideosData";
-import Subcategories from "../../components/Subcategories";
-import Categories from "../../components/Categories";
+import React, { useState, useEffect, useContext } from "react";
+import styled from "styled-components";
+import CategorySelector from "../../components/CategorySelector";
+import SubcategorySelector from "../../components/SubcategorySelector";
+import Card from "./Card"
+import { Outlet, useOutlet } from "react-router-dom";
 import ExploreBtn from "../../components/ExploreBtn";
 import AddNewBtn from "../../components/AddNewBtn";
-import VideoForm from "./VideoForm"
-import Card from "./Card";
+import { UserContext } from "../../contexts/UserContext";
+import VideoForm from "./VideoForm";
+import { useVideosData } from "./useVideosData";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 40px;
+  margin: 45px 0;
 `;
-const VideoPreviewWrapper = styled.section`
+
+const PostContainer = styled.div`
+  display: flex;
+  gap: 20px;
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 0;
+   
+  }
+`;
+
+const ItemContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  :hover {
-    cursor: pointer;
-  }
   @media (max-width: 768px) {
+    width: 100%;
     gap: 0;
+   
   }
 `;
 
+const CatContainer = styled.div`
+  display: flex;
+  height: 50px;
+  margin-bottom: 10px;
+`;
+
+const SubCatContainer = styled.div`
+`;
 const CardContainer = styled.div`
   transition: background-color 0.3s ease-in-out;
   display: flex;
@@ -37,11 +54,7 @@ const CardContainer = styled.div`
   border-radius: 10px;
   height: 360px;
   padding: 15px;
-  overflow: hidden;
-  position: relative;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background-color: rgba(255, 255, 255, 0.5);
+  background: white;
 
   &:hover {
     cursor: pointer;
@@ -79,6 +92,9 @@ const TextContainer = styled.div`
   justify-content: space-between;
   margin-top: 5px;
   padding: 0 15px 15px 15px;
+  word-wrap: break-word;     
+  overflow-wrap: break-word;
+  word-break: break-word; 
   h1 {
     font-size: 1.1rem;
     font-weight: 500;
@@ -96,154 +112,40 @@ const TextContainer = styled.div`
     color: rgb(45, 108, 199);
   }
 `;
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 301;
-  animation: ${fadeIn} 0.3s ease-in-out;
-  display: flex;
-  align-items: flex-end;
-  pointer-events: ${({ minimized }) => (minimized ? "none" : "auto")};
-`;
-
-const ModalContent = styled.div`
-  position: ${({ minimized }) => (minimized ? "fixed" : "initial")};
-  bottom: ${({ minimized }) => (minimized ? "50px" : "auto")};
-  right: ${({ minimized }) => (minimized ? "0px" : "auto")};
-  width: ${({ minimized }) => (minimized ? "200px" : "100vw")};
-  height: ${({ minimized }) => (minimized ? "115px" : "100vh")};
-  overflow-y: auto;
-  animation: ${fadeIn} 0.3s ease-in-out;
-  background-color: white;
-  pointer-events: auto;
-  z-index: 301; /* Ensure it's above ModalOverlay */
-  transition: transform 0.3s ease-in-out;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background-color: rgba(255, 255, 255, 0.6);
-  transform: ${({ dragging, dragDistance }) =>
-    dragging ? `translateY(${dragDistance}px)` : "translateY(0)"};
-`;
-
-
-
-const PostContainer = styled.div`
- display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 10px;
-`;
-
-
-
-const CategoriesContainer = styled.div`
-  position: fixed;
-  top: 45px;
-  left: ${({ toggleCategories }) => (toggleCategories ? "0" : "-300px")};
-  width: 300px;
-  transition: left 0.3s ease-in-out;
-  z-index: 1000;
-
-`;
-
-const CategoriesBtn = styled.div`
-  position: fixed;
-  top: ${({ show }) => (show ? "0px" : "-40px")}; /* Hide above viewport */
-  left: 10px; /* Adjust right position as needed */
-  z-index: 1000;
-  transition: top 0.3s ease-in-out;
-`;
-
-const Videos = () => {
-  const [isModalMinimized, setIsModalMinimized] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const [dragDistance, setDragDistance] = useState(0);
-  const navigate = useNavigate();
-  const modalRef = useRef(null);
-  const outlet = useOutlet();
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  const { videoData } = useVideosData();
-  const categories = [...new Set(videoData.map((video) => video.category))];
-  const subcategories = [...new Set(videoData.map((video) => video.subcategory))];
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategories, setSelectedSubcategories] = useState(["All"]);
-  const [toggleCategories, setToggleCategories] = useState(false);
+const Video = () => {
+  const { videoData, loading, error } = useVideosData();
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+  const [showSubcategories, setShowSubcategories] = useState(true);
   const [addNew, setAddNew] = useState(false);
-  const [showBtn, setShowBtn] = useState(true); 
 
-  useEffect(() => {
-    if (selectedCategory !== null) {
-      setSelectedSubcategories(["All"]);
-    }
-  }, [selectedCategory]);
+  const outlet = useOutlet();
+  const { isAdmin } = useContext(UserContext);
 
-  const filteredVideos = videoData
-    .filter(
-      (video) =>
-        (selectedCategory === null || video.category === selectedCategory) &&
-        (selectedSubcategories.includes("All") ||
-          selectedSubcategories.includes(video.subcategory))
-    )
-    .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
+  const sortedVideos = [...videoData].sort(
+    (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt)
+  );
 
-  const filteredSubcategories =
-    selectedCategory === null
-      ? ["All", ...subcategories]
-      : [
-          "All",
-          ...subcategories.filter((subcategory) =>
-            videoData.some(
-              (video) =>
-                video.category === selectedCategory &&
-                video.subcategory === subcategory
-            )
+  const categories = [...new Set(sortedVideos.map(video => video.category))];
+  const subcategories =
+    selectedCategories.length > 0
+      ? [
+          ...new Set(
+            sortedVideos
+              .filter(video => selectedCategories.includes(video.category))
+              .map(video => video.subcategory)
           ),
-        ];
+        ]
+      : [];
 
-
-  const handleTouchStart = (e) => {
-    if (e.touches.length === 1) {
-      const touch = e.touches[0];
-      modalRef.current.startY = touch.clientY;
-      setDragging(true);
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    if (e.touches.length === 1 && dragging) {
-      const touch = e.touches[0];
-      const deltaY = touch.clientY - modalRef.current.startY;
-      setDragDistance(deltaY);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (dragging) {
-      if (dragDistance > 200) {
-        setIsModalMinimized(true);
-      } else {
-        setIsModalMinimized(false);
-      }
-      setDragging(false);
-      setDragDistance(0);
-    }
-  };
-
-
+  const filteredVideo= sortedVideos.filter(Video => {
+    return (
+      (selectedCategories.length === 0 ||
+        selectedCategories.includes(Video.category)) &&
+      (selectedSubcategories.length === 0 ||
+        selectedSubcategories.includes(Video.subcategory))
+    );
+  });
 
   const handleAddNew = () => {
     setAddNew(true);
@@ -253,79 +155,60 @@ const Videos = () => {
     setAddNew(false);
   };
 
+  const handleExploreClick = () => {
+    setShowSubcategories(!showSubcategories);
+  };
+
   return (
-    <>
-      {isMobile && outlet && (
-        <ModalOverlay minimized={isModalMinimized}>
-          <ModalContent
-            minimized={isModalMinimized}
-            dragging={dragging}
-            dragDistance={dragDistance}
-            ref={modalRef}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <MobileDetails />
-          </ModalContent>
-        </ModalOverlay>
-      )}
-      {!isMobile && outlet ? null : (
-        <Container>
-          
-          <CategoriesBtn show={showBtn}>
-        <ExploreBtn onClick={() => setToggleCategories(!toggleCategories)} />
-      </CategoriesBtn>
-       
-        {selectedCategory !== null && (
-          <Subcategories
-            subcategories={filteredSubcategories}
-            selectedSubcategories={selectedSubcategories}
-            setSelectedSubcategories={setSelectedSubcategories}
-          />
-        )}
-       
-    
-         
-      <PostContainer>         {addNew && <VideoForm onClose={handleCloseForm} />}
-        <CategoriesContainer toggleCategories={toggleCategories}> 
-<AddNewBtn onClick={handleAddNew} />
-          <Categories
-            categories={categories}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            onClose={() => setToggleCategories(!toggleCategories)}
-          />
-        </CategoriesContainer>
-         
-            <VideoPreviewWrapper>
-              {filteredVideos.map((video, index) => (
-            
-                  <Card
-                  key={index}
-                  id={video.$id}
-                  title={video.title}
-                  rabbi={video.rabbi}
-                  views={video.views}
-                  thumbnail={video.thumbnail}
-                  poster={video.poster}
-                  createdAt={video.$createdAt}
-                  videoUrl={video.videoUrl}
-                  category={video.category}
-                  CardContainer={CardContainer}
-                  TextContainer={TextContainer}
-                  ThumbnailContainer={ThumbnailContainer}
+    <Container>
+      {addNew && <VideoForm onClose={handleCloseForm} />}
+      <CatContainer>
+        {isAdmin && <AddNewBtn onClick={handleAddNew} />}
+        <ExploreBtn onClick={handleExploreClick} />
+        <CategorySelector
+          categories={categories}
+          selectedCategories={selectedCategories}
+          onSelectCategory={setSelectedCategories}
+        />
+      </CatContainer>
+      <PostContainer>
+        {!outlet && (
+          <>
+            <SubCatContainer>
+              {showSubcategories && selectedCategories.length > 0 && (
+                <SubcategorySelector
+                  subcategories={subcategories}
+                  selectedSubcategories={selectedSubcategories}
+                  onSelectSubcategory={setSelectedSubcategories}
+                  onClose={() => setShowSubcategories(false)}
                 />
-             
+              )}
+            </SubCatContainer>
+            <ItemContainer>
+              {filteredVideo.map((video, index) => (
+               <Card
+               key={index}
+               id={video.$id}
+               title={video.title}
+               rabbi={video.rabbi}
+               views={video.views}
+               thumbnail={video.thumbnail}
+               poster={video.poster}
+               createdAt={video.$createdAt}
+               videoUrl={video.videoUrl}
+               category={video.category}
+               CardContainer={CardContainer}
+               TextContainer={TextContainer}
+               ThumbnailContainer={ThumbnailContainer}
+             />
               ))}
-            </VideoPreviewWrapper>
-          </PostContainer>
-         
-        </Container>
-      )}
-     {!isMobile && <Outlet /> } 
-    </>
+            </ItemContainer>
+          </>
+        )}
+        <Outlet />
+      </PostContainer>
+    </Container>
   );
 };
 
-export default Videos;
+export default Video;

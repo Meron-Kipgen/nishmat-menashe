@@ -21,6 +21,8 @@ import Profile from "../Features/User/Profile";
 import Alon from "../pages/Alon/Alon";
 import AudioDetails from "../pages/Audio/AudioDetails"
 import Podcast from "../pages/Audio/Podcast/Podcast";
+import Feedback from "../Features/Feedback/Feedback";
+import FeedbackDetails from "../Features/Feedback/FeedbackDetails";
 
 const routers = createBrowserRouter([
   {
@@ -110,6 +112,16 @@ const routers = createBrowserRouter([
       {
         path: "/search",
         element: <Results/>,
+      },
+      {
+        path: "/feedback",
+        element: <Feedback/>,
+        children:[
+          {
+            path: ":id",
+            element: <FeedbackDetails/>
+          }
+        ]
       },
     ],
   },
