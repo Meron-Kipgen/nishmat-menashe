@@ -1,6 +1,6 @@
 
 const playerVars = {
-    autoplay: 0,
+    autoplay: 1,
     controls: 0, // Hide default controls
     modestbranding: 1,
     rel: 0,

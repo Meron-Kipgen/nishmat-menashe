@@ -12,6 +12,7 @@ const Container = styled.footer`
   padding: 20px;
   @media (max-width: 768px) {
     background: #142B42;
+    color: white;
   }
 `;
 

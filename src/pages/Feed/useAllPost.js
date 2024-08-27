@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 
-import { useAudioData } from "../Audio/useAudioData";
+import { useSermonsData } from "../Audio/Sermons/useSermonsData";
 import { useVideosData } from "../Video/useVideosData";
 import { useArticlesData } from "../Articles/useArticlesData";
 import { useQuestionAnswerData } from "../QuestionAnswer/useQuestionAnswerData";
 import { useFeedbackData } from "../../Features/Feedback/useFeedbackData";
 
 export const useAllPosts = () => {
-  const { audioData, audioLoading, audioError } = useAudioData();
+  const { sermonData, audioLoading, audioError } = useSermonsData();
   const { videoData, videoLoading, videoError } = useVideosData();
   const { articleData, articleLoading, articleError } = useArticlesData();
   const { QuestionAnswerData, qaLoading, qaError } = useQuestionAnswerData();
@@ -15,7 +15,7 @@ export const useAllPosts = () => {
 
   const posts = useMemo(() => {
     const allPosts = [
-      ...(audioData || []).map(post => ({ ...post, type: "audio" })),
+      ...(sermonData || []).map(post => ({ ...post, type: "audio" })),
       ...(videoData || []).map(post => ({ ...post, type: "video" })),
       ...(articleData || []).map(post => ({ ...post, type: "article" })),
       ...(QuestionAnswerData || []).map(post => ({ ...post, type: "QnA" })),
@@ -26,7 +26,7 @@ export const useAllPosts = () => {
     return allPosts.sort(
       (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt)
     );
-  }, [audioData, videoData, articleData, QuestionAnswerData, feedbackData]);
+  }, [sermonData, videoData, articleData, QuestionAnswerData, feedbackData]);
 
   return {
     posts,

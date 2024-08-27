@@ -75,7 +75,7 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Initially set loading to true
   const [volume, setVolume] = useState(50); // Volume level (0-100)
   const [isMuted, setIsMuted] = useState(false);
 
@@ -141,14 +141,14 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
       playerRef.current.setVolume(volume);
       playerRef.current.isMuted() ? setIsMuted(true) : setIsMuted(false);
     }
-    if (volume === 0){
-      setIsMuted(true)
+    if (volume === 0) {
+      setIsMuted(true);
     }
-
   }, [volume, isPlayerReady]);
 
   const onPlayerReady = (event) => {
     setIsPlayerReady(true);
+    setIsLoading(false); // Set loading to false when the player is ready
     const videoDuration = playerRef.current.getDuration();
     if (!isNaN(videoDuration) && videoDuration > 0) {
       setDuration(videoDuration);
@@ -165,7 +165,7 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
 
   const onPlayerStateChange = (event) => {
     if (event.data === window.YT.PlayerState.BUFFERING) {
-      setIsLoading(true);
+      setIsLoading(true); // Show loading spinner when buffering
     } else if (event.data === window.YT.PlayerState.PLAYING) {
       setIsPlaying(true);
       setIsLoading(false);
@@ -258,36 +258,54 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
             isPlaying ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-player-pause-filled" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M9 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" strokeWidth="0" fill="currentColor" />
-                <path d="M17 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" strokeWidth="0" fill="currentColor" />
+                <path d="M9 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" fill="currentColor" />
+                <path d="M15 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" fill="currentColor" />
               </svg>
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-player-play" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M7 4v16l13 -8z" strokeWidth="0" fill="currentColor" />
+                <path d="M5 4l14 8l-14 8z" fill="none" />
               </svg>
             )
           )}
         </Button>
-        <Slider type="range" min="0" max="100" value={progress} onChange={handleSliderChange} />
-        <TimeDisplay>{formatTime(currentTime)} / {formatTime(duration)}</TimeDisplay>
-        <VolumeSlider type="range" min="0" max="100" value={volume} onChange={handleVolumeChange} />
+        <Slider
+          type="range"
+          min="0"
+          max="100"
+          value={progress}
+          onChange={handleSliderChange}
+        />
+        <VolumeSlider
+          type="range"
+          min="0"
+          max="100"
+          value={volume}
+          onChange={handleVolumeChange}
+        />
         <Button onClick={handleMuteUnmute}>
           {isMuted ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-volume-off" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-volume-mute" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M14 15v-6l5 3z" strokeWidth="0" fill="currentColor" />
-              <path d="M3 3l18 18" strokeWidth="2" fill="none" />
+              <path d="M15 8l-6 6" />
+              <path d="M9 8l6 6" />
+              <path d="M3 12l6 6v-12l-6 6" />
             </svg>
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-volume-2" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-volume" width="30" height="30" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M15 18v-12l-5 6z" strokeWidth="0" fill="currentColor" />
-              <path d="M19 19a4 4 0 0 0 0 -14" strokeWidth="2" fill="none" />
+              <path d="M15 8l-6 6" />
+              <path d="M9 8l6 6" />
+              <path d="M3 12l6 6v-12l-6 6" />
+              <path d="M21 12l-6 6v-12l6 6" />
             </svg>
           )}
         </Button>
+        <TimeDisplay>
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </TimeDisplay>
       </Controls>
+      {isLoading && <Loading />}
     </PlayerContainer>
   );
 };

@@ -4,7 +4,8 @@ import { NavLink } from "react-router-dom";
 import { ArticleIcon, AudioIcon, FeedIcon, LibraryIcon, QnAIcon, VideoIcon } from "../../Assets/Icons";
 
 // Define variables for icon dimensions
-const ICON_SIZE = 24; // Example size, adjust as needed
+const ICON_SIZE = 26; // Default icon size for desktop
+const MOBILE_ICON_SIZE = 29; // Icon size for mobile devices
 
 const Wrapper = styled.section`
   display: flex;
@@ -17,7 +18,6 @@ const Wrapper = styled.section`
     margin: 0;
     justify-content: space-between;
     gap: 30px;
-
   }
 
   li {
@@ -35,27 +35,43 @@ const StyledNavLink = styled(NavLink)`
   transition: color 0.3s;
   text-decoration: none;
   font-size: 0.9rem;
-  @media (max-width: 768px) {
-   font-size: 0.6rem;
+
+  svg {
+    stroke: currentColor; /* Make sure the SVG stroke color follows the text color */
+    transition: stroke 0.3s;
+    height: ${ICON_SIZE}px; /* Apply default icon size */
+    width: ${ICON_SIZE}px;  /* Apply default icon size */
+    margin-bottom: 2px; /* Space between the icon and text */
   }
-  &.active,
-  &:hover {
+
+  &.active {
     color: #FFA555;
-    @media (max-width: 768px) {
-   &:hover{
-    color: none;
-   }
-  }
     svg {
       stroke: #FFA555;
     }
   }
 
-  svg {
-    stroke: currentColor; /* Make sure the SVG stroke color follows the text color */
-    transition: stroke 0.3s;
-    height: ${ICON_SIZE}px; /* Apply icon size variable */
-    width: ${ICON_SIZE}px; /* Apply icon size variable */
+  &:hover {
+    @media (hover: hover) and (pointer: fine) {
+      color: #FFA555;
+      svg {
+        stroke: #FFA555;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.6rem;
+
+    svg {
+      height: ${MOBILE_ICON_SIZE}px; /* Apply mobile icon size */
+      width: ${MOBILE_ICON_SIZE}px;  /* Apply mobile icon size */
+      margin-bottom: 3px; /* Reduce spacing between icon and text for mobile */
+    }
+
+    &:hover {
+      color: #CACECF; /* Retain original color on touch devices */
+    }
   }
 `;
 
@@ -87,7 +103,6 @@ export default function NavMenu() {
             audios
           </StyledNavLink>
         </li>
-       
         <li>
           <StyledNavLink to="/Books" activeClassName="active">
             <LibraryIcon />

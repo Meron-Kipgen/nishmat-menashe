@@ -2,7 +2,7 @@ import React from "react";
 import { VideosDataProvider } from "./pages/Video/useVideosData";
 import { BookDataProvider } from "./pages/Books/useBookData";
 import { ArticlesDataProvider } from "./pages/Articles/useArticlesData";
-import { AudioDataProvider } from "./pages/Audio/useAudioData";
+import { SermonDataProvider } from "./pages/Audio/Sermons/useSermonsData";
 import { PodcastDataProvider } from "./pages/Audio/Podcast/usePodcastData";
 import { QuestionAnswerDataProvider } from "./pages/QuestionAnswer/useQuestionAnswerData";
 import { FeedbackDataProvider } from "./Features/Feedback/useFeedbackData";
@@ -12,7 +12,7 @@ const Providers = ({ children }) => {
     <FeedbackDataProvider>
       <VideosDataProvider>
         <QuestionAnswerDataProvider>
-          <AudioDataProvider>
+          <SermonDataProvider>
             <BookDataProvider>
               <PodcastDataProvider>
                 <ArticlesDataProvider>
@@ -20,7 +20,7 @@ const Providers = ({ children }) => {
                 </ArticlesDataProvider>
               </PodcastDataProvider>
             </BookDataProvider>
-          </AudioDataProvider>
+          </SermonDataProvider>
         </QuestionAnswerDataProvider>
       </VideosDataProvider>
     </FeedbackDataProvider>

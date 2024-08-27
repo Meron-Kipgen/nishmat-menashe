@@ -14,28 +14,29 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 45px 0;
+
+
 `;
 
 const PostContainer = styled.div`
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
   gap: 20px;
   @media (max-width: 768px) {
-    justify-content: none;
     width: 100%;
     gap: 0;
-   
+    margin-bottom: 40px;
   }
-  
 `;
-
 const ItemContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 10px;
+  gap: 10px;
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 10px;
+   
+  }
 `;
 
 const CatContainer = styled.div`
@@ -44,8 +45,22 @@ const CatContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-const SubCatContainer = styled.div``;
 
+const SubCatContainer = styled.div`
+
+  @media (max-width: 768px) {
+    width: 80%;
+   
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: white;
+    z-index: 1000; 
+    overflow-y: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+    
+  }
+`;
 const Articles = () => {
   const { articleData, loading, error } = useArticlesData();
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -127,7 +142,7 @@ const Articles = () => {
                   views={article.views}
                   writer={article.writer}
                   createdAt={article.$createdAt}
-                  body={article.body.substring(0, 300) + " ....."}
+                  body={article.body.substring(0, 200) + " ....."}
                   subcategory={article.subcategory}
                 />
               ))}

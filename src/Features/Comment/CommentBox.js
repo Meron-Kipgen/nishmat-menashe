@@ -50,7 +50,7 @@ const TextArea = styled.textarea`
 
 const SendButton = styled.button`
   position: absolute;
-  top: 8px;
+  top: 6px;
   right: 15px;
   background: none;
   border: none;
@@ -134,7 +134,10 @@ const CommentBox = ({ postId }) => {
             />
             {isNearLimit && <WarningMessage>{remainingChars} characters remaining</WarningMessage>}
             <SendButton onClick={handleSendComment} disabled={isLoading}>
-              {isLoading ? <LoadingSpinner /> : <FaPaperPlane />}
+              {isLoading ? <LoadingSpinner /> : <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-telegram" width="25" height="25" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fd0061" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
+</svg>}
             </SendButton>
           </TextAreaContainer>
         </Container>

@@ -1,15 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useLocation, Link } from "react-router-dom";
 import styled from "styled-components";
-import { fetchDataFromCollections } from './allData';
-
-const collections = [
-  { name: 'video', databaseId: '666aff03003ba124b787', collectionId: '666aff1400318bf6aa6f' },
-  { name: 'audio', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_AUDIO_COLLECTION_ID' },
-  { name: 'library', databaseId: '666aff03003ba124b787', collectionId: '668d39710005c04f99c6' },
-  { name: 'questionAndAnswer', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_QA_COLLECTION_ID' },
-  { name: 'article', databaseId: '666aff03003ba124b787', collectionId: '666b0186000007f47da9' },
-];
+import { useAllPosts } from "../../pages/Feed/useAllPost";
+import SearchItems from "./SearchItems";
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -20,6 +13,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  margin-top: 45px;
 `;
 
 const FilterContainer = styled.div`
@@ -30,188 +24,140 @@ const FilterContainer = styled.div`
 
 const FilterButton = styled.button`
   background: ${props => (props.active ? '#007bff' : '#e0e0e0')};
-  color: ${props => (props.active ? '#fff' : '#000')};
   border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
+  border-radius: 5px;
+  padding: 10px;
+  color: ${props => (props.active ? '#fff' : '#000')};
   cursor: pointer;
-  font-size: 16px;
+  position: relative;
 
   &:hover {
-    background: ${props => (props.active ? '#0056b3' : '#c0c0c0')};
+    background: ${props => (props.active ? '#0056b3' : '#bdbdbd')};
+  }
+
+  &::after {
+    content: ${props => (props.count > 0 ? `"${props.count}"` : '""')};
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    display: ${props => (props.count > 0 ? 'block' : 'none')};
   }
 `;
 
-const ResultsContainer = styled.div`
-  max-width: 800px;
-  width: 100%;
-  padding: 20px;
-  border-radius: 8px;
-  background: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin: 0 auto; 
-
-  @media (max-width: 768px) {
-    width: 100vw; 
-    height: 100vh; 
-    padding: 10px; 
-    overflow-y: auto;
-   
-  
-    border-radius: 0; /* Remove border-radius on mobile */
-  }
-`;
-
-const SearchResultItem = styled.li`
-  margin: 10px 0;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-
-  a {
-    text-decoration: none;
-    color: #1a0dab;
-    font-size: 18px;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  span {
-    display: block;
-    color: #6a6a6a;
-    font-size: 14px;
-    margin-top: 4px;
-  }
-`;
-
-const Loading = styled.p`
-  text-align: center;
-  font-size: 18px;
-`;
-
-const Error = styled.p`
-  text-align: center;
-  color: red;
-  font-size: 18px;
-`;
-
-export default function Results() {
+const Results = () => {
   const query = useQuery();
-  const searchTerm = query.get("q");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const searchTerm = query.get("q") || '';
+  const [selectedTypes, setSelectedTypes] = useState(new Set()); // State to manage selected types
+  const { posts, loading } = useAllPosts(); // Use useAllPosts to get all posts
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const fetchedData = await fetchDataFromCollections(collections);
-        const filteredResults = fetchedData.filter((item) => {
-          const lowerCasedTitle = item.title.toLowerCase();
-          const lowerCasedSearchTerm = searchTerm.toLowerCase();
-          return (
-            lowerCasedTitle.includes(lowerCasedSearchTerm) ||
-            lowerCasedSearchTerm.split(" ").some(term => lowerCasedTitle.includes(term))
-          );
-        });
-        setResults(filteredResults);
-      } catch (err) {
-        setError('Failed to fetch data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Function to calculate relevance based on multiple fields
+  const calculateRelevance = (post) => {
+    const searchTermLower = searchTerm.toLowerCase();
+    let score = 0;
 
-    fetchResults();
-  }, [searchTerm]);
-
-  const handleFilterClick = (filter) => {
-    setSelectedFilters(prevFilters =>
-      prevFilters.includes(filter)
-        ? prevFilters.filter(f => f !== filter)
-        : [...prevFilters, filter]
-    );
-  };
-
-  const filteredResults = selectedFilters.length
-    ? results.filter(result => selectedFilters.includes(result.collection))
-    : results;
-
-  const getResultLink = (result) => {
-    let path = '';
-    switch (result.collection) {
-      case 'video':
-        path = `/Video/${result.$id}`;
-        break;
-      case 'audio':
-        path = `/audios/${result.$id}`;
-        break;
-      case 'library':
-        path = `/libraries/${result.$id}`;
-        break;
-      case 'questionAndAnswer':
-        path = `/qas/${result.$id}`;
-        break;
-      case 'article':
-        path = `/articles/${result.$id}`;
-        break;
-      default:
-        path = '/';
-        break;
+    // Check title
+    if (post.title?.toLowerCase().includes(searchTermLower)) {
+      score += 1;
     }
-    return path;
+
+    // Check category
+    if (post.category?.toLowerCase().includes(searchTermLower)) {
+      score += 1;
+    }
+
+    // Check subcategory
+    if (post.subcategory?.toLowerCase().includes(searchTermLower)) {
+      score += 1;
+    }
+
+    // Check feedback (if available)
+    if (post.feedback?.toLowerCase().includes(searchTermLower)) {
+      score += 1;
+    }
+
+    // Check answer (if available)
+    if (post.answer?.toLowerCase().includes(searchTermLower)) {
+      score += 1;
+    }
+
+    return score;
   };
 
-  if (loading) return <Loading>Loading...</Loading>;
-  if (error) return <Error>Error: {error}</Error>;
+  // Filter posts based on search term and selected types
+  const filteredResults = posts
+    .filter(post => selectedTypes.size === 0 || selectedTypes.has(post.type)) // Filter by selected types
+    .map(post => ({
+      ...post,
+      relevance: calculateRelevance(post)
+    }))
+    .filter(post => post.relevance > 0) // Filter out posts with no relevance
+    .sort((a, b) => b.relevance - a.relevance); // Sort by relevance, descending
+
+  // Calculate counts for each type based on the search term
+  const typeCounts = useMemo(() => {
+    const counts = { audio: 0, video: 0, article: 0, QnA: 0, feedback: 0 };
+
+    posts.forEach(post => {
+      if (calculateRelevance(post) > 0) {
+        counts[post.type] = (counts[post.type] || 0) + 1;
+      }
+    });
+
+    return counts;
+  }, [posts, searchTerm]);
+
+  const handleTypeToggle = (type) => {
+    setSelectedTypes(prev => {
+      const newTypes = new Set(prev);
+      if (newTypes.has(type)) {
+        newTypes.delete(type);
+      } else {
+        newTypes.add(type);
+      }
+      return newTypes;
+    });
+  };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <Wrapper>
       <FilterContainer>
-        {collections.map(collection => (
+        <FilterButton
+          active={selectedTypes.size === 0}
+          onClick={() => setSelectedTypes(new Set())}
+          count={filteredResults.length}
+        >
+          All
+        </FilterButton>
+        {['audio', 'video', 'article', 'QnA', 'feedback'].map(type => (
           <FilterButton
-            key={collection.name}
-            active={selectedFilters.includes(collection.name)}
-            onClick={() => handleFilterClick(collection.name)}
+            key={type}
+            active={selectedTypes.has(type)}
+            onClick={() => handleTypeToggle(type)}
+            count={typeCounts[type]}
           >
-            {collection.name}
+            {type.charAt(0).toUpperCase() + type.slice(1)}
           </FilterButton>
         ))}
       </FilterContainer>
-      <ResultsContainer>
-        <h1>Search Results for "{searchTerm}"</h1>
-        {filteredResults.length > 0 ? (
-          <ul>
-            {filteredResults.map((result, index) => (
-              <SearchResultItem key={index}>
-                <Link to={getResultLink(result)}>
-                  {result.title}
-                </Link>
-                <span>({result.collection})</span>
-                {/* Add more details based on the collection */}
-                {result.collection === 'video' && (
-                  <div>
-                    <p>{result.description}</p>
-                    <video src={result.videoUrl} controls width="100%" />
-                  </div>
-                )}
-                {result.collection === 'article' && (
-                  <div>
-                    <p>{result.description}</p>
-                  </div>
-                )}
-              </SearchResultItem>
-            ))}
-          </ul>
-        ) : (
-          <p>No results found</p>
-        )}
-      </ResultsContainer>
+      {filteredResults.length > 0 ? (
+        filteredResults.map((post) => (
+          <SearchItems
+            key={post.id}
+            post={post}
+          />
+        ))
+      ) : (
+        <p>No results found.</p>
+      )}
     </Wrapper>
   );
-}
+};
+
+export default Results;

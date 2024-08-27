@@ -5,6 +5,7 @@ import CommentList from './CommentList';
 
 const CommentContainer = styled.section`
   border-top: 1px solid #ccc;
+  
 `;
 
 const CommentsSection = ({ postId, comments, loading, error, createComment, updateComment, deleteComment, maxPosts = 1 }) => {

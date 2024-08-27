@@ -9,14 +9,21 @@ const SubcategoryWrapper = styled.div`
   gap: 10px;
   padding: 10px;
   background-color: #f5f5f5;
-  max-height: 80vh;
+  height: 80vh;
   overflow-y: scroll;
   
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE and Edge */
+
   &::-webkit-scrollbar {
     width: 0;  /* Safari and Chrome */
     height: 0;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100vh;
+    position: relative; /* Ensure it is in the flow of the document */
   }
 `;
 
@@ -42,6 +49,13 @@ const CategoryButton = styled.button`
   }
 `;
 
+const TopSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  position: relative; /* Ensure the close button is correctly positioned */
+`;
+
 const CloseButton = styled.button`
   background: transparent;
   border: none;
@@ -65,19 +79,21 @@ const CloseButton = styled.button`
 const SubcategorySelector = ({ subcategories, selectedSubcategories, onSelectSubcategory, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);
 
-  const handleClose = () => {
+  const handleClose = (event) => {
+    event.stopPropagation(); // Prevent clicks from propagating and triggering other actions
     setIsVisible(false);
     onClose(); // Call the onClose function passed as a prop
   };
 
   if (!isVisible) return null;
 
-
-
   return (
     <SubcategoryWrapper>
-      <p>Subcategories</p>
-      <span onClick={handleClose}>close</span>
+      <TopSection>
+        <p>Subcategories</p>
+        <CloseButton onClick={handleClose}>×</CloseButton>
+      </TopSection>
+      
       <CategoryButton
         key="all"
         isSelected={selectedSubcategories.length === 0}

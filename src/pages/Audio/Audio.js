@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import PodcastCard from "./Podcast/PodcastCard";
-import AudioCard from "./AudioCard";
+import SermonCard from "./Sermons/SermonCard";
+import { useSermonsData } from "./Sermons/useSermonsData";
+import { Outlet, useNavigate, useOutlet } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -11,7 +13,23 @@ const Container = styled.div`
     flex-direction: column-reverse;
   }
 `;
+const AudioTitleContainer = styled.div`
+  padding: 0 90px 0 30px;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%; 
 
+   p{
+    display: flex;
+    align-items: center;
+   gap: 10px;
+    cursor: pointer;
+    &:hover{
+      color: red;
+    }
+  }
+`;
 const SermonContainer = styled.div`
   width: 1000px;
   height: 100vh;
@@ -31,17 +49,33 @@ const SermonContainer = styled.div`
     overflow-y: hidden; /* Hide vertical overflow */
   }
 `;
+const PodcastTitleContainer = styled.div`
+ 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 50px;
+    padding: 0 10px;
+  }
+  p{
+    display: flex;
+    align-items: center;
+    border: 1px solid red;
+  }
+`;
 const PodcastContainer = styled.div`
   width: 500px;
   height: 100vh;
   display: flex;
-  flex-direction: column;
   gap: 10px;
   flex-wrap: wrap;
-  overflow-y: scroll;
+  overflow-x: scroll;
   scrollbar-width: none;
-  -ms-overflow-style: none;
+  -ms-overflow-style: auto;
 
   &::-webkit-scrollbar {
     display: none;
@@ -54,40 +88,73 @@ const PodcastContainer = styled.div`
     overflow-x: auto;
     overflow-y: hidden;
     flex-wrap: nowrap;
-    gap: 15px; /* Adjust the gap between items */
+    gap: 15px;
+    margin-top: 50px;
   }
 
-  /* Ensure that the cards maintain their original size */
   & > * {
-    min-width: 200px; /* Set this to the same as the card's width */
-    flex-shrink: 0; /* Prevent shrinking */
+    min-width: 200px;
+    flex-shrink: 0;
   }
 `;
 
+
 export default function Audio() {
+  
+  const { sermonData } = useSermonsData();
+  const outlet = useOutlet();
+  const navigate = useNavigate()
+
+  const gotoSermonPage = () => {
+    navigate("/Audio/Sermon");
+  }
+  
+
+  
+
   return (
-    <Container>
-      <SermonContainer>
-        {/* AudioCard components go here */}
-        <AudioCard />
-        <AudioCard />
-        <AudioCard />
-        <AudioCard />
-        <AudioCard />
-        <AudioCard />
-        {/* Repeat as needed */}
-      </SermonContainer>
-      <PodcastContainer>
-        {/* PodcastCard components go here */}
-        <PodcastCard title="Podcast 1" description="Description 1" rabbi="Rabbi 1" season="Season 1" played="50" isComplete={true} thumbnail="https://via.placeholder.com/200" />
-        <PodcastCard title="Podcast 2" description="Description 2" rabbi="Rabbi 2" season="Season 2" played="30" isComplete={false} thumbnail="https://via.placeholder.com/200" />
-        <PodcastCard title="Podcast 3" description="Description 3" rabbi="Rabbi 3" season="Season 3" played="70" isComplete={true} thumbnail="https://via.placeholder.com/200" />
-        <PodcastCard title="Podcast 4" description="Description 4" rabbi="Rabbi 4" season="Season 4" played="20" isComplete={false} thumbnail="https://via.placeholder.com/200" />
-        <PodcastCard title="Podcast 5" description="Description 5" rabbi="Rabbi 5" season="Season 5" played="40" isComplete={true} thumbnail="https://via.placeholder.com/200" />
-        <PodcastCard title="Podcast 6" description="Description 6" rabbi="Rabbi 6" season="Season 6" played="60" isComplete={false} thumbnail="https://via.placeholder.com/200" />
-        <PodcastCard title="Podcast 7" description="Description 7" rabbi="Rabbi 7" season="Season 7" played="90" isComplete={true} thumbnail="https://via.placeholder.com/200" />
-        {/* Repeat as needed */}
-      </PodcastContainer>
-    </Container>
+    <>
+      {!outlet && (
+        <Container>
+          <SermonContainer>
+            <AudioTitleContainer>
+              <h1>Audio</h1>
+              <p onClick={gotoSermonPage}>
+              See all <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevrons-right" width="25" height="25" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M7 7l5 5l-5 5" />
+  <path d="M13 7l5 5l-5 5" />
+</svg></p>
+            </AudioTitleContainer>
+            {sermonData.map(audio => (
+              <SermonCard
+                id={audio.$id}
+                title={audio.title}
+                thumbnail={audio.thumbnail}
+                createdAt={audio.$createdAt}
+                rabbi={audio.rabbi}
+                category={audio.category}
+                subcategory={audio.subcategory}
+                played={audio.played}
+              />
+            ))}
+          </SermonContainer>
+
+          <PodcastContainer>
+            <PodcastTitleContainer>
+              <h1>Podcast</h1>
+              <p>see all <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevrons-right" width="25" height="25" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M7 7l5 5l-5 5" />
+  <path d="M13 7l5 5l-5 5" />
+</svg></p>
+            </PodcastTitleContainer>
+            <PodcastCard />
+          </PodcastContainer>
+        </Container>
+      )}
+
+      <Outlet />
+    </>
   );
 }

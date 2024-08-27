@@ -43,7 +43,7 @@ export default function MobileSearch() {
   return (
     <>
       <SearchIconContainer onClick={handleSearchClick}>
-        <SearchIcon height="30px" width="30px" />
+        <SearchIcon height="35px" width="35px" />
       </SearchIconContainer>
       {isSearchOpen && (
         <FullscreenOverlay>

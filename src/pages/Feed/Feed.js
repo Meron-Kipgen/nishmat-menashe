@@ -18,6 +18,9 @@ const Container = styled.section`
   display: flex;
   justify-content: center;
   gap: 30px;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const Middle = styled.section`
@@ -34,7 +37,11 @@ const Middle = styled.section`
   }
 
   @media (max-width: 768px) {
+    margin-bottom: 40px;
     width: 100%;
+    overflow-y: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   }
 `;
 

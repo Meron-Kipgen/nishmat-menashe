@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import TimeAgo from "../../utils/TimeAgo";
-import GlobalPlayer from "../Audio/GlobalPlayer";
-import { useAudioData } from "../Audio/useAudioData";
+import { useSermonsData } from "../Audio/Sermons/useSermonsData";
 import useCommentsData from "../../Features/Comment/useCommentsData";
 import CommentsSection from "../../Features/Comment/CommentSection";
 import { CommentIcon } from "../../Assets/Icons";
+import { useNavigate } from "react-router-dom";
 
 const CardContainer = styled.div`
   display: flex;
@@ -108,9 +108,8 @@ const PlayButton = styled.div`
 `;
 
 const AudioPost = ({ post, maxPosts = 1 }) => {
-  const { updatePlayed } = useAudioData();
-  const [currentAudioUrl, setCurrentAudioUrl] = useState(null);
-  const [shouldPlay, setShouldPlay] = useState(false);
+  const { updatePlayed } = useSermonsData();
+  const navigate = useNavigate();
   const {
     comments,
     loading,
@@ -124,17 +123,9 @@ const AudioPost = ({ post, maxPosts = 1 }) => {
     return <div>Loading...</div>; // Handle undefined post gracefully
   }
 
-  const handlePlay = audioUrl => {
-    console.log("Playing audio:", audioUrl); // Debugging
-    setCurrentAudioUrl(audioUrl);
-    setShouldPlay(true);
-    updatePlayed(audioUrl);
-  };
-
-  const handleClosePlayer = () => {
-    console.log("Closing player"); // Debugging
-    setCurrentAudioUrl(null);
-    setShouldPlay(false);
+  const handlePlay = () => {
+    navigate(`/Audio/${post.$id}`);
+    updatePlayed(post.$id);
   };
 
   return (
@@ -166,16 +157,6 @@ const AudioPost = ({ post, maxPosts = 1 }) => {
         </Content>
       </CardContainer>
 
-      {currentAudioUrl && (
-        <GlobalPlayer
-          audioUrl={currentAudioUrl}
-          thumbnail={post.thumbnail}
-          title={post.title}
-          rabbi={post.rabbi}
-          shouldPlay={shouldPlay}
-          onClose={handleClosePlayer}
-        />
-      )}
       <CommentsSection
         postId={post.$id}
         comments={comments}

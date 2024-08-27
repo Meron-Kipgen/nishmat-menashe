@@ -19,7 +19,8 @@ import PodcastDetails from "../pages/Audio/Podcast/PodcastDetails";
 import QuestionAnswerDetails from "../pages/QuestionAnswer/QuestionAnswerDetails";
 import Profile from "../Features/User/Profile";
 import Alon from "../pages/Alon/Alon";
-import AudioDetails from "../pages/Audio/AudioDetails"
+import Sermon from "../pages/Audio/Sermons/Sermon";
+import SermonDetails from "../pages/Audio/Sermons/SermonDetails"
 import Podcast from "../pages/Audio/Podcast/Podcast";
 import Feedback from "../Features/Feedback/Feedback";
 import FeedbackDetails from "../Features/Feedback/FeedbackDetails";
@@ -67,8 +68,15 @@ const routers = createBrowserRouter([
             ]
           }, 
           {
+            path: "sermon",
+            element: <Sermon />,
+            children:[
+               {
+         
             path: ":id",
-            element: <AudioDetails />,
+            element: <SermonDetails />,
+          }, 
+            ]
           }, 
          
           

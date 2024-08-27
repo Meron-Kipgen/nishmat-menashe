@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useAudioData } from "./useAudioData"; // Adjust the path as necessary
-import Draggable from "react-draggable";
+import { useSermonsData } from "./useSermonsData"; // Adjust the path as necessary
 
 const FormContainer = styled.div`
   background: #fff;
@@ -90,7 +89,7 @@ const ErrorMessage = styled.p`
 `;
 
 const EditAudioForm = ({ audio, onClose }) => {
-  const { updateAudio } = useAudioData();
+  const { updateSermon } = useSermonsData();
   const [formData, setFormData] = useState({
     title: audio.title,
     category: audio.category,
@@ -112,7 +111,7 @@ const EditAudioForm = ({ audio, onClose }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await updateAudio(audio.$id, formData);
+      await updateSermon(audio.$id, formData);
       onClose();
     } catch (err) {
       setError("Failed to update audio. Please try again.");
@@ -120,73 +119,71 @@ const EditAudioForm = ({ audio, onClose }) => {
   };
 
   return (
-    <Draggable>
-      <FormContainer>
-        <CloseButton onClick={onClose}>×</CloseButton>
-        <Title>Edit Audio</Title>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        <Form onSubmit={handleSubmit}>
-          <Label>
-            Title:
-            <Input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </Label>
-          <Label>
-            Category:
-            <Input
-              type="text"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-            />
-          </Label>
-          <Label>
-            Subcategory:
-            <Input
-              type="text"
-              name="subcategory"
-              value={formData.subcategory}
-              onChange={handleChange}
-            />
-          </Label>
-          <Label>
-            Rabbi:
-            <Input
-              type="text"
-              name="rabbi"
-              value={formData.rabbi}
-              onChange={handleChange}
-            />
-          </Label>
-          <Label>
-            Thumbnail URL:
-            <Input
-              type="text"
-              name="thumbnail"
-              value={formData.thumbnail}
-              onChange={handleChange}
-            />
-          </Label>
-          <Label>
-            Audio URL:
-            <Input
-              type="text"
-              name="audioUrl"
-              value={formData.audioUrl}
-              onChange={handleChange}
-              required
-            />
-          </Label>
-          <Button type="submit">Update Audio</Button>
-        </Form>
-      </FormContainer>
-    </Draggable>
+    <FormContainer>
+      <CloseButton onClick={onClose}>×</CloseButton>
+      <Title>Edit Audio</Title>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      <Form onSubmit={handleSubmit}>
+        <Label>
+          Title:
+          <Input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
+        </Label>
+        <Label>
+          Category:
+          <Input
+            type="text"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            required
+          />
+        </Label>
+        <Label>
+          Subcategory:
+          <Input
+            type="text"
+            name="subcategory"
+            value={formData.subcategory}
+            onChange={handleChange}
+          />
+        </Label>
+        <Label>
+          Rabbi:
+          <Input
+            type="text"
+            name="rabbi"
+            value={formData.rabbi}
+            onChange={handleChange}
+          />
+        </Label>
+        <Label>
+          Thumbnail URL:
+          <Input
+            type="text"
+            name="thumbnail"
+            value={formData.thumbnail}
+            onChange={handleChange}
+          />
+        </Label>
+        <Label>
+          Audio URL:
+          <Input
+            type="text"
+            name="audioUrl"
+            value={formData.audioUrl}
+            onChange={handleChange}
+            required
+          />
+        </Label>
+        <Button type="submit">Update Audio</Button>
+      </Form>
+    </FormContainer>
   );
 };
 

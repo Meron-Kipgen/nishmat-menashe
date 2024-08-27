@@ -14,15 +14,16 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 45px 0;
+ 
 `;
 
 const PostContainer = styled.div`
   display: flex;
-  gap: 20px;
+gap: 20px;
   @media (max-width: 768px) {
     width: 100%;
     gap: 0;
-   
+   margin-bottom: 40px;
   }
 `;
 
@@ -42,10 +43,26 @@ const CatContainer = styled.div`
   display: flex;
   height: 50px;
   margin-bottom: 10px;
+
 `;
 
 const SubCatContainer = styled.div`
+
+  @media (max-width: 768px) {
+    width: 80%;
+   
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: white;
+    z-index: 1000; 
+    overflow-y: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+    
+  }
 `;
+
+
 const CardContainer = styled.div`
   transition: background-color 0.3s ease-in-out;
   display: flex;

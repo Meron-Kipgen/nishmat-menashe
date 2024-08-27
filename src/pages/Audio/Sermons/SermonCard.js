@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import TimeAgo from "../../utils/TimeAgo";
-import AudioProperties from "./AudioProperties";
-import WarningDelete from "../../components/WarningDelete";
+import TimeAgo from "../../../utils/TimeAgo";
+
+import WarningDelete from "../../../components/WarningDelete";
+import { useNavigate } from "react-router-dom";
+import { DotHorizon } from "../../../Assets/Icons";
 // Container for the card
 const CardContainer = styled.div`
   display: flex;
@@ -162,24 +164,23 @@ const MenuWrapper = styled.div`
     border-radius: 5px;
   }
 `;
-const AudioCard = ({
+const SermonCard = ({
   title,
   category,
   subcategory,
   rabbi,
   played,
-  audioUrl,
-  onPlay,
+  id,
   thumbnail,
   createdAt,
-  onEdit,
-  onDelete,
+  onEdit, // onEdit function passed as a prop
+  onDelete, // onDelete function passed as a prop
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
 
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = event => {
@@ -193,23 +194,23 @@ const AudioCard = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleClick = () => {
+    navigate(`/Audio/Sermon/${id}`);
+  };
+  {
+    console.log(id);
+  }
   const handleDropdownToggle = () => {
     setIsDropdownOpen(prev => !prev);
   };
 
-  const handleShowDetails = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseDetails = () => {
-    setIsModalOpen(false);
-  };
   const handleDelete = () => {
     setShowWarning(true);
   };
 
   const handleConfirmDelete = () => {
-    onDelete();
+    onDelete(id); // Pass the audio ID to the onDelete function
     setShowWarning(false);
   };
 
@@ -225,50 +226,14 @@ const AudioCard = ({
       <Content>
         <Header>
           <DropMenu ref={dropdownRef} onClick={handleDropdownToggle}>
-            <MenuButton>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-dots-vertical"
-                width="35"
-                height="35"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="#000000"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12 16l0 -1" />
-                <path d="M12 12l0 -1" />
-                <path d="M12 8l0 -1" />
-              </svg>
-            </MenuButton>
+            <DotHorizon height={30} width={30} />
             <DropdownContent isOpen={isDropdownOpen}>
               <MenuWrapper
                 onClick={() => {
-                  onEdit();
+                  onEdit(id); // Pass the audio ID to the onEdit function
                   setIsDropdownOpen(false);
                 }}
               >
-                <MenuButton>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="icon icon-tabler icon-tabler-pencil"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="#000000"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M16 3l4 4l-11 11h-4v-4z" />
-                    <path d="M13.5 6.5l4 4" />
-                  </svg>
-                </MenuButton>
                 Edit
               </MenuWrapper>
               <MenuWrapper
@@ -277,56 +242,7 @@ const AudioCard = ({
                   setIsDropdownOpen(false);
                 }}
               >
-                <MenuButton>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="icon icon-tabler icon-tabler-trash"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="#000000"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M4 7l16 0" />
-                    <path d="M10 11l0 6" />
-                    <path d="M14 11l0 6" />
-                    <path d="M5 7l1 -1a2 2 0 0 1 1.5 -.5l10 0a2 2 0 0 1 1.5 .5l1 1" />
-                    <path d="M10 7l0 -2a2 2 0 0 1 4 0l0 2" />
-                  </svg>
-                </MenuButton>
                 Delete
-              </MenuWrapper>
-
-              <MenuWrapper
-                onClick={() => {
-                  handleShowDetails();
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <MenuButton>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="icon icon-tabler icon-tabler-info-circle"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="#000000"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M12 9l0 .01" />
-                    <path d="M12 12l0 4" />
-                    <path d="M3 12a9 9 0 1 1 18 0a9 9 0 0 1 -18 0" />
-                  </svg>
-                </MenuButton>
-                Details
               </MenuWrapper>
             </DropdownContent>
           </DropMenu>
@@ -340,39 +256,13 @@ const AudioCard = ({
         </Header>
         <FooterContainer>
           <FooterText>{played} Played ⁃ 33 Comments</FooterText>
-          <PlayButton onClick={() => onPlay(audioUrl)}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="icon icon-tabler icon-tabler-player-play-filled"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="#ffffff"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path
-                d="M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z"
-                strokeWidth="0"
-                fill="currentColor"
-              />
-            </svg>
+          <PlayButton onClick={handleClick}>
+            {/* Replace 'play' with an SVG icon */}
+            Play
           </PlayButton>
         </FooterContainer>
       </Content>
 
-      {isModalOpen && (
-        <AudioProperties
-          title={title}
-          category={category}
-          subcategory={subcategory}
-          played={played}
-          createdAt={createdAt}
-          thumbnail={thumbnail}
-          onClose={handleCloseDetails}
-        />
-      )}
       {showWarning && (
         <WarningDelete
           message="Are you sure you want to delete this Audio?"
@@ -384,4 +274,4 @@ const AudioCard = ({
   );
 };
 
-export default AudioCard;
+export default SermonCard;

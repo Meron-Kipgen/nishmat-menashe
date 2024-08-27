@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import Draggable from 'react-draggable';
-import { useAudioData } from './useAudioData'; // Adjust the path as necessary
+import React, { useState } from "react";
+import styled from "styled-components";
+import Draggable from "react-draggable";
+import { useSermonsData } from "./useSermonsData"; // Adjust the path as necessary
 
 const FormContainer = styled.div`
   background: #fff;
@@ -82,33 +82,33 @@ const ErrorMessage = styled.p`
   text-align: center;
 `;
 
-const AddAudioForm = ({ onClose }) => {
-  const { addAudio } = useAudioData();
+const AddSermonForm = ({ onClose }) => {
+  const { sermonData } = useSermonsData();
   const [formData, setFormData] = useState({
-    title: '',
-    category: '',
-    subcategory: '',
-    rabbi: '',
-    thumbnail: '',
-    audioUrl: '',
+    title: "",
+    category: "",
+    subcategory: "",
+    rabbi: "",
+    thumbnail: "",
+    audioUrl: "",
   });
   const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await addAudio(formData);
+      await addSermon(formData);
       onClose(); // Close the form on successful submission
     } catch (err) {
-      setError('Failed to add audio. Please try again.');
+      setError("Failed to add audio. Please try again.");
     }
   };
 
@@ -121,27 +121,60 @@ const AddAudioForm = ({ onClose }) => {
         <Form onSubmit={handleSubmit}>
           <Label>
             Title:
-            <Input type="text" name="title" value={formData.title} onChange={handleChange} required />
+            <Input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
           </Label>
           <Label>
             Category:
-            <Input type="text" name="category" value={formData.category} onChange={handleChange} required />
+            <Input
+              type="text"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+            />
           </Label>
           <Label>
             Subcategory:
-            <Input type="text" name="subcategory" value={formData.subcategory} onChange={handleChange} />
+            <Input
+              type="text"
+              name="subcategory"
+              value={formData.subcategory}
+              onChange={handleChange}
+            />
           </Label>
           <Label>
             Rabbi:
-            <Input type="text" name="rabbi" value={formData.rabbi} onChange={handleChange} />
+            <Input
+              type="text"
+              name="rabbi"
+              value={formData.rabbi}
+              onChange={handleChange}
+            />
           </Label>
           <Label>
             Thumbnail URL:
-            <Input type="text" name="thumbnail" value={formData.thumbnail} onChange={handleChange} />
+            <Input
+              type="text"
+              name="thumbnail"
+              value={formData.thumbnail}
+              onChange={handleChange}
+            />
           </Label>
           <Label>
-            Audio URL:
-            <Input type="text" name="audioUrl" value={formData.audioUrl} onChange={handleChange} required />
+            Sermon Id:
+            <Input
+              type="text"
+              name="audioUrl"
+              value={formData.audioUrl}
+              onChange={handleChange}
+              required
+            />
           </Label>
           <Button type="submit">Add Audio</Button>
         </Form>
@@ -150,4 +183,4 @@ const AddAudioForm = ({ onClose }) => {
   );
 };
 
-export default AddAudioForm;
+export default AddSermonForm;

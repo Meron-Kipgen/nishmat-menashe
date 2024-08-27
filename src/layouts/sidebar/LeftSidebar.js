@@ -4,15 +4,18 @@ import { FaUser, FaInfoCircle, FaPodcast } from 'react-icons/fa';
 import { GrArticle } from "react-icons/gr";
 import Footer from '../../layouts/footer/Footer';
 import { FcFeedback } from 'react-icons/fc';
+import { MdAudiotrack } from 'react-icons/md';
 
 const SidebarContainer = styled.section`
   width: 300px;
-  height: 50vh;
+  height: 70vh;
  background: white;
- 
-  overflow: hidden;
-  @media (max-width: 768px) {
-    width: 100%;
+ overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
 
@@ -48,7 +51,7 @@ const SidebarHeader = styled.h1`
 `;
 
 const LeftSidebar = () => (
-  <div>
+  <>
     <SidebarContainer>
       <SidebarHeader>Application</SidebarHeader>
       <SidebarNav>
@@ -61,16 +64,20 @@ const LeftSidebar = () => (
         <SidebarLink to="/Audio/podcast">
           <FaPodcast /> Audio Podcast
         </SidebarLink>
+        <SidebarLink to="/Audio/Sermon">
+          <MdAudiotrack /> Audio Sermons
+        </SidebarLink>
         <SidebarLink to="/about">
           <FaInfoCircle /> About
         </SidebarLink>
         <SidebarLink to="/feedback">
           <FcFeedback /> Feedback
         </SidebarLink>
+       
       </SidebarNav>
     </SidebarContainer>
     <Footer />
-  </div>
+  </>
 );
 
 export default LeftSidebar;

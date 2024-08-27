@@ -1,16 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { fetchDataFromCollections } from './allData';
-import { SearchIcon } from "../../Assets/Icons";
-
-const collections = [
-  { name: 'video', databaseId: '666aff03003ba124b787', collectionId: '666aff1400318bf6aa6f' },
-  { name: 'audio', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_AUDIO_COLLECTION_ID' },
-  { name: 'library', databaseId: '666aff03003ba124b787', collectionId: '668d39710005c04f99c6' },
-  { name: 'questionAndAnswer', databaseId: '666aff03003ba124b787', collectionId: 'YOUR_QA_COLLECTION_ID' },
-  { name: 'article', databaseId: '666aff03003ba124b787', collectionId: '666b0186000007f47da9' },
-];
+import { useAllPosts } from '../../pages/Feed/useAllPost'; // Update the import path
 
 const Wrapper = styled.section`
   width: 500px;
@@ -118,26 +109,17 @@ const SuggestionItem = styled.li`
 export default function Search({ onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [data, setData] = useState([]);
+  const { posts, loading } = useAllPosts(); // Use useAllPosts to get all posts
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const fetchedData = await fetchDataFromCollections(collections);
-      setData(fetchedData);
-    };
-
-    fetchData();
-  }, []);
-
   const handleSearchChange = (event) => {
-    const value = event.target.value;
+    const value = event.target.value.trim(); // Trim whitespace
     setSearchTerm(value);
 
     if (value.length > 0) {
-      const filteredSuggestions = data.filter((item) =>
-        item.title.toLowerCase().includes(value.toLowerCase())
-      );
+      const filteredSuggestions = posts.filter((item) => {
+        return item && item.title && typeof item.title === 'string' && item.title.toLowerCase().includes(value.toLowerCase());
+      });
       setSuggestions(filteredSuggestions);
     } else {
       setSuggestions([]);
@@ -164,6 +146,8 @@ export default function Search({ onClose }) {
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+
   return (
     <Wrapper>
       <GlassInput
@@ -187,7 +171,7 @@ export default function Search({ onClose }) {
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
             >
-             <SearchIcon height={15} width={15} stroke="black"/> {suggestion.title} ({suggestion.collection})
+              {suggestion.title} ({suggestion.type})
             </SuggestionItem>
           ))}
         </SuggestionsList>

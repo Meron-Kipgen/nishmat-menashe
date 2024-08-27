@@ -48,29 +48,13 @@ const Menu = styled.button`
       height: 24px;
     }
   }
-`;
-
-const Views = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-  font-size: 14px;
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  @media (min-width: 769px) {
-    font-size: 16px;
-
-    svg {
-      width: 24px;
-      height: 24px;
+  &.hide-on-mobile {
+    @media (max-width: 768px) {
+      display: none;
     }
   }
 `;
+
 
 const ForUsers = styled.div`
   display: flex;
@@ -98,12 +82,11 @@ const ForAdmin = styled.div`
 
 const Menus = ({
   articleId,
-  views,
-  handleClose,
+  handleBack,
   increaseFont,
   decreaseFont,
   onShowUpdateForm,
-  handleShare
+
 }) => {
   const { deleteArticle } = useArticlesData();
   const navigate = useNavigate();
@@ -148,7 +131,7 @@ const Menus = ({
   return (
     <MenuContainerWrapper>
       <ForUsers>
-        <Menu onClick={handleClose}>
+        <Menu onClick={handleBack} className="hide-on-mobile">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -160,7 +143,7 @@ const Menus = ({
           >
             <path d="M15 6l-6 6l6 6" />
           </svg>
-          Close
+          Back
         </Menu>
         <Menu onClick={handleIncreaseFont}>
           <svg
@@ -177,7 +160,7 @@ const Menus = ({
             <path d="M18 9v6" />
             <path d="M21 12h-6" />
           </svg>
-          Increase Font
+         
         </Menu>
         <Menu onClick={handleDecreaseFont}>
           <svg
@@ -193,7 +176,7 @@ const Menus = ({
             <path d="M4 13h7" />
             <path d="M21 12h-6" />
           </svg>
-          Decrease Font
+         
         </Menu>
         <Menu>
           <svg
@@ -209,7 +192,7 @@ const Menus = ({
           </svg>
           Save
         </Menu>
-        <Menu onClick={handleShare}>
+        <Menu >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -227,21 +210,7 @@ const Menus = ({
           </svg>
           Share
         </Menu>
-        <Views>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-            <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
-          </svg>
-          Views: {views}
-        </Views>
+        
       </ForUsers>
       <ForAdmin>
         <Menu onClick={handleShowUpdateForm}>

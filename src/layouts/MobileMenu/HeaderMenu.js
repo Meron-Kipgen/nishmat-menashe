@@ -32,13 +32,14 @@ const SidebarContainer = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 250px; /* Adjust width as needed */
+  width: 100%; /* Adjust width as needed */
   height: 100vh;
   background: #fff; /* Adjust background color as needed */
   transform: ${({ isOpen }) =>
     isOpen ? "translateX(0)" : "translateX(-100%)"};
   transition: transform 0.3s ease-in-out;
   z-index: 999; /* Ensure it appears above other content */
+  
 `;
 const ToggleMenu = styled.div`
 display: flex;
@@ -66,8 +67,8 @@ export default function HeaderMenu() {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="icon icon-tabler icon-tabler-menu"
-            width="44"
-            height="44"
+            width="40"
+            height="40"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="#ffffff"
