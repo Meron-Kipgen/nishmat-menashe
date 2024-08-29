@@ -9,7 +9,7 @@ import PodcastPost from "./PodcastPost";
 import styled from "styled-components";
 import FeedbackForm from "../../Features/Feedback/FeedbackForm";
 import Loading from "../../components/Loading";
-import RightSidebar from "./RightSidebar";
+import RightSidebar from "../../layouts/sidebar/RightSidebar";
 import LeftSidebar from "../../layouts/sidebar/LeftSidebar";
 
 const Container = styled.section`

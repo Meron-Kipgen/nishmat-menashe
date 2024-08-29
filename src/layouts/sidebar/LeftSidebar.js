@@ -9,8 +9,8 @@ import { MdAudiotrack } from 'react-icons/md';
 const SidebarContainer = styled.section`
   width: 300px;
   height: 70vh;
- background: white;
- overflow-y: scroll;
+  background: white;
+  overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -50,30 +50,29 @@ const SidebarHeader = styled.h1`
   font-size: 22px;
 `;
 
-const LeftSidebar = () => (
+const LeftSidebar = ({ toggleSidebar }) => (
   <>
     <SidebarContainer>
       <SidebarHeader>Application</SidebarHeader>
       <SidebarNav>
-        <SidebarLink to="/Alon">
-        <GrArticle /> Nishmat Menashe Alon
+        <SidebarLink to="/Alon" onClick={toggleSidebar}>
+          <GrArticle /> Nishmat Menashe Alon
         </SidebarLink>
-        <SidebarLink to="/profile">
+        <SidebarLink to="/profile" onClick={toggleSidebar}>
           <FaUser /> Profile
         </SidebarLink>
-        <SidebarLink to="/Audio/podcast">
+        <SidebarLink to="/Audio/podcast" onClick={toggleSidebar}>
           <FaPodcast /> Audio Podcast
         </SidebarLink>
-        <SidebarLink to="/Audio/Sermon">
+        <SidebarLink to="/Audio/Sermon" onClick={toggleSidebar}>
           <MdAudiotrack /> Audio Sermons
         </SidebarLink>
-        <SidebarLink to="/about">
+        <SidebarLink to="/about" onClick={toggleSidebar}>
           <FaInfoCircle /> About
         </SidebarLink>
-        <SidebarLink to="/feedback">
+        <SidebarLink to="/feedback" onClick={toggleSidebar}>
           <FcFeedback /> Feedback
         </SidebarLink>
-       
       </SidebarNav>
     </SidebarContainer>
     <Footer />

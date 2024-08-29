@@ -1,160 +1,98 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import BookItem from './BookItem';
-import Categories from './Categories';
-import { useBookData } from './useBookData'; // Import the context
-import AddNewBookForm from './AddNewBookForm'; // Import the AddNewBookForm component
+import styled from "styled-components";
 
 const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-gap: 40px;
-  padding: 20px;
+  margin: 45px auto;
+  padding: 10px;
+  background-color: #f5f5f5;
+ width: 800px; 
+ @media (max-width: 760px) {
+   width: 100%;
+  }
 `;
-const CatWrapper = styled.div`
-width: 300px;
 
-`
-const BooksContainer = styled.div`
+const Section = styled.div`
+  flex: 1;
+  margin: 0 10px;
+  @media (max-width: 760px) {
+   margin: 0;
+  }
+`;
 
-  padding: 0 20px;
+const Title = styled.p`
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 5px;
 `;
 
 const BookList = styled.div`
-display: flex;
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 1.2em;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 20px;
+
+  div {
+    flex: 1 1 calc(50% - 10px); /* Mobile layout: two items per row */
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+
+  @media (min-width: 800px) {
+    div {
+      flex: 1 1 calc(33.333% - 10px); /* PC layout: three items per row */
+    }
+  }
 `;
 
-const AddBookButton = styled.button`
-
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
-const Books = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { books, loading, addBook, editBook } = useBookData(); // Include editBook from context
-  const [selectedBook, setSelectedBook] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
-  const [showMiddleSection, setShowMiddleSection] = useState(true);
-  const [showAddBookForm, setShowAddBookForm] = useState(false);
-
-  useEffect(() => {
-    if (location.pathname === '/Books') {
-      setSelectedCategory(null);
-      setSelectedSubcategory(null);
-      setSelectedBook(null);
-      setShowMiddleSection(true);
-    } else {
-      setShowMiddleSection(false);
-    }
-  }, [location.pathname]);
-
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category === 'All' ? null : category);
-    setSelectedSubcategory(null);
-    setShowMiddleSection(true);
-  };
-
-  const handleSubcategorySelect = (subcategory) => {
-    setSelectedSubcategory(subcategory === 'All' ? null : subcategory);
-    setShowMiddleSection(true);
-  };
-
-  const handleBookSelect = (book) => {
-    setSelectedBook(book);
-    setShowMiddleSection(false);
-    navigate(`/Books/${book.$id}`);
-  };
-
-  const toggleAddBookForm = () => {
-    setShowAddBookForm(!showAddBookForm);
-  };
-
-  const handleEditBook = (editedBook) => {
-    // Assuming editBook directly modifies the book data in the context
-    editBook(editedBook);
-  };
-
-  const addNewBook = async (newBook) => {
-    try {
-      await addBook(newBook);
-      setShowAddBookForm(false);
-    } catch (error) {
-      console.error('Failed to add book:', error);
-      // Handle error state or logging as needed
-    }
-  };
-
-  let filteredBooks = books;
-
-  if (selectedCategory && selectedCategory !== 'All') {
-    filteredBooks = filteredBooks.filter((book) => book.category === selectedCategory);
-  }
-
-  if (selectedSubcategory && selectedSubcategory !== 'All') {
-    filteredBooks = filteredBooks.filter((book) => book.subcategory === selectedSubcategory);
-  }
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
+export default function Books() {
   return (
     <Container>
-      <CatWrapper>
-      <Categories
-        categories={[
-          { name: 'All', subcategories: [] },
-          ...books.reduce((acc, book) => {
-            const existingCategory = acc.find((item) => item.name === book.category);
-            if (!existingCategory) {
-              acc.push({ name: book.category, subcategories: [] });
-            }
-            const category = acc.find((cat) => cat.name === book.category);
-            if (category && book.subcategory && !category.subcategories.includes(book.subcategory)) {
-              category.subcategories.push(book.subcategory);
-            }
-            return acc;
-          }, []),
-        ]}
-        selectedCategory={selectedCategory}
-        selectedSubcategory={selectedSubcategory}
-        handleCategorySelect={handleCategorySelect}
-        handleSubcategorySelect={handleSubcategorySelect}
-      />
-</CatWrapper>
-      {showMiddleSection && (
-        <BooksContainer>
-          <h2>Books</h2>
-          <BookList>
-            {filteredBooks.map((book) => (
-              <BookItem
-                key={book.$id}
-                book={book}
-                active={selectedBook && selectedBook.$id === book.$id}
-                onClick={() => handleBookSelect(book)}
-                onEdit={handleEditBook} // Pass edit function to BookItem component
-              />
-            ))}
-          </BookList>
-          <AddBookButton onClick={toggleAddBookForm}>Add New Book</AddBookButton>
-          {showAddBookForm && <AddNewBookForm addBook={addNewBook} setShowAddBookForm={setShowAddBookForm} />}
-        </BooksContainer>
-      )}
-
-      {!showMiddleSection && <Outlet />}
-
- 
+      <Section>
+        <Title>Torah</Title>
+        <BookList>
+          <div>Bereshit</div>
+          <div>Shemot</div>
+          <div>Vayikra</div>
+          <div>Bamidbar</div>
+          <div>Devrim</div>
+        </BookList>
+        <Title>Writing</Title>
+        <BookList>
+          <div>Yehoshua</div>
+          <div>Melakhim</div>
+        </BookList>
+      </Section>
+      
+      <Section>
+        <Title>Neviim</Title>
+        <BookList>
+          <div>Yehoshua</div>
+          <div>Melakhim</div>
+        </BookList>
+      </Section>
+      <Section>
+        <Title>Halakha</Title>
+        <BookList>
+          <div>Daily Halakha</div>
+          <div>Shabbat Halakha</div>
+        </BookList>
+      </Section>
     </Container>
   );
-};
-
-export default Books;
+}

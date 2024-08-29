@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useVideosData } from "./useVideosData";
-import Draggable from "react-draggable";
 
 const FormContainer = styled.form`
   position: absolute;
@@ -118,7 +117,7 @@ const Update = ({ videoId, onClose }) => {
   };
 
   return (
-    <Draggable>
+
     <FormContainer onSubmit={handleSubmit}>
       <CloseButton onClick={onClose}>&times;</CloseButton>
       <FormGroup>
@@ -195,7 +194,7 @@ const Update = ({ videoId, onClose }) => {
       </FormGroup>
       <SubmitButton type="submit">Update Video</SubmitButton>
     </FormContainer>
-    </Draggable>
+
   );
 };
 

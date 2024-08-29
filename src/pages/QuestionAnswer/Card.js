@@ -6,18 +6,16 @@ import TimeAgo from '../../utils/TimeAgo';
 import { useQuestionAnswerData } from './useQuestionAnswerData';
 
 const CardContainer = styled.div`
-
   margin-bottom: 16px;
   background: #ffffff;
   width: 100%;
   max-width: 700px;
-padding: 20px;
+  padding: 20px;
 
   @media (max-width: 768px) {
     padding: 12px;
     margin-bottom: 12px;
     width: 100%;
-
   }
 `;
 
@@ -50,12 +48,13 @@ const QuestionContainer = styled.section`
   font-size: 1.1rem;
   line-height: 1.6rem;
   margin-bottom: 16px;
-  word-wrap: break-word;     
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word; 
+  word-break: break-word;
+
   p {
     margin: 0 0 8px;
-    
+
     @media (max-width: 768px) {
       font-size: 1rem;
     }
@@ -83,7 +82,6 @@ const AnswerButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
 
-
   &:hover {
     background-color: #0056b3;
   }
@@ -95,7 +93,6 @@ const UserInfo = styled.div`
   align-items: center;
 
   @media (max-width: 768px) {
-
     align-items: flex-start;
   }
 `;
@@ -122,16 +119,27 @@ const UserName = styled.div`
   }
 `;
 
-export default function Card({ id, avatarUrl, createdAt, userName, question,views, title, category, subcategory }) {
+const IsAnswered = styled.div`
+  background: ${props => props.isAnswered ? '#28a745' : '#142B42'};
+  width: 100px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  color: white;
+`;
+
+export default function Card({ id, avatarUrl, createdAt, userName, question, views, title, category, subcategory, isAnswered }) {
   const navigate = useNavigate();
-  const {updateViews} = useQuestionAnswerData()
+  const { updateViews } = useQuestionAnswerData();
+  
   const handleClick = () => {
     navigate(`/QuestionAnswer/${id}`);
-    updateViews(id)
+    updateViews(id);
   };
 
   return (
-    <CardContainer>
+    <CardContainer onClick={handleClick}>
       <TopText>
         <UserInfo>
           <Avatar src={avatarUrl} />
@@ -141,14 +149,12 @@ export default function Card({ id, avatarUrl, createdAt, userName, question,view
           </UserName>
         </UserInfo>
         <p>{category} ⁃ {subcategory}</p>
+        <IsAnswered isAnswered={isAnswered}>{isAnswered ? 'Answered' : 'Not Answered'}</IsAnswered>
       </TopText>
       <QuestionContainer>
         <p>{title}</p>
         <p>{question}</p>
       </QuestionContainer>
-      <FooterText>
-        <AnswerButton onClick={handleClick}>Answer</AnswerButton>
-      </FooterText>
     </CardContainer>
   );
 }

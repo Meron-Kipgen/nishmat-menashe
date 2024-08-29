@@ -1,22 +1,19 @@
-// Alon.js
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import QRCode from 'qrcode.react';
 import styled from 'styled-components';
 import PdfData from './PdfData';
-import PdfViewer from './PdfViewer';
 
 const Container = styled.section`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
-  gap: 40px;
+  gap: 20px;
   padding: 20px;
   background-color: #f7f8fa;
 `;
 
-const MainSection = styled.section`
-  width: 900px;
+const Section = styled.section`
   border: 1px solid #ddd;
   background: white;
   padding: 20px;
@@ -24,26 +21,15 @@ const MainSection = styled.section`
   border-radius: 8px;
 `;
 
-const LeftSection = styled.section`
-  width: 200px;
-  border: 1px solid #ddd;
-  background: #fff;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+const MainSection = styled(Section)`
+  width: 60%;
 `;
 
-const RightSection = styled.section`
-  width: 300px;
-  border: 1px solid #ddd;
-  background: white;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+const SideSection = styled(Section)`
+  width: 30%;
 `;
 
 const QRContainer = styled.div`
-  width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
@@ -58,19 +44,27 @@ const Title = styled.h2`
   text-align: center;
   color: #007bff;
   margin-top: 0;
+  margin-bottom: 20px;
 `;
 
 const PdfTitle = styled.h3`
   margin-top: 0;
   color: #333;
+  font-size: 1.2em;
+`;
+
+const PdfDetails = styled.p`
+  margin: 5px 0;
+  color: #555;
 `;
 
 const PdfLink = styled.a`
   display: block;
-  margin-top: 20px;
+  margin-top: 10px;
   text-align: center;
   color: #007bff;
   text-decoration: none;
+  font-weight: bold;
   &:hover {
     text-decoration: underline;
   }
@@ -82,24 +76,26 @@ export default function Alon() {
 
   return (
     <Container>
-      <LeftSection>
-        <Title>Year</Title>
-      </LeftSection>
-      <MainSection>
+      <SideSection>
+        <Title>Volume List</Title>
         {PdfData.map((pdf) => (
           <div key={pdf.id}>
             <PdfTitle>Issue {pdf.issue}</PdfTitle>
-            <p>Year: {pdf.yearEn} - {pdf.yearHe}</p>
-            <PdfViewer url={pdf.pdfUrl} />
+            <PdfDetails>Volume: {pdf.volume}</PdfDetails>
+            <PdfDetails>Parasha: {pdf.parasha}</PdfDetails>
+            <PdfDetails>Year: {pdf.yearEn} - {pdf.yearHe}</PdfDetails>
+            <PdfLink href={pdf.pdfUrl} target="_blank" rel="noopener noreferrer">
+              View PDF
+            </PdfLink>
           </div>
         ))}
-      </MainSection>
-      <RightSection>
+      </SideSection>
+      <MainSection>
         <QRContainer>
           <QRCodeFullWidth value={currentUrl} size={300} />
         </QRContainer>
         <Title>Nishmat Menashe Alon</Title>
-      </RightSection>
+      </MainSection>
     </Container>
   );
 }

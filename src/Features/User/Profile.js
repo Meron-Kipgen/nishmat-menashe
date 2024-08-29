@@ -1,11 +1,14 @@
-import React from 'react';
-import styled from 'styled-components';
-import ProfileAvatar from './ProfileAvatar';
+import React, { useContext } from "react";
+import styled from "styled-components";
+import ProfileAvatar from "./ProfileAvatar";
+import { UserContext } from "../../contexts/UserContext";
+import GoogleLogin from "./GoogleLogin";
 
 const Container = styled.section`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin: 45px 0;
 `;
 
 const Mainsection = styled.section`
@@ -37,23 +40,30 @@ const Rightside = styled.div`
 `;
 
 export default function Profile() {
+  const { isLogin } = useContext(UserContext);
   return (
     <Container>
-      <ProfileAvatar/>
-      <Mainsection>
-        <Leftside>
-          <h3>Menu</h3>
-          {/* Add menu items here */}
-        </Leftside>
-        <MiddleSection>
-          <h3>User Activity</h3>
-          {/* Display user activities here */}
-        </MiddleSection>
-        <Rightside>
-          <h3>Ads</h3>
-          {/* Add ads here */}
-        </Rightside>
-      </Mainsection>
+      {isLogin ? (
+        <>
+          <ProfileAvatar />
+          <Mainsection>
+            <Leftside>
+              <h3>Menu</h3>
+              {/* Add menu items here */}
+            </Leftside>
+            <MiddleSection>
+              <h3>User Activity</h3>
+              {/* Display user activities here */}
+            </MiddleSection>
+            <Rightside>
+              <h3>Ads</h3>
+              {/* Add ads here */}
+            </Rightside>
+          </Mainsection>
+        </>
+      ) : (
+        <GoogleLogin />
+      )}
     </Container>
   );
 }

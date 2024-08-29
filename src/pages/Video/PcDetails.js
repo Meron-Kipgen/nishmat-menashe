@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import Description from "./Description";
 import Related from "./Related";
 import Player from "../../Features/VideoPlayer/Player";
 import Suggestions from "./Suggestions";
-import PcBtn from "./PcBtn";
 import { useVideosData } from "../../pages/Video/useVideosData";
 import Delete from "./Delete";
 import Update from "./Update";
 import CommentBox from "../../Features/Comment/CommentBox";
 import CommentList from "../../Features/Comment/CommentList";
 import useCommentsData from "../../Features/Comment/useCommentsData";
+import { UserContext } from "../../contexts/UserContext";
+import TimeAgo from "../../utils/TimeAgo";
 
 const Container = styled.section`
   display: flex;
@@ -43,9 +44,14 @@ const DetailsContainer = styled.section`
     font-size: 1rem;
   }
 `;
-
-const CommentContainer = styled.section`
-  border: 1px solid red;
+const AdminBtn = styled.div`
+  
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
 `;
 
 const PcSuggestionsSection = styled.div`
@@ -66,20 +72,35 @@ const PcSuggestionsSection = styled.div`
     color: white;
   }
 `;
-
+const UpdateBtn = styled.div`
+cursor: pointer;
+`
 export default function PcDetails() {
   const { id } = useParams();
-  const { videoData, loading: videosLoading, error: videosError } = useVideosData();
-  const video = videoData?.find((v) => v.$id === id);
-  const { comments, loading: commentsLoading, error: commentsError, updateComment, deleteComment } = useCommentsData(video?.$id);
+  const {
+    videoData,
+    loading: videosLoading,
+    error: videosError,
+  } = useVideosData();
+  const video = videoData?.find(v => v.$id === id);
+  const {
+    comments,
+    loading: commentsLoading,
+    error: commentsError,
+    updateComment,
+    deleteComment,
+  } = useCommentsData(video?.$id);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const { isAdmin } = useContext(UserContext);
 
   if (videosLoading) {
     return <div>Loading...</div>;
   }
 
   if (videosError || !video) {
-    return <div>{videosError ? "Error loading video data." : "Video not found"}</div>;
+    return (
+      <div>{videosError ? "Error loading video data." : "Video not found"}</div>
+    );
   }
 
   const handleOpenUpdateModal = () => {
@@ -103,12 +124,36 @@ export default function PcDetails() {
           <Description description={video.description} />
           <h3>By: {video.rabbi}</h3>
           <span>Views: {video.views}</span>
-          <PcBtn />
-          <p>{video.date}</p>
-          <Delete videoId={id} />
-          <button onClick={handleOpenUpdateModal}>Update Video</button>
+
+          <p><TimeAgo createdAt={video.$createdAt}/></p>
+          {isAdmin && (
+            <AdminBtn>
+              <Delete videoId={id} />
+              <UpdateBtn onClick={handleOpenUpdateModal}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-edit"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="green"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                  <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                  <path d="M16 5l3 3" />
+                </svg>
+              </UpdateBtn>
+            </AdminBtn>
+          )}
         </DetailsContainer>
-        {isUpdateModalOpen && <Update videoId={id} onClose={handleCloseUpdateModal} />}
+        {isUpdateModalOpen && (
+          <Update videoId={id} onClose={handleCloseUpdateModal} />
+        )}
         <CommentBox postId={video.$id} />
         <CommentList
           comments={comments}

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useAllPosts } from '../../pages/Feed/useAllPost'; // Update the import path
+import { useAllPosts } from "../../pages/Feed/useAllPost"; // Update the import path
+import { SearchIcon } from "../../Assets/Icons";
 
 const Wrapper = styled.section`
   width: 500px;
@@ -19,10 +20,21 @@ const GlassInput = styled.input`
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: width 0.3s ease-in-out, box-shadow 0.3s ease;
+  @media (max-width: 760px) {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 6px 30px 6px 0;
+    border-bottom: 1px solid #ccc;
+  }
 
   &:focus {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     outline: none;
+    @media (max-width: 760px) {
+      border-bottom: 1px solid black;
+      box-shadow: none;
+    }
   }
 
   &::placeholder {
@@ -37,7 +49,8 @@ const GlassInput = styled.input`
   &::-webkit-search-cancel-button {
     height: 16px;
     width: 16px;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2304252F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>') no-repeat center center;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2304252F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>')
+      no-repeat center center;
     background-size: contain;
     cursor: pointer;
   }
@@ -55,7 +68,7 @@ const SearchButton = styled.button`
   outline: none;
 
   svg {
-    color: #04252F;
+    color: #04252f;
     font-size: 20px;
   }
 `;
@@ -79,9 +92,9 @@ const SuggestionsList = styled.ul`
   &::-webkit-scrollbar {
     display: none;
   }
-  
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   @media (max-width: 768px) {
     right: 0;
@@ -90,7 +103,8 @@ const SuggestionsList = styled.ul`
     height: 100vh;
     margin: 0;
     border-radius: 0;
-    max-height: none; 
+    max-height: none;
+    border: none;
   }
 `;
 
@@ -105,20 +119,29 @@ const SuggestionItem = styled.li`
     background: #f0f0f0;
   }
 `;
-
+const Lists = styled.div`
+display: flex;
+align-items: center;
+gap: 10px;
+`
 export default function Search({ onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const { posts, loading } = useAllPosts(); // Use useAllPosts to get all posts
   const navigate = useNavigate();
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     const value = event.target.value.trim(); // Trim whitespace
     setSearchTerm(value);
 
     if (value.length > 0) {
-      const filteredSuggestions = posts.filter((item) => {
-        return item && item.title && typeof item.title === 'string' && item.title.toLowerCase().includes(value.toLowerCase());
+      const filteredSuggestions = posts.filter(item => {
+        return (
+          item &&
+          item.title &&
+          typeof item.title === "string" &&
+          item.title.toLowerCase().includes(value.toLowerCase())
+        );
       });
       setSuggestions(filteredSuggestions);
     } else {
@@ -126,7 +149,7 @@ export default function Search({ onClose }) {
     }
   };
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = suggestion => {
     setSearchTerm(suggestion.title);
     setSuggestions([]);
     navigate(`/search?q=${suggestion.title}`);
@@ -140,8 +163,8 @@ export default function Search({ onClose }) {
     }
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = event => {
+    if (event.key === "Enter") {
       handleSearchButtonClick();
     }
   };
@@ -158,8 +181,19 @@ export default function Search({ onClose }) {
         onKeyDown={handleKeyDown}
       />
       <SearchButton onClick={handleSearchButtonClick}>
-        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-search" width="20" height="20" viewBox="0 0 24 24" stroke-width="3.5" stroke="#04252F" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="icon icon-tabler icon-tabler-search"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="3.5"
+          stroke="#04252F"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
           <path d="M21 21l-6 -6" />
         </svg>
@@ -171,7 +205,10 @@ export default function Search({ onClose }) {
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              {suggestion.title} ({suggestion.type})
+              <Lists>
+                <SearchIcon height="15px" width="15px" stroke="black"/>   {suggestion.title} ({suggestion.type})
+              </Lists>
+             
             </SuggestionItem>
           ))}
         </SuggestionsList>

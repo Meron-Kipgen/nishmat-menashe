@@ -8,8 +8,8 @@ const CommentContainer = styled.section`
   
 `;
 
-const CommentsSection = ({ postId, comments, loading, error, createComment, updateComment, deleteComment, maxPosts = 1 }) => {
-  const latestComments = comments.slice(Math.max(comments.length - maxPosts, 0));
+const CommentsSection = ({ postId, comments, loading, error, createComment, updateComment, deleteComment, maxPosts }) => {
+  const latestComments = maxPosts ? comments.slice(Math.max(comments.length - maxPosts, 0)) : comments;
 
   return (
     <CommentContainer>

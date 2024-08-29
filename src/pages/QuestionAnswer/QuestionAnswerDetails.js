@@ -11,13 +11,13 @@ import { UserContext } from '../../contexts/UserContext';
 // Styled components
 const Container = styled.div`
   padding: 20px;
-  max-width: 900px;
+  width: 700px;
   margin: 0 auto;
   background-color: #ffffff;
   margin-top: 20px;
 
   @media (max-width: 768px) {
-  width: 100%;
+    width: 100%;
   }
 `;
 
@@ -28,7 +28,7 @@ const HeaderSection = styled.section`
   margin-bottom: 20px;
 
   @media (max-width: 768px) {
- 
+    /* Responsive styles */
   }
 
   p {
@@ -72,11 +72,13 @@ const QuestionSection = styled.div`
     }
   }
 `;
+
 const QuestionConatiner = styled.div`
   word-wrap: break-word;     
   overflow-wrap: break-word;
   word-break: break-word; 
-`
+`;
+
 const AnswerSection = styled.div`
   padding: 20px;
   background-color: #f3f4f6;
@@ -126,6 +128,9 @@ export default function QuestionAnswerDetails() {
     question: '',
   });
 
+  const [savingQuestion, setSavingQuestion] = useState(false);
+  const [deletingQuestion, setDeletingQuestion] = useState(false);
+
   useEffect(() => {
     if (QuestionAnswerData.length) {
       const foundQuestion = QuestionAnswerData.find((qna) => qna.$id === id);
@@ -147,7 +152,7 @@ export default function QuestionAnswerDetails() {
 
   const handleSubmitQuestion = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSavingQuestion(true);
     setError(null);
     try {
       await updateQuestionAnswer(question.$id, editFields);
@@ -156,7 +161,7 @@ export default function QuestionAnswerDetails() {
       console.error('Error updating question:', error);
       setError('Failed to update question.');
     } finally {
-      setLoading(false);
+      setSavingQuestion(false);
     }
   };
 
@@ -176,7 +181,7 @@ export default function QuestionAnswerDetails() {
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this question?')) {
-      setLoading(true);
+      setDeletingQuestion(true);
       setError(null);
       try {
         await deleteQuestionAnswer(question.$id);
@@ -185,7 +190,7 @@ export default function QuestionAnswerDetails() {
         console.error('Error deleting question:', error);
         setError('Failed to delete question.');
       } finally {
-        setLoading(false);
+        setDeletingQuestion(false);
       }
     }
   };
@@ -219,7 +224,7 @@ export default function QuestionAnswerDetails() {
             editFields={editFields}
             handleFieldChange={handleFieldChange}
             handleSubmit={handleSubmitQuestion}
-            loading={loading}
+            loading={savingQuestion}
             setIsEditing={setIsEditingQuestion}
           />
         ) : (
@@ -262,9 +267,9 @@ export default function QuestionAnswerDetails() {
                 <button
                   type="button"
                   onClick={handleDelete}
-                  disabled={loading}
+                  disabled={deletingQuestion}
                 >
-                  {loading ? 'Deleting...' : 'Delete Question'}
+                  {deletingQuestion ? 'Deleting...' : 'Delete Question'}
                 </button>
               </>
             )}

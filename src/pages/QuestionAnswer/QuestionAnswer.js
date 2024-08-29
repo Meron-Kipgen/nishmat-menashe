@@ -109,6 +109,7 @@ export default function QuestionAnswer() {
                 avatarUrl={QuestionAnswer.avatarUrl}
                 createdAt={QuestionAnswer.$createdAt}
                 views={QuestionAnswer.views}
+                isAnswered={QuestionAnswer.answer}
               />
             ))}
           </QuestionAnswerContainer>

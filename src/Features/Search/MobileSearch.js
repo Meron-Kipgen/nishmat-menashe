@@ -12,6 +12,7 @@ const FullscreenOverlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   z-index: 1000;
+ padding: 10px 0 0 0;
   background: white;
 `;
 
@@ -19,9 +20,9 @@ const SearchIconContainer = styled.div`
   margin-top: 3px;
 `;
 
-const CloseButton = styled.button`
-  height: 10px;
-  margin-right: 20px;
+const CloseButton = styled.div`
+  
+  margin-right: 10px;
   background: none;
   border: none;
   margin-top: 2px;

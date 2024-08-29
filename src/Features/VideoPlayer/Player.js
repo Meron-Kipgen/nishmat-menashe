@@ -11,23 +11,26 @@ import ForwardSeekButton from "./Controls/ForwardSeekButton";
 import BackwardSeekButton from "./Controls/BackwardSeekButton";
 import DurationDisplay from "./Controls/DurationDisplay";
 import CenterPlayButton from "./Controls/CenterPlayButton";
-
 const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio (9 / 16 * 100) */
+  height: 0; /* Height is determined by padding-bottom */
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden; /* Ensure controls outside are hidden when not hovered */
 `;
 
 const Video = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%; /* Adjust height based on aspect ratio */
+  height: 100%;
   object-fit: cover;
 `;
+
 
 const ControlsContainer = styled.div`
   position: absolute;
