@@ -1,43 +1,18 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import QRCode from 'qrcode.react';
-import styled from 'styled-components';
-import PdfData from './PdfData';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { useLocation } from "react-router-dom";
+import PdfData from "./PdfData"; // Assuming your PdfData is imported
+import Filter from "./Filter";
+import MainSection from "./MainSection";
+import SideSection from "./SideSection";
 
 const Container = styled.section`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: 100%;
   gap: 20px;
   padding: 20px;
-  background-color: #f7f8fa;
-`;
-
-const Section = styled.section`
-  border: 1px solid #ddd;
-  background: white;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-`;
-
-const MainSection = styled(Section)`
-  width: 60%;
-`;
-
-const SideSection = styled(Section)`
-  width: 30%;
-`;
-
-const QRContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-`;
-
-const QRCodeFullWidth = styled(QRCode)`
-  width: 100%;
-  height: auto;
+  margin: 45px 0;
 `;
 
 const Title = styled.h2`
@@ -45,57 +20,57 @@ const Title = styled.h2`
   color: #007bff;
   margin-top: 0;
   margin-bottom: 20px;
-`;
 
-const PdfTitle = styled.h3`
-  margin-top: 0;
-  color: #333;
-  font-size: 1.2em;
-`;
-
-const PdfDetails = styled.p`
-  margin: 5px 0;
-  color: #555;
-`;
-
-const PdfLink = styled.a`
-  display: block;
-  margin-top: 10px;
-  text-align: center;
-  color: #007bff;
-  text-decoration: none;
-  font-weight: bold;
-  &:hover {
-    text-decoration: underline;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
   }
 `;
 
+const MainWrapper = styled.section`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+`;
+
 export default function Alon() {
+  const [filters, setFilters] = useState({ volume: "", issue: "", parasha: "" });
   const location = useLocation();
   const currentUrl = window.location.origin + location.pathname;
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  const handleDownloadClick = (pdfUrl) => {
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.setAttribute("download", "");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const filteredPdfData = PdfData.filter((pdf) => {
+    return (
+      (filters.volume === "" || pdf.volume.toString().includes(filters.volume)) &&
+      (filters.issue === "" || pdf.issue.toString().includes(filters.issue)) &&
+      (filters.parasha === "" || pdf.parasha.toLowerCase().includes(filters.parasha.toLowerCase()))
+    );
+  });
+
   return (
     <Container>
-      <SideSection>
-        <Title>Volume List</Title>
-        {PdfData.map((pdf) => (
-          <div key={pdf.id}>
-            <PdfTitle>Issue {pdf.issue}</PdfTitle>
-            <PdfDetails>Volume: {pdf.volume}</PdfDetails>
-            <PdfDetails>Parasha: {pdf.parasha}</PdfDetails>
-            <PdfDetails>Year: {pdf.yearEn} - {pdf.yearHe}</PdfDetails>
-            <PdfLink href={pdf.pdfUrl} target="_blank" rel="noopener noreferrer">
-              View PDF
-            </PdfLink>
-          </div>
-        ))}
-      </SideSection>
-      <MainSection>
-        <QRContainer>
-          <QRCodeFullWidth value={currentUrl} size={300} />
-        </QRContainer>
-        <Title>Nishmat Menashe Alon</Title>
-      </MainSection>
+      <Title>Nishmat Menashe Alon Pdf</Title>
+      <Filter filters={filters} onInputChange={handleInputChange} />
+      <MainWrapper>
+        <MainSection filteredPdfData={filteredPdfData} handleDownloadClick={handleDownloadClick} />
+        <SideSection currentUrl={currentUrl} />
+      </MainWrapper>
     </Container>
   );
 }

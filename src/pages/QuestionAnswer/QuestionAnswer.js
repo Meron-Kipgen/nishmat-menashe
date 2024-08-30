@@ -14,7 +14,7 @@ const Container = styled.section`
   align-items: center;
   padding: 0 16px;
   box-sizing: border-box;
-margin: 40px 0;
+margin: 45px 0;
   @media (max-width: 768px) {
     padding: 0;
     margin-top: 40px;

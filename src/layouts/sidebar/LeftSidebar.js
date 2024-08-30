@@ -17,6 +17,7 @@ const SidebarContainer = styled.section`
   &::-webkit-scrollbar {
     display: none;
   }
+
 `;
 
 const SidebarNav = styled.nav`
@@ -48,6 +49,10 @@ const SidebarHeader = styled.h1`
   text-align: center;
   padding: 20px;
   font-size: 22px;
+  @media (max-width: 768px) {
+    margin-top: 45px;
+    
+  }
 `;
 
 const LeftSidebar = ({ toggleSidebar }) => (

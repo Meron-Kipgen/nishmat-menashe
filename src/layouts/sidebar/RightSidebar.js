@@ -7,6 +7,10 @@ background: white;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  @media (max-width: 768px) {
+    margin: 45px 0;
+    
+  }
 `;
 
 const SectionTitle = styled.h3`

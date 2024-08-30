@@ -21,7 +21,7 @@ const CardContainer = styled.div`
 
 const TopText = styled.section`
   margin-bottom: 16px;
-
+  position: relative;
   h4 {
     font-size: 20px;
     color: #333;
@@ -58,32 +58,6 @@ const QuestionContainer = styled.section`
     @media (max-width: 768px) {
       font-size: 1rem;
     }
-  }
-`;
-
-const FooterText = styled.section`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 16px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-`;
-
-const AnswerButton = styled.button`
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #0056b3;
   }
 `;
 
@@ -127,6 +101,9 @@ const IsAnswered = styled.div`
   border-radius: 50px;
   font-size: 0.8rem;
   color: white;
+  position: absolute;
+  top: 0;
+  right: 0;
 `;
 
 export default function Card({ id, avatarUrl, createdAt, userName, question, views, title, category, subcategory, isAnswered }) {

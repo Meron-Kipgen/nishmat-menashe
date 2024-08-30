@@ -1,105 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuestionAnswerData } from './useQuestionAnswerData';
-import styled from 'styled-components';
-import Avatar from '../../Features/User/Avatar';
-import TimeAgo from '../../utils/TimeAgo';
-import AnswerForm from './AnswerForm'; 
-import QuestionEditForm from './QuestionEditForm';
+import HeaderSection from './HeaderSection';
+import QuestionSection from './QuestionSection';
+import AnswerSection from './AnswerSection';
 import { UserContext } from '../../contexts/UserContext';
+import styled from 'styled-components';
 
-// Styled components
 const Container = styled.div`
-  padding: 20px;
-  width: 700px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  margin-top: 20px;
+position: relative;
+width: 700px;
+padding: 10px;
 
-  @media (max-width: 768px) {
+background: white;
+@media (max-width: 768px) {
     width: 100%;
   }
-`;
-
-const HeaderSection = styled.section`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
-
-  @media (max-width: 768px) {
-    /* Responsive styles */
-  }
-
-  p {
-    font-size: 1rem;
-
-    @media (max-width: 768px) {
-      font-size: 1.2em;
-    }
-  }
-`;
-
-const QuestionSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
-
-  h1 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-
-    @media (max-width: 768px) {
-      font-size: 1.2rem;
-    }
-  }
-
-  p {
-    font-size: 1rem;
-    
-    @media (max-width: 768px) {
-      font-size: 1em;
-    }
-  }
-
-  button {
-    align-self: start;
-    margin-top: 10px;
-
-    @media (max-width: 768px) {
-      margin-top: 5px;
-    }
-  }
-`;
-
-const QuestionConatiner = styled.div`
-  word-wrap: break-word;     
-  overflow-wrap: break-word;
-  word-break: break-word; 
-`;
-
-const AnswerSection = styled.div`
-  padding: 20px;
-  background-color: #f3f4f6;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  word-wrap: break-word;     
-  overflow-wrap: break-word;
-  word-break: break-word; 
-  @media (max-width: 768px) {
-    padding: 15px;
-  }
-
-  button {
-    margin-top: 10px;
-
-    @media (max-width: 768px) {
-      margin-top: 5px;
-    }
-  }
-`;
-
+`
 const ErrorMessage = styled.p`
   color: #ef4444;
   font-size: 1em;
@@ -130,6 +47,11 @@ export default function QuestionAnswerDetails() {
 
   const [savingQuestion, setSavingQuestion] = useState(false);
   const [deletingQuestion, setDeletingQuestion] = useState(false);
+  const [fontSize, setFontSize] = useState('1rem');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Ref for the dropdown menu
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (QuestionAnswerData.length) {
@@ -145,6 +67,19 @@ export default function QuestionAnswerDetails() {
       }
     }
   }, [QuestionAnswerData, id]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   if (!question) {
     return <div>Question not found</div>;
@@ -180,103 +115,74 @@ export default function QuestionAnswerDetails() {
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this question?')) {
-      setDeletingQuestion(true);
-      setError(null);
-      try {
-        await deleteQuestionAnswer(question.$id);
-        navigate('/QuestionAnswer');
-      } catch (error) {
-        console.error('Error deleting question:', error);
-        setError('Failed to delete question.');
-      } finally {
-        setDeletingQuestion(false);
-      }
+    setDeletingQuestion(true);
+    setError(null);
+    try {
+      await deleteQuestionAnswer(question.$id);
+      navigate('/questions');
+    } catch (error) {
+      console.error('Error deleting question:', error);
+      setError('Failed to delete question.');
+    } finally {
+      setDeletingQuestion(false);
     }
   };
 
-  const handleFieldChange = (e) => {
-    const { name, value } = e.target;
-    setEditFields((prevFields) => ({
-      ...prevFields,
-      [name]: value,
-    }));
-  };
+  const increaseFontSize = () => setFontSize((prevSize) => {
+    const newSize = parseFloat(prevSize) + 0.1;
+    return `${newSize}rem`;
+  });
 
-  // Determine if the user can edit the question
-  const canEditQuestion = userId === question.userId && !question.answer;
+  const decreaseFontSize = () => setFontSize((prevSize) => {
+    const newSize = parseFloat(prevSize) - 0.1;
+    return `${Math.max(newSize, 0.8)}rem`;
+  });
+
+  const shareContent = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: question.title,
+        text: question.question,
+        url: window.location.href,
+      });
+    } else {
+      alert('Share not supported');
+    }
+  };
 
   return (
     <Container>
-      <HeaderSection>
-        <Avatar src={question.avatarUrl} />
-        <div>
-          <p>{question.userName}</p>
-          <p>
-            <TimeAgo createdAt={question.$createdAt} /> | {question.views} views
-          </p>
-        </div>
-      </HeaderSection>
-
-      <QuestionSection>
-        {isEditingQuestion ? (
-          <QuestionEditForm
-            editFields={editFields}
-            handleFieldChange={handleFieldChange}
-            handleSubmit={handleSubmitQuestion}
-            loading={savingQuestion}
-            setIsEditing={setIsEditingQuestion}
-          />
-        ) : (
-          <QuestionConatiner>
-            <p>{question.category} - {question.subcategory}</p>
-            <h1>{question.title}</h1>
-            <p>{question.question}</p>
-            {canEditQuestion && (
-              <button
-                type="button"
-                onClick={() => setIsEditingQuestion(true)}
-              >
-                Edit Question
-              </button>
-            )}
-          </QuestionConatiner>
-        )}
-      </QuestionSection>
-
-      <AnswerSection>
-        <h1>Answer:</h1>
-        {isEditingAnswer ? (
-          <AnswerForm
-            initialAnswer={question.answer}
-            onSubmit={handleSubmitAnswer}
-            onCancel={() => setIsEditingAnswer(false)}
-            loading={loading}
-          />
-        ) : (
-          <div>
-            <p>{question.answer || 'No answer provided yet.'}</p>
-            {isAdmin && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setIsEditingAnswer(true)}
-                >
-                  Edit Answer
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={deletingQuestion}
-                >
-                  {deletingQuestion ? 'Deleting...' : 'Delete Question'}
-                </button>
-              </>
-            )}
-          </div>
-        )}
-      </AnswerSection>
-
+      <HeaderSection
+        question={question}
+        dropdownOpen={dropdownOpen}
+        toggleDropdown={() => setDropdownOpen((prev) => !prev)}
+        increaseFontSize={increaseFontSize}
+        decreaseFontSize={decreaseFontSize}
+        shareContent={shareContent}
+        dropdownRef={dropdownRef}
+      />
+      <QuestionSection
+        question={question}
+        isEditingQuestion={isEditingQuestion}
+        editFields={editFields}
+        handleFieldChange={(e) => setEditFields({ ...editFields, [e.target.name]: e.target.value })}
+        handleSubmitQuestion={handleSubmitQuestion}
+        setIsEditingQuestion={setIsEditingQuestion}
+        fontSize={fontSize}
+        canEditQuestion={question.userId === userId || isAdmin}
+        savingQuestion={savingQuestion}
+      />
+      <AnswerSection
+        question={question}
+        isEditingAnswer={isEditingAnswer}
+        handleSubmitAnswer={handleSubmitAnswer}
+        loading={loading}
+        setIsEditingAnswer={setIsEditingAnswer}
+        isAdmin={isAdmin}
+        handleDelete={handleDelete}
+        deletingQuestion={deletingQuestion}
+        fontSize={fontSize}
+      />
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </Container>
   );

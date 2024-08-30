@@ -139,22 +139,6 @@ const DropdownContent = styled.div`
   padding: 10px;
 `;
 
-const MenuButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  cursor: pointer;
-  &:hover {
-    background: #d6d6d6;
-    border-radius: 50%;
-  }
-  svg {
-    pointer-events: none;
-  }
-`;
 const MenuWrapper = styled.div`
   display: flex;
   align-items: center;

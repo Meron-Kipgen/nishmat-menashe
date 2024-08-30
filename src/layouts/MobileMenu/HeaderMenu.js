@@ -64,8 +64,7 @@ const RightSidebarContainer = styled.div`
   width: 100%;
   height: 100vh;
   background: #fff;
-  transform: ${({ isOpen }) =>
-    isOpen ? "translateX(0)" : "translateX(100%)"};
+  transform: ${({ isOpen }) => (isOpen ? "translateX(0)" : "translateX(100%)")};
   transition: transform 0.3s ease-in-out;
   z-index: 999;
 `;
@@ -75,74 +74,95 @@ export default function HeaderMenu() {
   const [isRightSidebarOpen, setRightSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
   const rightSidebarRef = useRef(null);
-
-  let touchStartX = 0;
-  let touchEndX = 0;
+  const touchStartX = useRef(0);
+  const touchDeltaX = useRef(0);
 
   const toggleSidebar = () => {
-    setSidebarOpen(prevState => !prevState);
+    setSidebarOpen((prevState) => {
+      if (isRightSidebarOpen) {
+        setRightSidebarOpen(false);
+      }
+      return !prevState;
+    });
   };
 
   const toggleRightSidebar = () => {
-    setRightSidebarOpen(prevState => !prevState);
+    setRightSidebarOpen((prevState) => {
+      if (isSidebarOpen) {
+        setSidebarOpen(false);
+      }
+      return !prevState;
+    });
   };
 
-  const handleClickOutside = event => {
+  const handleClickOutside = (event) => {
     if (
-      sidebarRef.current && !sidebarRef.current.contains(event.target) &&
-      rightSidebarRef.current && !rightSidebarRef.current.contains(event.target)
+      sidebarRef.current &&
+      !sidebarRef.current.contains(event.target) &&
+      rightSidebarRef.current &&
+      !rightSidebarRef.current.contains(event.target) &&
+      !event.target.closest(".toggle-menu") &&
+      !event.target.closest(".right-toggle-menu")
     ) {
       setSidebarOpen(false);
       setRightSidebarOpen(false);
     }
   };
 
-  const handleTouchStart = e => {
-    touchStartX = e.changedTouches[0].screenX;
+  const handleTouchStart = (event) => {
+    touchStartX.current = event.touches[0].clientX;
+    touchDeltaX.current = 0;
   };
 
-  const handleTouchEnd = e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipeGesture();
+  const handleTouchMove = (event) => {
+    touchDeltaX.current = event.touches[0].clientX - touchStartX.current;
   };
 
-  const handleSwipeGesture = () => {
-    const swipeDistance = touchStartX - touchEndX;
+  const handleTouchEnd = () => {
+    const swipeThreshold = 100; // Minimum swipe distance to trigger sidebar close
 
-    if (swipeDistance > 50) {
-      setSidebarOpen(false); // Close left sidebar on left swipe
-    } else if (swipeDistance < -50 && isRightSidebarOpen) {
-      setRightSidebarOpen(false); // Close right sidebar on right swipe if open
+    if (touchDeltaX.current > swipeThreshold && isRightSidebarOpen) {
+      setRightSidebarOpen(false);
+    } else if (touchDeltaX.current < -swipeThreshold && isSidebarOpen) {
+      setSidebarOpen(false);
     }
   };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleTouchStart);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleTouchEnd);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
-  }, []);
+  }, [isSidebarOpen, isRightSidebarOpen]);
 
   return (
     <>
       <Container>
         <LeftSide>
-          <ToggleMenu onClick={toggleSidebar}>
+          <ToggleMenu className="toggle-menu" onClick={toggleSidebar}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="icon icon-tabler icon-tabler-menu"
-              width="35"
-              height="35"
+              className="icon icon-tabler icon-tabler-menu-2"
+              width="40"
+              height="40"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
-              stroke="#ffffff"
+              stroke="#fff"
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M4 8l16 0" />
-              <path d="M4 16l16 0" />
+              <path d="M4 6l16 0" />
+              <path d="M4 12l16 0" />
+              <path d="M4 18l16 0" />
             </svg>
           </ToggleMenu>
           <Logo />
@@ -150,10 +170,13 @@ export default function HeaderMenu() {
 
         <RightSide>
           <MobileSearch />
-          <RightToggleMenu onClick={toggleRightSidebar}>
+          <RightToggleMenu
+            className="right-toggle-menu"
+            onClick={toggleRightSidebar}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="              icon-tabler icon-tabler-layout-grid"
+              className="icon-tabler icon-tabler-layout-grid"
               width="35"
               height="35"
               viewBox="0 0 24 24"
@@ -176,16 +199,12 @@ export default function HeaderMenu() {
       <SidebarContainer
         ref={sidebarRef}
         isOpen={isSidebarOpen}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
       >
         <LeftSidebar toggleSidebar={toggleSidebar} />
       </SidebarContainer>
       <RightSidebarContainer
         ref={rightSidebarRef}
         isOpen={isRightSidebarOpen}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
       >
         <RightSidebar />
       </RightSidebarContainer>
