@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { useAllPosts } from "./useAllPost";
 import VideoPost from "./VideoPost";
 import AudioPost from "./AudioPost";
@@ -11,6 +11,8 @@ import FeedbackForm from "../../Features/Feedback/FeedbackForm";
 import Loading from "../../components/Loading";
 import RightSidebar from "../../layouts/sidebar/RightSidebar";
 import LeftSidebar from "../../layouts/sidebar/LeftSidebar";
+import LoadMore from "../../components/LoadMore";
+import useLoadMore from "../../hooks/useLoadMore"; 
 
 const Container = styled.section`
   margin-top: 45px;
@@ -27,22 +29,6 @@ const Middle = styled.section`
   width: 600px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 20px);
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media (max-width: 768px) {
-    margin-bottom: 40px;
-    width: 100%;
-    overflow-y: none;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  }
 `;
 
 const PostContainer = styled.section`
@@ -54,6 +40,8 @@ const PostContainer = styled.section`
 `;
 
 const Left = styled.section`
+  position: sticky;
+  top: 40px;
   margin-top: 10px;
   width: 300px;
   height: 50vh;
@@ -64,10 +52,11 @@ const Left = styled.section`
 `;
 
 const Right = styled.section`
+  position: sticky;
+  top: 40px;
   margin-top: 10px;
   width: 400px;
   height: 80vh;
-
   @media (max-width: 768px) {
     display: none;
   }
@@ -78,71 +67,9 @@ const PostWrapper = styled.div`
   background: #ffffff;
 `;
 
-const LoadingMessage = styled.p`
-  text-align: center;
-  margin: 20px 0;
-  color: #888;
-`;
-
 const Feed = () => {
   const { posts, loading, error } = useAllPosts();
-  const [visiblePosts, setVisiblePosts] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const containerRef = useRef(null);
-
-  const postsPerPage = 10;
-  console.log("Posts:", posts);
-  useEffect(() => {
-    if (posts && posts.length > 0) {
-      setVisiblePosts(posts.slice(0, postsPerPage));
-    }
-  }, [posts]);
-
-  const loadMorePosts = () => {
-    if (loadingMore || !hasMore) return;
-
-    setLoadingMore(true);
-
-    setTimeout(() => {
-      const nextPosts = posts.slice(
-        visiblePosts.length,
-        visiblePosts.length + postsPerPage
-      );
-      setVisiblePosts(prev => [...prev, ...nextPosts]);
-
-      if (visiblePosts.length + nextPosts.length >= posts.length) {
-        setHasMore(false);
-      }
-
-      setLoadingMore(false);
-    }, 1000);
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const container = containerRef.current;
-      if (container) {
-        if (
-          container.scrollTop + container.clientHeight >=
-          container.scrollHeight - 5
-        ) {
-          loadMorePosts();
-        }
-      }
-    };
-
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [visiblePosts, hasMore, loadingMore]);
+  const { visibleItems: visiblePosts, loadMoreItems, hasMore, loadingMore } = useLoadMore(posts, 30);
 
   if (loading) return <Loading />;
   if (error) return <div>Error loading posts: {error}</div>;
@@ -153,7 +80,7 @@ const Feed = () => {
         <LeftSidebar />
       </Left>
 
-      <Middle ref={containerRef}>
+      <Middle>
         <FeedbackForm />
         {visiblePosts.map(post => (
           <PostContainer key={post.$id}>
@@ -167,8 +94,11 @@ const Feed = () => {
             </PostWrapper>
           </PostContainer>
         ))}
-        {loadingMore && <LoadingMessage>Loading more posts...</LoadingMessage>}
-        {!hasMore && <LoadingMessage>No more posts to load.</LoadingMessage>}
+        <LoadMore
+          onClick={loadMoreItems}
+          loading={loadingMore}
+          hasMore={hasMore}
+        />
       </Middle>
 
       <Right>

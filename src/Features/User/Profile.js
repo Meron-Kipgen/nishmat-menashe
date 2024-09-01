@@ -9,13 +9,23 @@ const Container = styled.section`
   flex-direction: column;
   gap: 20px;
   margin: 45px 0;
+  padding: 0 20px;
+
+  @media (max-width: 768px) {
+    padding: 0 10px;
+  }
 `;
 
 const Mainsection = styled.section`
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 20px;
   margin: 90px 0;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin: 45px 0;
+  }
 `;
 
 const Leftside = styled.div`
@@ -23,6 +33,12 @@ const Leftside = styled.div`
   background: #f4f4f4;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    box-shadow: none;
+    padding: 10px;
+  }
 `;
 
 const MiddleSection = styled.div`
@@ -30,6 +46,10 @@ const MiddleSection = styled.div`
   background: #fff;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 const Rightside = styled.div`
@@ -37,6 +57,12 @@ const Rightside = styled.div`
   background: #f4f4f4;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    box-shadow: none;
+    padding: 10px;
+  }
 `;
 
 export default function Profile() {

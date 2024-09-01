@@ -8,33 +8,56 @@ import DeleteAvatar from './DeleteAvatar';
 
 const AvatarContainerWrapper = styled.div`
   position: relative;
-  margin-top: 150px;
-  margin-left: 250px;
+  margin: 150px auto 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    margin-left: 250px;
+  }
 `;
 
 const Username = styled.p`
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: white;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+    text-align: left;
+  }
 `;
 
 const UploadAvatar = styled.div`
   position: absolute;
   cursor: pointer;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  
+  @media (min-width: 768px) {
+    top: 10px;
+    right: 20px;
+  }
 `;
 
 const ProfileCover = styled.div`
-  height: 300px;
+  height: 200px;
   width: 100%;
   background: #EE5253;
   position: relative;
+
+  @media (min-width: 768px) {
+    height: 300px;
+  }
 `;
 
 const DropdownMenu = styled.div`
   position: absolute;
-  bottom: 50px; // Adjust based on your layout
+  bottom: 70px; // Adjust based on your layout
   right: 10px; // Align with the camera icon
   background: white;
   border: 1px solid #ccc;
@@ -42,6 +65,10 @@ const DropdownMenu = styled.div`
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   display: ${({ show }) => (show ? 'block' : 'none')};
   z-index: 1000;
+  
+  @media (min-width: 768px) {
+    bottom: 50px;
+  }
 `;
 
 const MenuItem = styled.div`
@@ -76,7 +103,7 @@ const ProfileAvatar = () => {
   return (
     <ProfileCover>
       <AvatarContainerWrapper>
-        <Avatar src={userAvatarUrl} name={username} width={"200px"} height={"200px"} border={"5px solid white"} />
+        <Avatar src={userAvatarUrl} name={username} width={"150px"} height={"150px"} border={"5px solid white"} />
         <Username>{username}</Username>
         <UploadAvatar onClick={handleCameraClick}>
           <CameraIcon width="30px" height="30px" stroke="red"/>

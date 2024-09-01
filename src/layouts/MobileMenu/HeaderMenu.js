@@ -18,6 +18,7 @@ const Container = styled.nav`
   left: 0;
   z-index: 1000;
   background: #142b42;
+  transform: ${({ isVisible }) => (isVisible ? "translateY(0)" : "translateY(-100%)")};
   transition: transform 0.3s ease-in-out;
   padding: 0 10px;
 `;
@@ -35,8 +36,7 @@ const SidebarContainer = styled.div`
   width: 100%;
   height: 100vh;
   background: #fff;
-  transform: ${({ isOpen }) =>
-    isOpen ? "translateX(0)" : "translateX(-100%)"};
+  transform: ${({ isOpen }) => (isOpen ? "translateX(0)" : "translateX(-100%)")};
   transition: transform 0.3s ease-in-out;
   z-index: 999;
 `;
@@ -72,10 +72,12 @@ const RightSidebarContainer = styled.div`
 export default function HeaderMenu() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setRightSidebarOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const sidebarRef = useRef(null);
   const rightSidebarRef = useRef(null);
   const touchStartX = useRef(0);
   const touchDeltaX = useRef(0);
+  const lastScrollY = useRef(0);
 
   const toggleSidebar = () => {
     setSidebarOpen((prevState) => {
@@ -128,23 +130,36 @@ export default function HeaderMenu() {
     }
   };
 
+  const handleScroll = () => {
+    if (window.scrollY > lastScrollY.current) {
+      // Scrolling down
+      setIsVisible(false);
+    } else {
+      // Scrolling up
+      setIsVisible(true);
+    }
+    lastScrollY.current = window.scrollY;
+  };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("touchstart", handleTouchStart);
     document.addEventListener("touchmove", handleTouchMove);
     document.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [isSidebarOpen, isRightSidebarOpen]);
 
   return (
     <>
-      <Container>
+      <Container isVisible={isVisible}>
         <LeftSide>
           <ToggleMenu className="toggle-menu" onClick={toggleSidebar}>
             <svg
@@ -196,17 +211,11 @@ export default function HeaderMenu() {
           <RightNavbar />
         </RightSide>
       </Container>
-      <SidebarContainer
-        ref={sidebarRef}
-        isOpen={isSidebarOpen}
-      >
+      <SidebarContainer ref={sidebarRef} isOpen={isSidebarOpen}>
         <LeftSidebar toggleSidebar={toggleSidebar} />
       </SidebarContainer>
-      <RightSidebarContainer
-        ref={rightSidebarRef}
-        isOpen={isRightSidebarOpen}
-      >
-        <RightSidebar />
+      <RightSidebarContainer ref={rightSidebarRef} isOpen={isRightSidebarOpen}>
+        <RightSidebar toggleRightSidebar={toggleRightSidebar} />
       </RightSidebarContainer>
     </>
   );

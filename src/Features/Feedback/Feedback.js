@@ -6,42 +6,51 @@ import FeedCard from './FeedCard';
 import { Outlet, useOutlet } from 'react-router-dom';
 
 const Container = styled.section`
-  margin-top: 50px;
   width: 700px;
-  margin: 50px auto; /* Center horizontally */
+  margin: 45px 0; 
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center children horizontally */
+  align-items: center; 
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 45px 0;
+  }
+
 `;
 
 const FeedbackPost = styled.div`
   width: 100%;
+
+  @media (max-width: 768px) {
+  margin-top: 10px;
+  }
 `;
 
 export default function Feedback() {
   const { feedbackData } = useFeedbackData();
-const outlet = useOutlet()
+  const outlet = useOutlet();
 
   return (
     <Container>
       {!outlet && (
         <>
-        <FeedbackForm />
-      <FeedbackPost>
-        {feedbackData.map((feed) => (
-          <FeedCard
-            id={feed.$id}
-            key={feed.$id} 
-            feedback={feed.feedback} 
-            createdAt={feed.$createdAt}
-            userName={feed.userName}
-            userAvatarUrl={feed.userAvatarUrl}
-          />
-        ))}
-      </FeedbackPost>  
-      </>
+          <FeedbackForm />
+          <FeedbackPost>
+            {feedbackData.map((feed) => (
+              <FeedCard
+                id={feed.$id}
+                key={feed.$id}
+                feedback={feed.feedback}
+                createdAt={feed.$createdAt}
+                userName={feed.userName}
+                userAvatarUrl={feed.userAvatarUrl}
+              />
+            ))}
+          </FeedbackPost>
+        </>
       )}
-    <Outlet/>
+      <Outlet />
     </Container>
   );
 }

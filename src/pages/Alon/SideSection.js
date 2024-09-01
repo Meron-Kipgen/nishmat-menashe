@@ -19,7 +19,6 @@ const QRContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
-
   @media (max-width: 768px) {
     margin-bottom: 10px;
   }
@@ -52,7 +51,7 @@ export default function SideSection({ currentUrl }) {
       <QRContainer>
         <QRCodeFullWidth value={currentUrl} size={300} />
       </QRContainer>
-      <Title>Share and Save QR Code</Title>
+      <Title>QR Code</Title>
     </Section>
   );
 }

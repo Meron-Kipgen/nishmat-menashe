@@ -3,13 +3,13 @@ import styled from "styled-components";
 
 const Thumbnail = styled.div`
   border-radius: 10px;
-  overflow: hidden; /* Ensures that the image does not overflow the border-radius */
-  transition: transform 0.3s ease; /* Smooth scaling transition */
+  overflow: hidden;
+  transition: transform 0.3s ease;
 
   img {
     height: 120px;
     width: 120px;
-    transition: transform 0.3s ease; /* Smooth scaling transition for the image */
+    transition: transform 0.3s ease;
   }
 `;
 
@@ -24,30 +24,67 @@ const Container = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin-bottom: 10px;
-  position: relative; /* Ensure to position the container for the hover effect to work */
-  
+  position: relative;
+
   &:hover ${Thumbnail},
   &:focus-within ${Thumbnail} {
-    transform: scale(1.1); /* Scale up the thumbnail */
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 600px) {
+    width: 100%;
   }
 `;
 
 const InfoSection = styled.div`
-  /* Additional styling for InfoSection if needed */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 10px;
 `;
 
 const DownloadBtn = styled.div`
-  margin-top: 5px;
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100px;
-  background: #142B42;
+  background: #142b42;
   padding: 5px;
   color: white;
   border-radius: 40px;
+  cursor: pointer;
+  text-align: center;
 `;
 
-export default function PdfCard({ volume, parasha, yearHe, yearEn, download, issue }) {
+const ShareBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  background: #007bff;
+  padding: 5px;
+  color: white;
+  border-radius: 40px;
+  cursor: pointer;
+  text-align: center;
+`;
+
+export default function PdfCard({ volume, parasha, yearHe, yearEn, pdfUrl, issue }) {
+  const handleShareClick = () => {
+    if (navigator.share) {
+      navigator.share({
+    
+        url: pdfUrl,
+      }).catch(console.error);
+    } else {
+      alert("This browser doesn't support the Share API. Copy this link to share: " + pdfUrl);
+    }
+  };
+
   return (
     <Container>
       <Thumbnail>
@@ -59,7 +96,10 @@ export default function PdfCard({ volume, parasha, yearHe, yearEn, download, iss
         <p>
           Year: {yearHe} - {yearEn}
         </p>
-        <DownloadBtn onClick={download}>Download</DownloadBtn>
+        <ButtonWrapper>
+          <DownloadBtn onClick={() => window.location.href = pdfUrl}>Download</DownloadBtn>
+          <ShareBtn onClick={handleShareClick}>Share</ShareBtn>
+        </ButtonWrapper>
       </InfoSection>
     </Container>
   );

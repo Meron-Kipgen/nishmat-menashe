@@ -20,7 +20,7 @@ const Container = styled.div`
 
 const PostContainer = styled.div`
   display: flex;
-  gap: 20px;
+gap: 10px;
   @media (max-width: 768px) {
     width: 100%;
     gap: 0;

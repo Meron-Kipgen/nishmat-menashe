@@ -14,6 +14,9 @@ const PostContainer = styled.div`
   background: #f9f9f9;
   position: relative; 
   padding:10px 20px 0 20px;
+  @media (max-width: 768px) {
+    margin: 10px 0;
+  }
 `;
 
 const TopSection = styled.div`

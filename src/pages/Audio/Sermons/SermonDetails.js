@@ -3,31 +3,32 @@ import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useSermonsData } from "./useSermonsData";
 import AudioPlayer from "../../../Features/AudioPlayer/AudioPlayer";
-import playerVars from '../../../Features/AudioPlayer/PlayerVars';
+import playerVars from "../../../Features/AudioPlayer/PlayerVars";
 import EditSermonForm from "./EditSermonForm";
 import CommentsSection from "../../../Features/Comment/CommentSection";
 import useCommentsData from "../../../Features/Comment/useCommentsData";
 import { UserContext } from "../../../contexts/UserContext";
+import TimeAgo from "../../../utils/TimeAgo";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 30px;
+  width: 700px;
+  padding: 20px 0;
   background-color: #ffffff;
-  border-radius: 15px;
+
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 `;
-
+const DetailsSection = styled.div`
+`
 const Thumbnail = styled.div`
   width: 100%;
   margin-bottom: 30px;
-
+  display: flex;
+  justify-content: center;
   img {
-    width: 60%;
+    width: 80%;
     height: auto;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -77,9 +78,8 @@ const Description = styled.p`
 
 const AudioPlayerContainer = styled.div`
   width: 100%;
-  margin-top: 25px;
-  border-top: 1px solid #eee;
-  padding-top: 25px;
+
+
 `;
 
 const ButtonContainer = styled.div`
@@ -89,7 +89,7 @@ const ButtonContainer = styled.div`
 `;
 
 const Button = styled.button`
-  background: ${(props) => props.bgColor || "#007bff"};
+  background: ${props => props.bgColor || "#007bff"};
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -100,18 +100,28 @@ const Button = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background: ${(props) => props.hoverColor || "#0056b3"};
+    background: ${props => props.hoverColor || "#0056b3"};
   }
 `;
+const CommentsContainer = styled.div`
+width: 100%;
+`
 
-const AudioDetails = () => {
+const SermonDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { deleteSermon, sermonData } = useSermonsData();
-  const [isEditFormVisible, setIsEditFormVisible] = useState(false);  
-  const post = sermonData.find((sermon) => sermon.$id === id);
-  const { comments, loading, error, updateComment, deleteComment, createComment } = useCommentsData(post.$id);
-  const {isAdmin} = useContext(UserContext)
+  const [isEditFormVisible, setIsEditFormVisible] = useState(false);
+  const post = sermonData.find(sermon => sermon.$id === id);
+  const {
+    comments,
+    loading,
+    error,
+    updateComment,
+    deleteComment,
+    createComment,
+  } = useCommentsData(post.$id);
+  const { isAdmin } = useContext(UserContext);
   if (!sermonData || sermonData.length === 0) {
     return <div>Loading audio data...</div>;
   }
@@ -141,46 +151,63 @@ const AudioDetails = () => {
 
   return (
     <Container>
-      <Thumbnail>
-        <img src={post.thumbnail} alt={`${post.title} thumbnail`} />
-      </Thumbnail>
-      <Title>{post.title}</Title>
-      <Rabbi>{post.rabbi}</Rabbi>
-      <Category>
-        <span>Category:</span> {post.category} | <span>Subcategory:</span> {post.subcategory}
-      </Category>
-      <Description>{post.description}</Description>
+      <DetailsSection>
+        <Thumbnail>
+          <img src={post.thumbnail} alt={`${post.title} thumbnail`} />
+        </Thumbnail>
+        <Title>{post.title}</Title>
+        <Rabbi>By: {post.rabbi} - Played {post.played}</Rabbi>
+        <Category>
+        {post.category} | {post.subcategory} | <TimeAgo createdAt={post.$createdAt}/>
+        </Category>
+        <Description>{post.description}</Description>
+      </DetailsSection>
+
       <AudioPlayerContainer>
-        <AudioPlayer 
-          key={post.$id} 
-          audioUrl={post.audioUrl} 
-          playerVars={playerVars} 
+        <AudioPlayer
+          key={post.$id}
+          audioUrl={post.audioUrl}
+          playerVars={playerVars}
+          shouldPlay={true}
         />
       </AudioPlayerContainer>
       {isAdmin && (
-         <ButtonContainer>
-        <Button onClick={handleEditClick} bgColor="#007bff" hoverColor="#0056b3">Edit Audio</Button>
-        <Button onClick={handleDeleteClick} bgColor="#ff4d4d" hoverColor="#e60000">Delete Audio</Button>
-      </ButtonContainer>
+        <ButtonContainer>
+          <Button
+            onClick={handleEditClick}
+            bgColor="#007bff"
+            hoverColor="#0056b3"
+          >
+            Edit Audio
+          </Button>
+          <Button
+            onClick={handleDeleteClick}
+            bgColor="#ff4d4d"
+            hoverColor="#e60000"
+          >
+            Delete Audio
+          </Button>
+        </ButtonContainer>
       )}
-     
 
       {isEditFormVisible && (
         <EditSermonForm audio={post} onClose={handleCloseForm} />
       )}
-
-      <CommentsSection
-      postId={post.$id}
-      comments={comments}
-      loading={loading}
-      error={error}
-      createComment={createComment}
-      updateComment={updateComment}
-      deleteComment={deleteComment}
-      maxPosts={comments.length} 
+<CommentsContainer>
+   <CommentsSection
+        postId={post.$id}
+        comments={comments}
+        loading={loading}
+        error={error}
+        createComment={createComment}
+        updateComment={updateComment}
+        deleteComment={deleteComment}
+        maxPosts={comments.length}
       />
+</CommentsContainer>
+     
     </Container>
   );
 };
 
-export default AudioDetails;
+export default SermonDetails;

@@ -25,14 +25,14 @@ const GlassInput = styled.input`
     border: none;
     border-radius: 0;
     padding: 6px 30px 6px 0;
-    border-bottom: 1px solid #ccc;
+ 
   }
 
   &:focus {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     outline: none;
     @media (max-width: 760px) {
-      border-bottom: 1px solid black;
+     
       box-shadow: none;
     }
   }

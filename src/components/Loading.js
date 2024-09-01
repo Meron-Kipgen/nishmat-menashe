@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
+
 const Spinner = styled.div`
-  border: 2px solid red; /* Light grey */
-  border-top: 2px solid white; /* Blue */
+  border: 2px solid red; 
+  border-top: 2px solid white;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: ${({ size }) => size || '30px'}; 
+  height: ${({ size }) => size || '30px'};
   animation: spin 1s linear infinite;
 
   @keyframes spin {
@@ -19,8 +20,9 @@ const Spinner = styled.div`
   }
 `;
 
-const Loading = () => {
-  return <Spinner />;
+// Loading component that accepts size as a prop
+const Loading = ({ size }) => {
+  return <Spinner size={size} />;
 };
 
 export default Loading;

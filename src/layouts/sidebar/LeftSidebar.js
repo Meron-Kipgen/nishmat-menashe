@@ -72,7 +72,7 @@ const LeftSidebar = ({ toggleSidebar }) => (
         <SidebarLink to="/Audio/Sermon" onClick={toggleSidebar}>
           <MdAudiotrack /> Audio Sermons
         </SidebarLink>
-        <SidebarLink to="/about" onClick={toggleSidebar}>
+        <SidebarLink to="/" onClick={toggleSidebar}>
           <FaInfoCircle /> About
         </SidebarLink>
         <SidebarLink to="/feedback" onClick={toggleSidebar}>

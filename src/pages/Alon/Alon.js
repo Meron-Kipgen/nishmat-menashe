@@ -5,6 +5,7 @@ import PdfData from "./PdfData"; // Assuming your PdfData is imported
 import Filter from "./Filter";
 import MainSection from "./MainSection";
 import SideSection from "./SideSection";
+import useMediaQuery from "../../hooks/useMediaQuery";
 
 const Container = styled.section`
   display: flex;
@@ -13,6 +14,10 @@ const Container = styled.section`
   gap: 20px;
   padding: 20px;
   margin: 45px 0;
+  
+  @media (max-width: 600px) {
+    padding: 0 5px;
+  }
 `;
 
 const Title = styled.h2`
@@ -33,10 +38,26 @@ const MainWrapper = styled.section`
   justify-content: flex-end;
 `;
 
+const ToggleButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
 export default function Alon() {
   const [filters, setFilters] = useState({ volume: "", issue: "", parasha: "" });
+  const [isSideSectionVisible, setSideSectionVisible] = useState(false);
   const location = useLocation();
   const currentUrl = window.location.origin + location.pathname;
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,13 +84,25 @@ export default function Alon() {
     );
   });
 
+  const toggleSideSection = () => {
+    setSideSectionVisible((prev) => !prev);
+  };
+
   return (
     <Container>
+      {isMobile && (
+        <>
+          <ToggleButton onClick={toggleSideSection}>
+            {isSideSectionVisible ? "Hide QR Code" : "Show QR Code"}
+          </ToggleButton>
+          {isSideSectionVisible && <SideSection currentUrl={currentUrl} />}
+        </>
+      )}
       <Title>Nishmat Menashe Alon Pdf</Title>
       <Filter filters={filters} onInputChange={handleInputChange} />
       <MainWrapper>
         <MainSection filteredPdfData={filteredPdfData} handleDownloadClick={handleDownloadClick} />
-        <SideSection currentUrl={currentUrl} />
+        {!isMobile && <SideSection currentUrl={currentUrl} />}
       </MainWrapper>
     </Container>
   );

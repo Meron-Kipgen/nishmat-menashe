@@ -2,28 +2,29 @@ import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import CategorySelector from "../../components/CategorySelector";
 import SubcategorySelector from "../../components/SubcategorySelector";
-import Card from "./Card"
+import Card from "./Card";
 import { Outlet, useOutlet } from "react-router-dom";
 import ExploreBtn from "../../components/ExploreBtn";
 import AddNewBtn from "../../components/AddNewBtn";
 import { UserContext } from "../../contexts/UserContext";
 import VideoForm from "./VideoForm";
 import { useVideosData } from "./useVideosData";
+import useMediaQuery from "../../hooks/useMediaQuery";
+import MobileDetails from "./MobileDetails"
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 45px 0;
- 
 `;
 
 const PostContainer = styled.div`
   display: flex;
-gap: 20px;
+  gap: 10px;
   @media (max-width: 768px) {
     width: 100%;
     gap: 0;
-   margin-bottom: 40px;
+    margin-bottom: 40px;
   }
 `;
 
@@ -35,7 +36,6 @@ const ItemContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     gap: 0;
-   
   }
 `;
 
@@ -43,25 +43,21 @@ const CatContainer = styled.div`
   display: flex;
   height: 50px;
   margin-bottom: 10px;
-
 `;
 
 const SubCatContainer = styled.div`
-
   @media (max-width: 768px) {
     width: 80%;
-   
+
     position: fixed;
     left: 0;
     top: 0;
     background: white;
-    z-index: 1000; 
+    z-index: 1000;
     overflow-y: auto;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
-    
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   }
 `;
-
 
 const CardContainer = styled.div`
   transition: background-color 0.3s ease-in-out;
@@ -109,9 +105,9 @@ const TextContainer = styled.div`
   justify-content: space-between;
   margin-top: 5px;
   padding: 0 15px 15px 15px;
-  word-wrap: break-word;     
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word; 
+  word-break: break-word;
   h1 {
     font-size: 1.1rem;
     font-weight: 500;
@@ -129,13 +125,17 @@ const TextContainer = styled.div`
     color: rgb(45, 108, 199);
   }
 `;
+
+const MobileViews = styled.div`
+
+`
 const Video = () => {
   const { videoData, loading, error } = useVideosData();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [showSubcategories, setShowSubcategories] = useState(true);
   const [addNew, setAddNew] = useState(false);
-
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const outlet = useOutlet();
   const { isAdmin } = useContext(UserContext);
 
@@ -155,7 +155,7 @@ const Video = () => {
         ]
       : [];
 
-  const filteredVideo= sortedVideos.filter(Video => {
+  const filteredVideo = sortedVideos.filter(Video => {
     return (
       (selectedCategories.length === 0 ||
         selectedCategories.includes(Video.category)) &&
@@ -178,16 +178,19 @@ const Video = () => {
 
   return (
     <Container>
+ 
       {addNew && <VideoForm onClose={handleCloseForm} />}
-      <CatContainer>
-        {isAdmin && <AddNewBtn onClick={handleAddNew} />}
-        <ExploreBtn onClick={handleExploreClick} />
-        <CategorySelector
-          categories={categories}
-          selectedCategories={selectedCategories}
-          onSelectCategory={setSelectedCategories}
-        />
-      </CatContainer>
+      {!outlet && (
+        <CatContainer>
+          {isAdmin && <AddNewBtn onClick={handleAddNew} />}
+          <ExploreBtn onClick={handleExploreClick} />
+          <CategorySelector
+            categories={categories}
+            selectedCategories={selectedCategories}
+            onSelectCategory={setSelectedCategories}
+          />
+        </CatContainer>
+      )}
       <PostContainer>
         {!outlet && (
           <>
@@ -203,26 +206,29 @@ const Video = () => {
             </SubCatContainer>
             <ItemContainer>
               {filteredVideo.map((video, index) => (
-               <Card
-               key={index}
-               id={video.$id}
-               title={video.title}
-               rabbi={video.rabbi}
-               views={video.views}
-               thumbnail={video.thumbnail}
-               poster={video.poster}
-               createdAt={video.$createdAt}
-               videoUrl={video.videoUrl}
-               category={video.category}
-               CardContainer={CardContainer}
-               TextContainer={TextContainer}
-               ThumbnailContainer={ThumbnailContainer}
-             />
+                <Card
+                  key={index}
+                  id={video.$id}
+                  title={video.title}
+                  rabbi={video.rabbi}
+                  views={video.views}
+                  thumbnail={video.thumbnail}
+                  poster={video.poster}
+                  createdAt={video.$createdAt}
+                  videoUrl={video.videoUrl}
+                  category={video.category}
+                  CardContainer={CardContainer}
+                  TextContainer={TextContainer}
+                  ThumbnailContainer={ThumbnailContainer}
+                />
               ))}
             </ItemContainer>
           </>
         )}
-        <Outlet />
+        {!isMobile &&  <Outlet />}
+       {isMobile && outlet &&
+        <MobileDetails/>
+      }
       </PostContainer>
     </Container>
   );

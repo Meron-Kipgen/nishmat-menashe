@@ -9,6 +9,7 @@ import MobileBtn from "./MobileBtn";
 import Random from "./Random";
 import MobileCommentsBtn from "./MobileCommentsBtn";
 import { useVideosData } from "./useVideosData";
+
 // Styled Components
 const Container = styled.section`
   width: 100%;
@@ -54,14 +55,20 @@ const StickyMobileBtn = styled.div`
 // Main Component
 const MobileDetails = () => {
   const { id } = useParams();
-  const { videoData } = useVideosData();
+  const { videoData, loading } = useVideosData(); // Assuming useVideosData provides a loading state
   const video = videoData.find(v => v.$id === id);
 
-  const [showRelated, setShowRelated] = useState(false); // State to toggle between showing related videos
-  const [showSuggestions, setShowSuggestions] = useState(false); // State to toggle between showing suggested videos
+  const [showRelated, setShowRelated] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
+  // Handle loading state
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Handle case where video is not found
   if (!video) {
-    return <DetailsContainer>Video not found</DetailsContainer>;
+    return <div>Video not found</div>;
   }
 
   const handleRelatedClick = () => {

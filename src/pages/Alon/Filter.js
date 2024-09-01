@@ -2,13 +2,14 @@ import React from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+
   @media (max-width: 768px) {
-    flex-direction: row;
+    grid-template-columns: 1fr 1fr; 
+    grid-template-rows: auto auto auto; 
   }
 `;
 
@@ -17,8 +18,15 @@ const Input = styled.input`
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
-  flex: 1;
- 
+  width: 100%; 
+
+`;
+
+
+const LastInput = styled(Input)`
+  @media (max-width: 768px) {
+    grid-column: span 2; 
+  }
 `;
 
 export default function Filter({ filters, onInputChange }) {
@@ -38,7 +46,7 @@ export default function Filter({ filters, onInputChange }) {
         onChange={onInputChange}
         placeholder="Filter by Issue"
       />
-      <Input
+      <LastInput
         type="text"
         name="parasha"
         value={filters.parasha}
