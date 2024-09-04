@@ -62,6 +62,7 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
     };
   }, [audioUrl, playerVars]);
 
+  
   useEffect(() => {
     if (isPlayerReady && isDataLoaded && shouldPlay) {
       try {

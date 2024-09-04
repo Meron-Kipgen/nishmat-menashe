@@ -150,7 +150,7 @@ const Menus = ({
             <path d="M18 9v6" />
             <path d="M21 12h-6" />
           </svg>
-          Increase Font
+    
         </Menu>
         <Menu onClick={handleDecreaseFont}>
           <svg
@@ -166,7 +166,7 @@ const Menus = ({
             <path d="M4 13h7" />
             <path d="M21 12h-6" />
           </svg>
-          Decrease Font
+      
         </Menu>
         <Menu>
           <svg

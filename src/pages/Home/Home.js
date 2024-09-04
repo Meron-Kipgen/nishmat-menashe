@@ -1,22 +1,28 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import HeroSection from './HeroSection';
-import MiddleSection from './MiddleSection';
-import BottomSection from './BottomSection';
 import styled from 'styled-components';
 import AboutUs from './AboutUs';
-import OurTeam from "./OurTeam"
+import OurProjects from './OurProjects';
+import OurTeam from './OurTeam';
+
 const Container = styled.div`
   font-family: Arial, Helvetica, sans-serif;
 `;
 
 function Home() {
+  const aboutUsRef = useRef(null);
+  const ourProjectRef = useRef(null);
+
   return (
     <Container>
-      <HeroSection />
-      <AboutUs/>
-      <MiddleSection />
-      <BottomSection />
-      <OurTeam/>
+      <HeroSection aboutUsRef={aboutUsRef} ourProjectRef={ourProjectRef} />
+      <div ref={aboutUsRef}>
+        <AboutUs />
+      </div>
+      <div ref={ourProjectRef}>
+        <OurProjects />
+      </div>
+      <OurTeam />
     </Container>
   );
 }

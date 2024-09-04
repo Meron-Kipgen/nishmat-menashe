@@ -6,24 +6,24 @@ import FeedCard from './FeedCard';
 import { Outlet, useOutlet } from 'react-router-dom';
 
 const Container = styled.section`
-  width: 700px;
-  margin: 45px 0; 
+  width: 600px;
+  margin: 45px auto;
   display: flex;
   flex-direction: column;
-  align-items: center; 
 
+  min-height: 100vh; /* Center vertically */
+  
   @media (max-width: 768px) {
     width: 100%;
-    margin: 45px 0;
+    margin: 45px auto;
   }
-
 `;
 
 const FeedbackPost = styled.div`
   width: 100%;
-
-  @media (max-width: 768px) {
   margin-top: 10px;
+  @media (max-width: 768px) {
+    margin-top: 10px;
   }
 `;
 

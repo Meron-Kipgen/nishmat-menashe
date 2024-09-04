@@ -15,7 +15,7 @@ import LoadMore from "../../components/LoadMore";
 import useLoadMore from "../../hooks/useLoadMore"; 
 
 const Container = styled.section`
-  margin-top: 45px;
+  margin: 45px 0;
   width: 100%;
   display: flex;
   justify-content: center;

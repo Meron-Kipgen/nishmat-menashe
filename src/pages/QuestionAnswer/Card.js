@@ -119,7 +119,7 @@ export default function Card({ id, avatarUrl, createdAt, userName, question, vie
     <CardContainer onClick={handleClick}>
       <TopText>
         <UserInfo>
-          <Avatar src={avatarUrl} />
+          <Avatar src={avatarUrl} name={userName}/>
           <UserName>
             <h1>{userName}</h1>
             <p><TimeAgo createdAt={createdAt} /> ⁃ {views} views</p>

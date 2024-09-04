@@ -63,9 +63,6 @@ const LeftSidebar = ({ toggleSidebar }) => (
         <SidebarLink to="/Alon" onClick={toggleSidebar}>
           <GrArticle /> Nishmat Menashe Alon
         </SidebarLink>
-        <SidebarLink to="/profile" onClick={toggleSidebar}>
-          <FaUser /> Profile
-        </SidebarLink>
         <SidebarLink to="/Audio/podcast" onClick={toggleSidebar}>
           <FaPodcast /> Audio Podcast
         </SidebarLink>

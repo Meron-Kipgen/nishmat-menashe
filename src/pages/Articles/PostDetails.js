@@ -7,6 +7,8 @@ import UpdateArticleForm from "./UpdateArticleForm"; // Adjust the path if neces
 import { useArticlesData } from "./useArticlesData";
 import DOMPurify from "dompurify";
 import TimeAgo from "../../utils/TimeAgo";
+import useCommentsData from "../../Features/Comment/useCommentsData";
+import CommentsSection from "../../Features/Comment/CommentSection";
 
 const Container = styled.div`
   display: flex;
@@ -20,12 +22,14 @@ const Container = styled.div`
 `;
 
 const PostContainer = styled.div`
-  width: 800px;
+  width: 700px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   @media (max-width: 768px) {
     width: 100%;
+    border-radius: 0;
+    margin-top: -40px;
   }
 `;
 
@@ -33,6 +37,7 @@ const Post = styled.div`
   padding: 40px;
   @media (max-width: 768px) {
     width: 100%;
+    padding: 10px;
   }
   h1 {
     margin-bottom: 7px;
@@ -70,7 +75,7 @@ const Menubar = styled.div`
   width: 100%;
   background: white;
   position: sticky;
-  top: 45px;
+  top: 0;
   z-index: 100;
   @media (min-width: 768px) {
     display: none;
@@ -117,7 +122,14 @@ const PostDetails = () => {
   const [fontSize, setFontSize] = useState(16);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false); 
-
+  const {
+    comments,
+    loading,
+    error,
+    updateComment,
+    deleteComment,
+    createComment,
+  } = useCommentsData(post?.$id);
   if (!post) {
     return <div>Post not found</div>;
   }
@@ -260,6 +272,16 @@ const PostDetails = () => {
             )}
           </Body>
         </Post>
+        <CommentsSection
+        postId={post.$id}
+        comments={comments}
+        loading={loading}
+        error={error}
+        createComment={createComment}
+        updateComment={updateComment}
+        deleteComment={deleteComment}
+        maxPosts={comments.length}
+      />
         {showUpdateForm && (
           <UpdateArticleForm
             articleId={post.$id}

@@ -14,6 +14,7 @@ const PostContainer = styled.div`
   background: #f9f9f9;
   position: relative; 
   padding:10px 20px 0 20px;
+  margin-top: 10px;
   @media (max-width: 768px) {
     margin: 10px 0;
   }
@@ -132,13 +133,20 @@ const ActionBtnContainer = styled.div`
 `;
 
 const FeedbackContainer = styled.div`
-  word-wrap: break-word;     
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word; 
+  word-break: break-word;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 10; /* Limit to 10 lines */
   @media (max-width: 768px) {  
-    padding:0 ;
+    padding: 0;
   }
 `;
+
 
 
 
@@ -200,14 +208,14 @@ const handleClick = ()=>{
       <PostContainer>
         <TopSection>
           <AvatarWrapper>
-            <Avatar src={userAvatarUrl} />
+            <Avatar src={userAvatarUrl} name={userName}/>
           </AvatarWrapper>
           <ContentWrapper>
             <Username>
               <strong>{userName}</strong>
-              <p><TimeAgo createdAt={createdAt} /></p>
+              <p><TimeAgo createdAt={createdAt} /> - {` ${comments.length} Comment${comments.length > 1 ? 's' : ''}`}</p>
             </Username>
-            <p>{` ${comments.length} Comment${comments.length > 1 ? 's' : ''}`}</p>
+           
           </ContentWrapper>
           {userId === userId && (
             <DropdownButton onClick={() => setDropdownOpen(!dropdownOpen)}>

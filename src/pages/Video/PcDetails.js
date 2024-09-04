@@ -8,16 +8,16 @@ import Suggestions from "./Suggestions";
 import { useVideosData } from "../../pages/Video/useVideosData";
 import Delete from "./Delete";
 import Update from "./Update";
-import CommentBox from "../../Features/Comment/CommentBox";
-import CommentList from "../../Features/Comment/CommentList";
+import CommentsSection from "../../Features/Comment/CommentSection";
 import useCommentsData from "../../Features/Comment/useCommentsData";
 import { UserContext } from "../../contexts/UserContext";
 import TimeAgo from "../../utils/TimeAgo";
 
 const Container = styled.section`
+width: 100%;
   display: flex;
   justify-content: space-between;
-  margin: 0 50px;
+  margin: 10px 50px;
   gap: 30px;
   flex-wrap: wrap;
 `;
@@ -82,13 +82,14 @@ export default function PcDetails() {
     loading: videosLoading,
     error: videosError,
   } = useVideosData();
-  const video = videoData?.find(v => v.$id === id);
+  const video = videoData?.find(video => video.$id === id);
   const {
     comments,
-    loading: commentsLoading,
-    error: commentsError,
+    loading,
+    error,
     updateComment,
     deleteComment,
+    createComment,
   } = useCommentsData(video?.$id);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const { isAdmin } = useContext(UserContext);
@@ -150,18 +151,22 @@ export default function PcDetails() {
               </UpdateBtn>
             </AdminBtn>
           )}
+            <CommentsSection
+        postId={video.$id}
+        comments={comments}
+        loading={loading}
+        error={error}
+        createComment={createComment}
+        updateComment={updateComment}
+        deleteComment={deleteComment}
+        maxPosts={comments.length}
+      />
         </DetailsContainer>
         {isUpdateModalOpen && (
           <Update videoId={id} onClose={handleCloseUpdateModal} />
         )}
-        <CommentBox postId={video.$id} />
-        <CommentList
-          comments={comments}
-          loading={commentsLoading}
-          error={commentsError}
-          updateComment={updateComment}
-          deleteComment={deleteComment}
-        />
+        
+      
       </VideoSection>
 
       <PcSuggestionsSection>

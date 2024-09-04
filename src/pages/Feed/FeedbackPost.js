@@ -1,9 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
-
-import useCommentsData from '../../Features/Comment/useCommentsData';
-import CommentsSection from '../../Features/Comment/CommentSection';
-import FeedCard from "../../Features/Feedback/FeedCard"
+import React from "react";
+import styled from "styled-components";
+import useCommentsData from "../../Features/Comment/useCommentsData";
+import CommentBox from "../../Features/Comment/CommentBox";
+import FeedCard from "../../Features/Feedback/FeedCard";
 
 const PostContainer = styled.div`
   display: flex;
@@ -11,13 +10,12 @@ const PostContainer = styled.div`
   background: #f9f9f9;
   border-bottom: 1px solid #ddd;
 `;
+const CommentBoxContainer = styled.div`
+  border-top: 1px solid #ccc;
+`;
 
-
-
-const FeedbackPost = ({ post, maxPosts = 1}) => {
-
-  const { comments, loading, error, updateComment, deleteComment, createComment } = useCommentsData(post.$id);
-
+const FeedbackPost = ({ post }) => {
+  const { createComment } = useCommentsData(post.$id);
 
   if (!post) {
     return <div>Loading...</div>;
@@ -26,26 +24,19 @@ const FeedbackPost = ({ post, maxPosts = 1}) => {
   return (
     <>
       <PostContainer>
-      <FeedCard
-            id={post.$id}
-            key={post.$id} 
-            feedback={post.feedback} 
-            createdAt={post.$createdAt}
-            userName={post.userName}
-            userAvatarUrl={post.userAvatarUrl}
-          />
-       
-      </PostContainer> 
-      <CommentsSection
-        postId={post.$id}
-        comments={comments}
-        loading={loading}
-        error={error}
-        createComment={createComment}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-        maxPosts={maxPosts}
-      />
+        <FeedCard
+          id={post.$id}
+          key={post.$id}
+          feedback={post.feedback}
+          createdAt={post.$createdAt}
+          userName={post.userName}
+          userAvatarUrl={post.userAvatarUrl}
+        />
+      </PostContainer>
+
+      <CommentBoxContainer>
+        <CommentBox postId={post.$id} createComment={createComment} />
+      </CommentBoxContainer>
     </>
   );
 };

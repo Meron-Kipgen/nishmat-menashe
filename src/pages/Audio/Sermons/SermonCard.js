@@ -96,7 +96,7 @@ const PlayButton = styled.div`
   justify-content: center;
   width: 50px;
   height: 50px;
-  border: 1px solid #142b42;
+ background-color: #142b42;
   border-radius: 50%;
   color: #142b42;
   cursor: pointer;
@@ -182,9 +182,7 @@ const SermonCard = ({
   const handleClick = () => {
     navigate(`/Audio/Sermon/${id}`);
   };
-  {
-    console.log(id);
-  }
+
   const handleDropdownToggle = () => {
     setIsDropdownOpen(prev => !prev);
   };
@@ -241,8 +239,21 @@ const SermonCard = ({
         <FooterContainer>
           <FooterText>{played} Played ⁃ 33 Comments</FooterText>
           <PlayButton onClick={handleClick}>
-            {/* Replace 'play' with an SVG icon */}
-            Play
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon icon-tabler icon-tabler-player-play"
+            width="44"
+            height="44"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="#ffffff"
+            fill="#fff"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M7 4v16l13 -8z" />
+          </svg>
           </PlayButton>
         </FooterContainer>
       </Content>

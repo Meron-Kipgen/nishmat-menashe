@@ -4,7 +4,7 @@ import Player from '../../Features/VideoPlayer/Player';
 import { useNavigate } from 'react-router-dom';
 import { useVideosData } from '../Video/useVideosData';
 import useCommentsData from '../../Features/Comment/useCommentsData';
-import CommentsSection from '../../Features/Comment/CommentSection';
+import CommentBox from '../../Features/Comment/CommentBox';
 import { CommentIcon } from '../../Assets/Icons';
 
 const Container = styled.div``;
@@ -28,7 +28,9 @@ cursor: pointer;
   color: darkblue;
 }
 `
-
+const CommentBoxContainer = styled.div`
+  border-top: 1px solid #ccc;
+`;
 const VideoPost = ({ post, maxPosts = 1 }) => {
   const navigate = useNavigate();
   const { updateViews } = useVideosData();
@@ -56,16 +58,9 @@ const VideoPost = ({ post, maxPosts = 1 }) => {
         <p>{post.category} ⁃ {post.subcategory} ⁃ {post.views} views</p>
         <p>{post.description} |  <CommentIcon height="20px" width="20px" stroke="red" /> {comments.length} {comments.length > 0 ? "Comments": "Comment"}</p>
       </TextWrapper>
-      <CommentsSection
-        postId={post.$id}
-        comments={comments}
-        loading={loading}
-        error={error}
-        createComment={createComment}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-        maxPosts={maxPosts}
-      />
+      <CommentBoxContainer>
+        <CommentBox postId={post.$id} createComment={createComment} />
+      </CommentBoxContainer>
     </Container>
   );
 };

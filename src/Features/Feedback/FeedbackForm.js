@@ -10,10 +10,12 @@ import { GuestIcon } from '../../Assets/Icons';
 
 const Container = styled.section`
   display: flex;
+  width: 600px;
   flex-direction: column;
   align-items: center;
   padding: 10px 0 20px 0;
   @media (max-width: 768px) {
+    width: 100%;
     padding: 0 2px 10px 2px;
   }
 `;

@@ -11,12 +11,12 @@ const ButtonContainer = styled.div`
   display: flex;
   padding-left: 5px;
   gap: 10px;
-  overflow-x: auto; /* Enable horizontal scrolling */
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  max-width: 100%; /* Ensure the container doesn't overflow horizontally */
-  -ms-overflow-style: none; /* IE and Edge specific: hide scrollbar */
-  scrollbar-width: none; /* Firefox specific: hide scrollbar */
-  /* Adjust height as needed */
+  overflow-x: auto; 
+  overflow-y: hidden; 
+  max-width: 100%;
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+ 
 `;
 
 const Button = styled.button`
@@ -34,28 +34,29 @@ export default function MobileBtn({
   onClickSuggestion,
 }) {
   const handleClickRelated = () => {
-    onClickRelated(); // Call the onClickRelated function passed from Details component
+    onClickRelated(); 
   };
 
   const handleClickSuggestion = () => {
-    onClickSuggestion(); // Call the onClickSuggestion function passed from Details component
+    onClickSuggestion(); 
   };
 
   return (
     <Container>
       <ButtonContainer>
-        <Button># Like</Button>
-        <Button># Share</Button>
+        <Button>back</Button>
+
+     <Button>Comments</Button>
         <Button onClick={handleClickRelated}>
-          # Related
+          Related
         </Button>
-        {/* Call onClickRelated when Related button is clicked */}
+      
         <Button onClick={handleClickSuggestion}>
-          # Suggestion
+          Suggestion
         </Button>
-        {/* Call onClickSuggestion when Suggestion button is clicked */}
-        <Button># Another Button</Button>
-        <Button># More Buttons</Button>
+      
+        <Button>share</Button>
+     
       </ButtonContainer>
     </Container>
   );

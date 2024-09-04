@@ -6,7 +6,7 @@ import { useArticlesData } from "../Articles/useArticlesData";
 import DOMPurify from "dompurify";
 import TimeAgo from "../../utils/TimeAgo";
 import useCommentsData from "../../Features/Comment/useCommentsData";
-import CommentsSection from "../../Features/Comment/CommentSection";
+import CommentBox from "../../Features/Comment/CommentBox";
 import { CommentIcon } from "../../Assets/Icons";
 
 const truncateText = (text, wordCount) => {
@@ -47,20 +47,9 @@ const Wrapper = styled.div`
   color: grey;
 `;
 
-const ReadMoreButton = styled.button`
-  margin-top: auto;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
+const CommentBoxContainer = styled.div`
+border-top: 1px solid #ccc;
+`
 
 const ArticlePost = ({ post, maxPosts = 1 }) => {
   const { comments, loading, error, createComment, updateComment, deleteComment } = useCommentsData(post.$id);
@@ -97,18 +86,12 @@ const ArticlePost = ({ post, maxPosts = 1 }) => {
           </p>
         </Wrapper>
         <Body dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(truncatedBody) }} />
-      <p>Read more</p>
+    
       </PostItemContainer>
-      <CommentsSection
-        postId={post.$id}
-        comments={comments}
-        loading={loading}
-        error={error}
-        createComment={createComment}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-        maxPosts={maxPosts}
-      />
+      <CommentBoxContainer>
+          <CommentBox postId={post.$id} createComment={createComment} />
+      </CommentBoxContainer>
+    
     </>
   );
 };

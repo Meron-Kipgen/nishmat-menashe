@@ -1,9 +1,8 @@
-import React, { useState } from "react";
 import styled from "styled-components";
 import TimeAgo from "../../utils/TimeAgo";
 import { useSermonsData } from "../Audio/Sermons/useSermonsData";
 import useCommentsData from "../../Features/Comment/useCommentsData";
-import CommentsSection from "../../Features/Comment/CommentSection";
+import CommentBox from "../../Features/Comment/CommentBox";
 import { CommentIcon } from "../../Assets/Icons";
 import { useNavigate } from "react-router-dom";
 
@@ -106,17 +105,18 @@ const PlayButton = styled.div`
     height: 24px;
   }
 `;
+const CommentBoxContainer = styled.div`
+border-top: 1px solid #ccc;
+`
 
-const AudioPost = ({ post, maxPosts = 1 }) => {
+const AudioPost = ({ post }) => {
   const { updatePlayed } = useSermonsData();
   const navigate = useNavigate();
   const {
     comments,
-    loading,
-    error,
+   
     createComment,
-    updateComment,
-    deleteComment,
+
   } = useCommentsData(post.$id);
 
   if (!post) {
@@ -124,7 +124,7 @@ const AudioPost = ({ post, maxPosts = 1 }) => {
   }
 
   const handlePlay = () => {
-    navigate(`/Audio/${post.$id}`);
+    navigate(`/Audio/Sermon/${post.$id}`);
     updatePlayed(post.$id);
   };
 
@@ -157,16 +157,9 @@ const AudioPost = ({ post, maxPosts = 1 }) => {
         </Content>
       </CardContainer>
 
-      <CommentsSection
-        postId={post.$id}
-        comments={comments}
-        loading={loading}
-        error={error}
-        createComment={createComment}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-        maxPosts={maxPosts}
-      />
+      <CommentBoxContainer>
+          <CommentBox postId={post.$id} createComment={createComment} />
+      </CommentBoxContainer>
     </>
   );
 };

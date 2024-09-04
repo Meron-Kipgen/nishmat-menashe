@@ -120,7 +120,7 @@ const SermonDetails = () => {
     updateComment,
     deleteComment,
     createComment,
-  } = useCommentsData(post.$id);
+  } = useCommentsData(post?.$id);
   const { isAdmin } = useContext(UserContext);
   if (!sermonData || sermonData.length === 0) {
     return <div>Loading audio data...</div>;

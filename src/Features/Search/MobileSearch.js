@@ -8,16 +8,17 @@ const FullscreenOverlay = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+height: 47px;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
+  align-items: center;
   z-index: 1000;
  padding: 10px 0 0 0;
   background: white;
 `;
 
 const SearchIconContainer = styled.div`
-  margin-top: 3px;
+margin-top: 3px;
 `;
 
 const CloseButton = styled.div`
@@ -25,7 +26,7 @@ const CloseButton = styled.div`
   margin-right: 10px;
   background: none;
   border: none;
-  margin-top: 2px;
+
   cursor: pointer;
   outline: none;
 `;
@@ -44,7 +45,7 @@ export default function MobileSearch() {
   return (
     <>
       <SearchIconContainer onClick={handleSearchClick}>
-        <SearchIcon height="35px" width="35px" />
+        <SearchIcon height="33px" width="33px" />
       </SearchIconContainer>
       {isSearchOpen && (
         <FullscreenOverlay>

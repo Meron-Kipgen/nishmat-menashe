@@ -110,16 +110,19 @@ const Articles = () => {
 
   return (
     <Container>
-      {addNew && <AddArticleForm onClose={handleCloseForm} />}
-      <CatContainer>
-        {isAdmin && <AddNewBtn onClick={handleAddNew} />}
-        <ExploreBtn onClick={handleExploreClick} />
-        <CategorySelector
-          categories={categories}
-          selectedCategories={selectedCategories}
-          onSelectCategory={setSelectedCategories}
-        />
-      </CatContainer>
+     
+     {addNew && <AddArticleForm onClose={handleCloseForm} />}
+      {!outlet && (
+        <CatContainer>
+          {isAdmin && <AddNewBtn onClick={handleAddNew} />}
+          <ExploreBtn onClick={handleExploreClick} />
+          <CategorySelector
+            categories={categories}
+            selectedCategories={selectedCategories}
+            onSelectCategory={setSelectedCategories}
+          />
+        </CatContainer>
+      )}
       <PostContainer>
         {!outlet && (
           <>

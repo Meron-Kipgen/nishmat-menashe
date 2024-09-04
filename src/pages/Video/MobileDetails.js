@@ -9,6 +9,7 @@ import MobileBtn from "./MobileBtn";
 import Random from "./Random";
 import MobileCommentsBtn from "./MobileCommentsBtn";
 import { useVideosData } from "./useVideosData";
+import CommentList from "../../Features/Comment/CommentList";
 
 // Styled Components
 const Container = styled.section`
@@ -44,7 +45,7 @@ const MobileSuggestionContainer = styled.section`
 
 const StickyMobileBtn = styled.div`
   position: sticky;
-  top: 204px;
+  top: 220px;
   padding: 5px 0;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -100,8 +101,6 @@ const MobileDetails = () => {
           onClickSuggestion={handleSuggestionClick}
         />
       </StickyMobileBtn>
-
-      <MobileCommentsBtn />
 
       <MobileSuggestionContainer>
         {!showRelated && !showSuggestions && (
