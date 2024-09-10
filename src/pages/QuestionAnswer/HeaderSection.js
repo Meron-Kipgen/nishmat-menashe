@@ -2,6 +2,7 @@ import React from "react";
 import Avatar from "../../Features/User/Avatar";
 import TimeAgo from "../../utils/TimeAgo";
 import styled from "styled-components";
+import BackButton from "../../components/BackButton";
 
 const HeaderContainer = styled.section`
   display: flex;
@@ -68,6 +69,7 @@ const HeaderSection = ({
 }) => (
   <>
     <HeaderContainer>
+      <BackButton/>
       <Avatar src={question.avatarUrl} />
       <div>
         <p>{question.userName}</p>

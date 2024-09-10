@@ -41,6 +41,7 @@ export default function Feedback() {
               <FeedCard
                 id={feed.$id}
                 key={feed.$id}
+                feedUserId = {feed.userId}
                 feedback={feed.feedback}
                 createdAt={feed.$createdAt}
                 userName={feed.userName}

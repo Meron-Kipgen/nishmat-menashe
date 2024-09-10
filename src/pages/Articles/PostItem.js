@@ -70,16 +70,21 @@ const PostItem = ({
   title,
   body,
   subcategory,
-  writer,
+  author,
   views,
   createdAt,
-  onClick, // Accept onClick handler
+  onClick,
+  updateViews, 
 }) => {
   const navigate = useNavigate();
 
   const handleReadMore = () => {
+    if (updateViews) {
+      updateViews(id); 
+    }
     navigate(`/Articles/${id}`);
-    if (onClick) onClick(); // Call onClick handler
+    
+    if (onClick) onClick();
   };
 
   const sanitizedBody = DOMPurify.sanitize(body);
@@ -92,7 +97,7 @@ const PostItem = ({
       </SubcategoryPoster>
       <Title>{title}</Title>
       <Wrapper>
-        {writer} ⁃ <TimeAgo createdAt={createdAt} /> ⁃ views: {views}
+       By: {author} ⁃ <TimeAgo createdAt={createdAt} /> ⁃ views: {views}
       </Wrapper>
       <Body dangerouslySetInnerHTML={{ __html: truncatedBody }} />
 
@@ -100,5 +105,4 @@ const PostItem = ({
     </PostItemContainer>
   );
 };
-
 export default PostItem;

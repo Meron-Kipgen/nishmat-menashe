@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useArticlesData } from './useArticlesData';
 import TextEditor from '../../components/TextEditor';
-import Draggable from 'react-draggable';
+
 
 const FormContainer = styled.form`
   position: absolute;
   top: 60px;
-cursor: move;
+
   width: 800px;
   z-index: 1000;
   margin: 0 auto;
@@ -83,7 +83,7 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [body, setBody] = useState('');
-  const [writer, setWriter] = useState('');
+  const [author, setAuthor] = useState('');
 
   useEffect(() => {
     const article = articleData.find(article => article.$id === articleId);
@@ -92,7 +92,7 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
       setCategory(article.category || '');
       setSubcategory(article.subcategory || '');
       setBody(article.body || '');
-      setWriter(article.writer || '');
+      setAuthor(article.author || '');
     }
   }, [articleId, articleData]);
 
@@ -106,7 +106,7 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
         category,
         subcategory,
         body,
-        writer,
+        author,
       };
 
       try {
@@ -121,7 +121,7 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
   };
 
   return (
-    <Draggable>
+ 
     <FormContainer onSubmit={handleSubmit}>
       <CloseButton onClick={onClose}>&times;</CloseButton>
       <FormGroup>
@@ -152,11 +152,11 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
         />
       </FormGroup>
       <FormGroup>
-        <label>Writer:</label>
+        <label>author:</label>
         <input
           type="text"
-          value={writer}
-          onChange={(e) => setWriter(e.target.value)}
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
           required
         />
       </FormGroup>
@@ -167,7 +167,7 @@ const UpdateArticleForm = ({ articleId, onClose }) => {
       
       <SubmitButton type="submit">Update Article</SubmitButton>
     </FormContainer>
-    </Draggable>
+
   );
 };
 

@@ -12,6 +12,12 @@ const fadeInUp = keyframes`
   }
 `;
 
+const animateImage = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+`;
+
 const MiddleContainer = styled.section`
   padding: 50px 20px;
   text-align: center;
@@ -19,7 +25,7 @@ const MiddleContainer = styled.section`
 
   h2 {
     margin-bottom: 40px;
-    font-size: 2rem; /* Adjusted font size */
+    font-size: 2rem;
     color: #333;
   }
 `;
@@ -27,7 +33,7 @@ const MiddleContainer = styled.section`
 const FeaturesRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Center items */
+  justify-content: center;
 `;
 
 const Feature = styled.div`
@@ -44,14 +50,18 @@ const Feature = styled.div`
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+    img {
+      animation: ${animateImage} 1s infinite; /* Trigger animation on hover */
+    }
   }
 
   @media (max-width: 768px) {
-    flex: 0 1 45%; /* Adjust to 2 items per row */
+    flex: 0 1 45%;
   }
 
   @media (max-width: 480px) {
-    flex: 0 1 100%; /* Adjust to 1 item per row */
+    flex: 0 1 100%;
   }
 `;
 
@@ -60,7 +70,11 @@ const FeatureImage = styled.img`
   height: auto; 
   object-fit: cover;
   border-radius: 10px 10px 0 0;
-  margin-top: -90px;
+
+  transition: transform 0.3s; /* Smooth transition for the hover effect */
+
+  /* Animation only on hover */
+  animation: none;
 `;
 
 const FeatureContent = styled.div`
@@ -69,12 +83,12 @@ const FeatureContent = styled.div`
 
 const FeatureTitle = styled.h3`
   color: #333;
-  font-size: 1.25rem; /* Adjusted font size */
+  font-size: 1.25rem;
 `;
 
 const FeatureText = styled.p`
   color: #777;
-  font-size: 1rem; /* Adjusted font size */
+  font-size: 1rem;
 `;
 
 function OurProjects() {
@@ -83,21 +97,21 @@ function OurProjects() {
       <h2>Our Projects</h2>
       <FeaturesRow>
         <Feature>
-          <FeatureImage src="../worldwide.gif" alt="Project One" />
+          <FeatureImage src="../animatedIcons/website.webp" alt="Website" />
           <FeatureContent>
             <FeatureTitle>Website</FeatureTitle>
             <FeatureText>Your website is a dynamic social network platform designed to foster connections and engagement among users through a variety of interactive features. It offers functionalities like posting, commenting, liking, and sharing, creating a vibrant community where users can express themselves and connect over shared interests. The platform also includes video components, allowing users to explore, watch, and interact with video content, including detailed pages for each video and related suggestions. With a modern design and user-friendly interface, your website provides a seamless experience, encouraging active participation and content discovery.</FeatureText>
           </FeatureContent>
         </Feature>
         <Feature>
-          <FeatureImage src="https://via.placeholder.com/300" alt="Project Two" />
+          <FeatureImage src="../animatedIcons/alon.webp" alt="alon" />
           <FeatureContent>
             <FeatureTitle>Project Two</FeatureTitle>
             <FeatureText>Weekly Alon</FeatureText>
           </FeatureContent>
         </Feature>
         <Feature>
-          <FeatureImage src="https://via.placeholder.com/300" alt="Project Three" />
+          <FeatureImage src="../animatedIcons/books.webp" alt="books" />
           <FeatureContent>
             <FeatureTitle>Project Three</FeatureTitle>
             <FeatureText>Books</FeatureText>

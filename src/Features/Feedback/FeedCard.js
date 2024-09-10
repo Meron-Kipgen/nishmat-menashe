@@ -150,7 +150,7 @@ const FeedbackContainer = styled.div`
 
 
 
-const FeedbackPost = ({userAvatarUrl,feedback, userName, id, createdAt}) => {
+const FeedbackPost = ({userAvatarUrl,feedback,feedUserId, userName, id, createdAt}) => {
   const { deleteFeedback, updateFeedback } = useFeedbackData();
   const { userId } = useContext(UserContext);
   const { comments } = useCommentsData(id);
@@ -217,7 +217,7 @@ const handleClick = ()=>{
             </Username>
            
           </ContentWrapper>
-          {userId === userId && (
+          {feedUserId === userId && (
             <DropdownButton onClick={() => setDropdownOpen(!dropdownOpen)}>
               <DotHorizon width="20px" height="20px" />
             </DropdownButton>

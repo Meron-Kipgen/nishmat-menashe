@@ -7,15 +7,16 @@ import TimeAgo from '../../utils/TimeAgo';
 import CommentsSection from '../Comment/CommentSection';
 import useCommentsData from '../Comment/useCommentsData';
 import { UserContext } from '../../contexts/UserContext';
-import { SaveIcon, CancelIcon, EditIcon, DeleteIcon, DotHorizon } from '../../Assets/Icons'; 
+import { SaveIcon, CancelIcon, EditIcon, DeleteIcon, DotHorizon } from '../../Assets/Icons';
+import BackButton from '../../components/BackButton'; // Import the BackButton
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #fff;
   width: 600px;
-  max-width: 100%; /* Ensures it doesn't overflow on smaller screens */
-  margin: 0 auto; /* Centers the container horizontally on larger screens */
+  max-width: 100%;
+  margin: 0 auto;
 
   @media (max-width: 600px) {
     width: 100%;
@@ -28,7 +29,7 @@ const TopSection = styled.div`
   display: flex;
   gap: 20px;
   padding: 10px;
-  position: relative; /* Ensure dropdown is positioned relative to this container */
+  position: relative;
 `;
 
 const Username = styled.div`
@@ -41,9 +42,9 @@ const Text = styled.p`
   font-size: 16px;
   line-height: 1.5;
   padding: 10px;
-  word-wrap: break-word;     
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word; 
+  word-break: break-word;
   @media (max-width: 600px) {
     font-size: 14px;
     margin: 4px 0;
@@ -61,7 +62,7 @@ const DropdownButton = styled.button`
   right: 10px;
 
   &:hover {
-    background: #D6D6D6;
+    background: #d6d6d6;
     border-radius: 50%;
     width: 25px;
     height: 25px;
@@ -71,14 +72,14 @@ const DropdownButton = styled.button`
 const DropdownMenu = styled.div`
   display: ${({ open }) => (open ? 'block' : 'none')};
   position: absolute;
-  top: 30px; /* Adjust as needed */
+  top: 30px;
   right: 10px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   z-index: 900;
-  width: 120px; /* Adjust as needed */
+  width: 120px;
 
   button {
     display: flex;
@@ -182,6 +183,7 @@ const FeedbackDetails = () => {
   return (
     <Container>
       <TopSection>
+        <BackButton /> {/* Use the reusable BackButton */}
         <Avatar src={feed.userAvatarUrl} />
         <Username>
           <p>{feed.userName}</p>
@@ -219,7 +221,7 @@ const FeedbackDetails = () => {
               overflow: 'hidden',
               boxSizing: 'border-box',
               fontSize: 16,
-              background: "#D6D6D6",
+              background: '#d6d6d6',
             }}
           />
           <ActionBtnContainer>

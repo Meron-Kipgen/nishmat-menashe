@@ -6,9 +6,11 @@ import { SermonDataProvider } from "./pages/Audio/Sermons/useSermonsData";
 import { PodcastDataProvider } from "./pages/Audio/Podcast/usePodcastData";
 import { QuestionAnswerDataProvider } from "./pages/QuestionAnswer/useQuestionAnswerData";
 import { FeedbackDataProvider } from "./Features/Feedback/useFeedbackData";
+import { PdfDataProvider } from "./pages/Alon/usePdfData";
 
 const Providers = ({ children }) => {
   return (
+    <PdfDataProvider>
     <FeedbackDataProvider>
       <VideosDataProvider>
         <QuestionAnswerDataProvider>
@@ -24,6 +26,7 @@ const Providers = ({ children }) => {
         </QuestionAnswerDataProvider>
       </VideosDataProvider>
     </FeedbackDataProvider>
+    </PdfDataProvider>
   );
 };
 

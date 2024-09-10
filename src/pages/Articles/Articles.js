@@ -3,7 +3,7 @@ import styled from "styled-components";
 import CategorySelector from "../../components/CategorySelector";
 import SubcategorySelector from "../../components/SubcategorySelector";
 import PostItem from "./PostItem";
-import { Outlet, useOutlet } from "react-router-dom";
+import { Outlet, useNavigate, useOutlet } from "react-router-dom";
 import { useArticlesData } from "./useArticlesData";
 import AddArticleForm from "./AddArticleForm";
 import ExploreBtn from "../../components/ExploreBtn";
@@ -62,12 +62,12 @@ const SubCatContainer = styled.div`
   }
 `;
 const Articles = () => {
-  const { articleData, loading, error } = useArticlesData();
+  const { articleData, loading, error, updateViews} = useArticlesData();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [showSubcategories, setShowSubcategories] = useState(true);
   const [addNew, setAddNew] = useState(false);
-
+const navigate = useNavigate()
   const outlet = useOutlet();
   const { isAdmin } = useContext(UserContext);
 
@@ -107,7 +107,13 @@ const Articles = () => {
   const handleExploreClick = () => {
     setShowSubcategories(!showSubcategories);
   };
-
+  const handleReadMore = (id) => {
+    try {
+      updateViews(id); 
+    } catch (error) {
+      console.error('Error navigating to Articles:', error);
+    }
+  };
   return (
     <Container>
      
@@ -143,10 +149,12 @@ const Articles = () => {
                   id={article.$id}
                   title={article.title}
                   views={article.views}
-                  writer={article.writer}
+                  author={article.author}
                   createdAt={article.$createdAt}
                   body={article.body.substring(0, 200) + " ....."}
                   subcategory={article.subcategory}
+                  onClick={() => handleReadMore(article.$id)} 
+                  updateViews={updateViews} 
                 />
               ))}
             </ItemContainer>

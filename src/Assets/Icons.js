@@ -225,21 +225,21 @@ export const SearchIcon = ({ height, width, stroke = "white" }) => (
 
 export const BackIcon = ({ height, width, stroke = "black" }) => (
   <svg
-  xmlns="http://www.w3.org/2000/svg"
-  class="icon icon-tabler icon-tabler-arrow-back-up"
-  width={width}
-  height={height}
-  viewBox="0 0 24 24"
-  stroke-width="1.5"
-  stroke={stroke}
-  fill="none"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-  <path d="M9 14l-4 -4l4 -4" />
-  <path d="M5 10h11a4 4 0 1 1 0 8h-1" />
-</svg>
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon icon-tabler icon-tabler-arrow-back-up"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    stroke={stroke}
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M9 14l-4 -4l4 -4" />
+    <path d="M5 10h11a4 4 0 1 1 0 8h-1" />
+  </svg>
 );
 
 export const FeedIcon = ({ height, width, stroke = "#2c3e50" }) => (
@@ -368,3 +368,169 @@ export const QnAIcon = ({ height, width, stroke = "#2c3e50" }) => (
   </svg>
 );
 
+export const BoldIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M7 5h6a3.5 3.5 0 0 1 0 7h-6z" />
+    <path d="M13 12h1a3.5 3.5 0 0 1 0 7h-7v-7" />
+  </svg>
+);
+export const ItalicIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M11 5l6 0" />
+    <path d="M7 19l6 0" />
+    <path d="M14 5l-4 14" />
+  </svg>
+);
+export const LeftAlignIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 6l16 0" />
+  <path d="M4 12l10 0" />
+  <path d="M4 18l14 0" />
+  </svg>
+);
+export const RightAlignIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M4 6l16 0" />
+    <path d="M10 12l10 0" />
+    <path d="M6 18l14 0" />
+  </svg>
+);
+export const CenterAlignIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M4 6l16 0" />
+    <path d="M8 12l8 0" />
+    <path d="M6 18l12 0" />
+  </svg>
+);
+export const JustifyIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 6l16 0" />
+  <path d="M4 12l16 0" />
+  <path d="M4 18l12 0" />
+  </svg>
+);
+export const MaximizeIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M16 4l4 0l0 4" />
+  <path d="M14 10l6 -6" />
+  <path d="M8 20l-4 0l0 -4" />
+  <path d="M4 20l6 -6" />
+  <path d="M16 20l4 0l0 -4" />
+  <path d="M14 14l6 6" />
+  <path d="M8 4l-4 0l0 4" />
+  <path d="M4 4l6 6" />
+
+  </svg>
+);
+export const MinimizeIcon = ({ height, width, stroke = "#2c3e50" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M5 9l4 0l0 -4" />
+  <path d="M3 3l6 6" />
+  <path d="M5 15l4 0l0 4" />
+  <path d="M3 21l6 -6" />
+  <path d="M19 9l-4 0l0 -4" />
+  <path d="M15 9l6 -6" />
+  <path d="M19 15l-4 0l0 4" />
+  <path d="M15 15l6 6" />
+
+
+  </svg>
+);

@@ -14,6 +14,7 @@ const CardContainer = styled.div`
   width: 100%;
   border-radius: 8px;
   cursor: pointer;
+  position: relative;
 `;
 
 const TopText = styled.section`
@@ -49,6 +50,7 @@ const UserInfo = styled.div`
   display: flex;
   gap: 10px;
 `;
+
 const UserName = styled.div`
   h4 {
     font-size: 1rem;
@@ -57,18 +59,26 @@ const UserName = styled.div`
     font-size: 0.9rem;
   }
 `;
+
 const CommentBoxContainer = styled.div`
   border-top: 1px solid #ccc;
 `;
+
+const IsAnswered = styled.div`
+  background: ${(props) => (props.isAnswered ? "#28a745" : "#142B42")};
+  width: 100px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  color: white;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+`;
+
 export default function Card({ post, maxPosts = 1 }) {
-  const {
-    comments,
-    loading,
-    error,
-    createComment,
-    updateComment,
-    deleteComment,
-  } = useCommentsData(post.$id);
+  const { comments, createComment } = useCommentsData(post.$id);
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -81,22 +91,18 @@ export default function Card({ post, maxPosts = 1 }) {
         <TopText>
           <UserInfo>
             <Avatar src={post.avatarUrl} name={post.userName} />
-       
             <UserName>
               <h4>{post.userName}</h4>
               <p>
-                {" "}
-                <TimeAgo createdAt={post.$createdAt} /> ⁃ {post.views} views{" "}
+                <TimeAgo createdAt={post.$createdAt} /> ⁃ {post.views} views
               </p>
               <p>
-                {!post.answer ? "not answered" : "answered"} |{" "}
                 <CommentIcon height="20px" width="20px" stroke="red" />{" "}
-                {post.description} {comments.length}{" "}
+                {comments.length}{" "}
                 {comments.length > 0 ? "Comments" : "Comment"}
               </p>
             </UserName>
           </UserInfo>
-
           <p>
             {post.category} ⁃ {post.subcategory}
           </p>
@@ -105,6 +111,9 @@ export default function Card({ post, maxPosts = 1 }) {
           <p>{post.title}</p>
           <p>{post.question}</p>
         </QuestionContainer>
+        <IsAnswered isAnswered={!!post.answer}>
+          {post.answer ? "Answered" : "Not Answered"}
+        </IsAnswered>
       </CardContainer>
       <CommentBoxContainer>
         <CommentBox postId={post.$id} createComment={createComment} />

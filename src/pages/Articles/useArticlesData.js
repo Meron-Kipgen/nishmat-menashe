@@ -3,7 +3,7 @@ import { db, ID } from '../../db/config';
 import useRealTimeSubscription from '../../db/useRealTimeSubscription';
 
 const databaseId = '666aff03003ba124b787';
-const articlesCollectionId = '666b0186000007f47da9';
+const articlesCollectionId = '66debe75003c455e52b8';
 
 const ArticlesDataContext = createContext();
 

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useArticlesData } from './useArticlesData';
 import TextEditor from '../../components/TextEditor';
-import Draggable from 'react-draggable';
+
 
 const FormContainer = styled.form`
   position: absolute;
   top: 60px;
-  width: 800px;
+  width: 800px; // Default width for larger screens
   z-index: 1000;
   margin: 0 auto;
   padding: 20px;
@@ -16,7 +16,16 @@ const FormContainer = styled.form`
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
   cursor: move;
+
+  @media (max-width: 768px) {
+    top: 45px;
+    width: 100%; 
+    margin: 0; 
+    box-shadow: none; 
+    border-radius: 0;
+  }
 `;
+
 
 const FormHeader = styled.div`
   display: flex;
@@ -84,7 +93,7 @@ const AddArticleForm = ({ onClose }) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
-  const [writer, setWriter] = useState('');
+  const [author, setAuthor] = useState('');
   const [body, setBody] = useState('');
 
   const handleSubmit = async (e) => {
@@ -94,8 +103,7 @@ const AddArticleForm = ({ onClose }) => {
       category,
       subcategory,
       body,
-      writer,
-      comments: [],
+      author,
     };
 
     try {
@@ -104,7 +112,7 @@ const AddArticleForm = ({ onClose }) => {
       setCategory('');
       setSubcategory('');
       setBody('');
-      setWriter('');
+      setAuthor('');
       onClose();
     } catch (error) {
       console.error('Failed to add article:', error);
@@ -112,7 +120,7 @@ const AddArticleForm = ({ onClose }) => {
   };
 
   return (
-    <Draggable>
+  
       <FormContainer onSubmit={handleSubmit}>
       
         <FormHeader>  
@@ -149,11 +157,11 @@ const AddArticleForm = ({ onClose }) => {
           />
         </FormGroup>
         <FormGroup>
-          <label>Writer:</label>
+          <label>Author:</label>
           <input
             type="text"
-            value={writer}
-            onChange={(e) => setWriter(e.target.value)}
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
             required
           />
         </FormGroup>
@@ -163,7 +171,7 @@ const AddArticleForm = ({ onClose }) => {
         </FormGroup>
         <SubmitButton type="submit">Add Article</SubmitButton>
       </FormContainer>
-    </Draggable>
+   
   );
 };
 

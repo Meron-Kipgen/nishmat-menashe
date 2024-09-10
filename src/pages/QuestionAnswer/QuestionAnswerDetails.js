@@ -10,7 +10,7 @@ import styled from 'styled-components';
 const Container = styled.div`
 position: relative;
 width: 700px;
-padding: 10px;
+padding: 20px;
 
 background: white;
 @media (max-width: 768px) {
@@ -152,6 +152,8 @@ export default function QuestionAnswerDetails() {
 
   return (
     <Container>
+
+      
       <HeaderSection
         question={question}
         dropdownOpen={dropdownOpen}
@@ -161,6 +163,7 @@ export default function QuestionAnswerDetails() {
         shareContent={shareContent}
         dropdownRef={dropdownRef}
       />
+      
       <QuestionSection
         question={question}
         isEditingQuestion={isEditingQuestion}

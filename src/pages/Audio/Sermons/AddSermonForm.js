@@ -83,7 +83,7 @@ const ErrorMessage = styled.p`
 `;
 
 const AddSermonForm = ({ onClose }) => {
-  const { sermonData } = useSermonsData();
+  const { sermonData, addSermon} = useSermonsData();
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -167,7 +167,7 @@ const AddSermonForm = ({ onClose }) => {
             />
           </Label>
           <Label>
-            Sermon Id:
+            Audio Id:
             <Input
               type="text"
               name="audioUrl"

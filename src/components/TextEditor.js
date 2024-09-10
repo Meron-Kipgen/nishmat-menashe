@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
-import DOMPurify from 'dompurify';
+import React, { useState, useEffect, useRef } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import styled, { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   body.fullscreen-mode {
@@ -9,132 +10,63 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const EditorContainer = styled.div`
-  margin-bottom: 20px;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  position: relative;
-  ${({ fullscreen }) => fullscreen && `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    z-index: 9999;
-    overflow: hidden;
-  `}
-`;
+  height: ${props => (props.fullscreen ? 'calc(100vh - 60px)' : 'auto')};
 
-const MenuBar = styled.div`
-  background-color: #f0f0f0;
-  padding: 8px;
-  border-bottom: 1px solid #ced4da;
-  border-radius: 8px 8px 0 0;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const FormatButtons = styled.div`
-  display: flex;
-`;
-
-const FormatButton = styled.button`
-  margin-right: 10px;
-  padding: 5px 10px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  cursor: pointer;
+  position: ${props => (props.fullscreen ? 'fixed' : 'relative')};
+  top: ${props => (props.fullscreen ? '0' : 'initial')};
+  left: ${props => (props.fullscreen ? '0' : 'initial')};
+  width: ${props => (props.fullscreen ? '100%' : '100%')};
   background-color: #ffffff;
-  &:hover {
-    background-color: #e9ecef;
-  }
+  z-index: ${props => (props.fullscreen ? '9999' : 'initial')};
+  overflow: hidden;
+  box-shadow: ${props => (props.fullscreen ? '0 4px 8px rgba(0, 0, 0, 0.1)' : 'none')};
+  transition: all 0.3s ease;
 `;
 
 const FullscreenButton = styled.button`
-  padding: 5px 10px;
-  border: 1px solid #ced4da;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 16px;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
-  background-color: #ffffff;
+  background-color: #007bff;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+
   &:hover {
-    background-color: #e9ecef;
+    background-color: #0056b3;
   }
 `;
 
-const ContentEditable = styled.div`
-  padding: 16px;
-  min-height: 150px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  outline: none;
-  background: #e0dddd;
-  margin: 0 auto;
-  width: ${({ fullscreen }) => fullscreen ? '800px' : 'auto'};
-  height: ${({ fullscreen }) => fullscreen ? 'calc(100vh - 80px)' : '150px'};
-  unicode-bidi: embed;
-  ${({ fullscreen }) => fullscreen && `
-    max-height: calc(100vh - 80px);
-    overflow-y: auto;
-  `}
+const MenuContainer = styled.div`
+  position: relative;
+  margin-bottom: 10px;
 `;
 
 const TextEditor = ({ value, onChange }) => {
-  const [body, setBody] = useState(value || '');
+  const [editorValue, setEditorValue] = useState(value || "");
   const [fullscreen, setFullscreen] = useState(false);
-  const contentEditableRef = useRef(null);
+  const quillRef = useRef(null);
 
   useEffect(() => {
-    setBody(value || '');
+    setEditorValue(value || "");
   }, [value]);
 
   useEffect(() => {
     if (fullscreen) {
-      document.body.classList.add('fullscreen-mode');
+      document.body.classList.add("fullscreen-mode");
     } else {
-      document.body.classList.remove('fullscreen-mode');
+      document.body.classList.remove("fullscreen-mode");
     }
   }, [fullscreen]);
 
-  const saveSelection = () => {
-    const sel = window.getSelection();
-    if (sel.rangeCount > 0) {
-      const range = sel.getRangeAt(0);
-      return range;
-    }
-    return null;
-  };
-
-  const restoreSelection = range => {
-    if (range) {
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-    }
-  };
-
-  const handleFormat = (e, format) => {
-    e.preventDefault(); // Ensure default action is prevented
-    const range = saveSelection();
-    document.execCommand(format);
-    restoreSelection(range);
-    contentEditableRef.current.focus();
-    onChange(contentEditableRef.current.innerHTML);
-  };
-
-  const handlePaste = e => {
-    e.preventDefault();
-    const text = e.clipboardData.getData('text/plain');
-    const sanitizedText = DOMPurify.sanitize(text);
-
-    document.execCommand('insertText', false, sanitizedText);
-    setBody(contentEditableRef.current.innerHTML);
-    onChange(contentEditableRef.current.innerHTML);
-  };
-
-  const handleChange = () => {
-    const sanitizedHTML = DOMPurify.sanitize(contentEditableRef.current.innerHTML);
-    setBody(sanitizedHTML);
-    onChange(sanitizedHTML);
+  const handleChange = value => {
+    setEditorValue(value);
+    onChange(value);
   };
 
   const toggleFullscreen = e => {
@@ -145,27 +77,33 @@ const TextEditor = ({ value, onChange }) => {
   return (
     <EditorContainer fullscreen={fullscreen}>
       <GlobalStyle />
-      <MenuBar>
-        <FormatButtons>
-          <FormatButton onClick={(e) => handleFormat(e, 'bold')}>Bold</FormatButton>
-          <FormatButton onClick={(e) => handleFormat(e, 'italic')}>Italic</FormatButton>
-          <FormatButton onClick={(e) => handleFormat(e, 'justifyLeft')}>Left</FormatButton>
-          <FormatButton onClick={(e) => handleFormat(e, 'justifyCenter')}>Center</FormatButton>
-          <FormatButton onClick={(e) => handleFormat(e, 'justifyRight')}>Right</FormatButton>
-          <FormatButton onClick={(e) => handleFormat(e, 'justifyFull')}>Justify</FormatButton>
-        </FormatButtons>
+      <MenuContainer>
         <FullscreenButton onClick={toggleFullscreen}>
-          {fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+          {fullscreen ? "Exit Fullscreen" : "Fullscreen"}
         </FullscreenButton>
-      </MenuBar>
-      <ContentEditable
-        ref={contentEditableRef}
-        id="editor-contenteditable"
-        contentEditable
-        onBlur={handleChange}
-        onPaste={handlePaste}
-        fullscreen={fullscreen}
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body) }}
+      </MenuContainer>
+      <ReactQuill
+        ref={quillRef}
+        value={editorValue}
+        onChange={handleChange}
+        placeholder="Enter some text..."
+        modules={{
+          toolbar: [
+            [{ font: [] }],
+            ["bold", "italic"],
+            [
+              { align: "" },
+              { align: "center" },
+              { align: "right" },
+              { align: "justify" },
+            ],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ direction: "rtl" }],
+            ["link"],
+            ["clean"],
+          ],
+        }}
+        style={{ height: "100%", width: "100%" }}
       />
     </EditorContainer>
   );

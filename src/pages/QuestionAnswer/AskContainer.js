@@ -53,7 +53,7 @@ const UserInfo = styled.div`
 const AskButton = styled.div`
   display: flex;
   cursor: pointer;
-  background: #142B42;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   width: 100%;
   max-width: 150px;
   height: 40px;
@@ -62,6 +62,21 @@ const AskButton = styled.div`
   justify-content: center;
   text-align: center;
   padding: 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: linear-gradient(135deg, #1f3a93 0%, #1b68d4 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 
   @media (max-width: 768px) {
     width: 100%;
@@ -84,6 +99,7 @@ export default function AskContainer({
   handleCategoryChange, 
   username, 
   userAvatarUrl 
+
 }) {
   return (
     <AskContainerWrapper>
@@ -117,7 +133,7 @@ export default function AskContainer({
       />
       <AskBtnContainer>
         <UserInfo>
-          <Avatar src={userAvatarUrl}/>
+          <Avatar src={userAvatarUrl} name={username}/>
           <p>{username}</p>
         </UserInfo>
         <AskButton onClick={handleSubmit}>Ask</AskButton>

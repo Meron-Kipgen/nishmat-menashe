@@ -46,7 +46,7 @@ const PodcastCard = ({ id, title, description, thumbnail, rabbi, season, isCompl
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`podcast/${id}`);
+    navigate(`/Audio/Podcast/${id}`);
   };
 
   return (

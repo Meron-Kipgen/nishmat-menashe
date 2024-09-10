@@ -3,7 +3,7 @@ import HeroSection from './HeroSection';
 import styled from 'styled-components';
 import AboutUs from './AboutUs';
 import OurProjects from './OurProjects';
-import OurTeam from './OurTeam';
+
 
 const Container = styled.div`
   font-family: Arial, Helvetica, sans-serif;
@@ -22,7 +22,7 @@ function Home() {
       <div ref={ourProjectRef}>
         <OurProjects />
       </div>
-      <OurTeam />
+
     </Container>
   );
 }

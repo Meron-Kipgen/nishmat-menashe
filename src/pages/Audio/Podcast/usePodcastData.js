@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db, ID, client } from '../../../db/config'; // Import your DB and client configurations
-
+import { db, ID } from '../../../db/config';
+import useRealTimeSubscription from '../../../db/useRealTimeSubscription'; 
+import { Query } from 'appwrite';
 
 const databaseId = '666aff03003ba124b787';
 const podcastCollectionId = '66b8c030003510531dba';
-const episodeCollectionId = '66bb12500015fb5fbf27';
-
+const episodesCollectionId = "66dd4aca0014a7cf6151";
 const PodcastDataContext = createContext();
 
 export const usePodcastData = () => {
@@ -17,8 +17,8 @@ export const usePodcastData = () => {
 };
 
 export const PodcastDataProvider = ({ children }) => {
-    const [podcastData, setPodcastData] = useState([]);
-    const [episodeData, setEpisodeData] = useState([]);
+    const [podcastData, setPodcastData] = useRealTimeSubscription(databaseId, podcastCollectionId);
+    const [episodeData, setEpisodeData] = useRealTimeSubscription(databaseId, episodesCollectionId);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -34,72 +34,8 @@ export const PodcastDataProvider = ({ children }) => {
         }
     };
 
-    const fetchEpisodes = async () => {
-        setLoading(true);
-        try {
-            const response = await db.listDocuments(databaseId, episodeCollectionId);
-            setEpisodeData(response.documents);
-        } catch (err) {
-            setError(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
         fetchPodcast();
-        fetchEpisodes();
-
-        const podcastSubscription = client.subscribe(`databases.${databaseId}.collections.${podcastCollectionId}.documents`, (response) => {
-            const { events, payload } = response;
-
-            if (events.includes('databases.*.collections.*.documents.*.create')) {
-                setPodcastData(prevData => {
-                    if (prevData.find(podcast => podcast.$id === payload.$id)) {
-                        return prevData;
-                    }
-                    return [...prevData, payload];
-                });
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.update')) {
-                setPodcastData(prevData => prevData.map(podcast => podcast.$id === payload.$id ? payload : podcast));
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.delete')) {
-                setPodcastData(prevData => prevData.filter(podcast => podcast.$id !== payload.$id));
-            }
-        });
-
-        const episodeSubscription = client.subscribe(`databases.${databaseId}.collections.${episodeCollectionId}.documents`, (response) => {
-            const { events, payload } = response;
-
-            if (events.includes('databases.*.collections.*.documents.*.create')) {
-                setEpisodeData(prevData => {
-                    if (prevData.find(episode => episode.$id === payload.$id)) {
-                        return prevData;
-                    }
-                    return [...prevData, payload];
-                });
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.update')) {
-                setEpisodeData(prevData => prevData.map(episode => episode.$id === payload.$id ? payload : episode));
-            }
-
-            if (events.includes('databases.*.collections.*.documents.*.delete')) {
-                setEpisodeData(prevData => prevData.filter(episode => episode.$id !== payload.$id));
-            }
-        });
-
-        return () => {
-            if (podcastSubscription) {
-                podcastSubscription();
-            }
-            if (episodeSubscription) {
-                episodeSubscription();
-            }
-        };
     }, []);
 
     const addPodcast = async (newPodcast) => {
@@ -148,93 +84,81 @@ export const PodcastDataProvider = ({ children }) => {
         }
     };
 
-    const deletePodcast = async (podcastUrl) => {
+    const deletePodcast = async (podcastId) => {
         try {
-            const documentId = podcastData.find(podcast => podcast.PodcastUrl === podcastUrl).$id;
-            await db.deleteDocument(databaseId, podcastCollectionId, documentId);
-            setPodcastData(podcastData.filter(podcast => podcast.$id !== documentId));
+            await db.deleteDocument(databaseId, podcastCollectionId, podcastId);
+            setPodcastData(podcastData.filter(podcast => podcast.$id !== podcastId));
         } catch (error) {
             setError(error);
             throw new Error('Failed to delete Podcast');
         }
     };
 
-    const addEpisode = async (newEpisode) => {
+    const fetchEpisodes = async (podcastId) => {
         try {
-            // Create the new episode document
-            const createdEpisode = await db.createDocument(databaseId, episodeCollectionId, ID.unique(), newEpisode);
+            const response = await db.listDocuments(databaseId, episodesCollectionId, [
+                Query.equal('podcastId', podcastId) // Filter episodes by podcastId
+            ]);
+            return response.documents;
+        } catch (err) {
+            setError(err);
+            throw err;
+        }
+    };
     
-            // Fetch the current podcast document
-            const podcast = podcastData.find(podcast => podcast.$id === newEpisode.podcastId);
-    
-            if (!podcast) {
-                throw new Error('Podcast not found');
-            }
-    
-            // Update the podcast's episodes array with the new episode ID
-            const updatedEpisodes = [...(podcast.episodes || []), createdEpisode.$id];
-    
-            // Update the podcast document with the new episodes array
-            await db.updateDocument(databaseId, podcastCollectionId, podcast.$id, {
-                episodes: updatedEpisodes
+    const addEpisode = async (podcastId, title, audioId,episodeNum) => {
+        try {
+            await db.createDocument(databaseId, episodesCollectionId, ID.unique(), {
+                title,
+                audioId,
+                podcastId ,
+                episodeNum
             });
-    
-            // Update the local state to include the new episode
-            setPodcastData(prevData => 
-                prevData.map(p => 
-                    p.$id === podcast.$id ? { ...p, episodes: updatedEpisodes } : p
-                )
-            );
-            
-            // Update the episode data state
-            setEpisodeData(prevData => [...prevData, createdEpisode]);
-    
+            // Optionally update local state here if needed
         } catch (err) {
             setError(err);
             throw err;
         }
     };
     
-
-    const updateEpisode = async (episodeId, updatedEpisode) => {
+    const updateEpisode = async (episodeId, updatedFields) => {
         try {
-            await db.updateDocument(databaseId, episodeCollectionId, episodeId, updatedEpisode);
-            setEpisodeData(prevData => prevData.map(episode =>
-                episode.$id === episodeId ? { ...episode, ...updatedEpisode } : episode
-            ));
+            await db.updateDocument(databaseId, episodesCollectionId, episodeId, updatedFields);
+            // Optionally update local state here if needed
         } catch (err) {
             setError(err);
             throw err;
         }
     };
-
+    
     const deleteEpisode = async (episodeId) => {
         try {
-            await db.deleteDocument(databaseId, episodeCollectionId, episodeId);
-            setEpisodeData(prevData => prevData.filter(episode => episode.$id !== episodeId));
+            await db.deleteDocument(databaseId, episodesCollectionId, episodeId);
+            // Optionally update local state here if needed
         } catch (err) {
             setError(err);
             throw err;
         }
     };
-
+    
     return (
         <PodcastDataContext.Provider
-            value={{
-                podcastData,
-                episodeData,
-                loading,
-                error,
-                addPodcast,
-                updatePlayed,
-                updatePodcast,
-                deletePodcast,
-                addEpisode,
-                updateEpisode,
-                deleteEpisode,
-            }}
-        >
-            {children}
-        </PodcastDataContext.Provider>
+        value={{
+            podcastData,
+            episodeData, // Provide episode data here
+            loading,
+            error,
+            addPodcast,
+            updatePlayed,
+            updatePodcast,
+            deletePodcast,
+            fetchEpisodes,
+            addEpisode,
+            updateEpisode,
+            deleteEpisode,
+        }}
+    >
+        {children}
+    </PodcastDataContext.Provider>
     );
 };

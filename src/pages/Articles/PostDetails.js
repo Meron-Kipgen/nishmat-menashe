@@ -155,7 +155,7 @@ const PostDetails = () => {
     setDropdownVisible(prevVisible => !prevVisible);
   };
 
-  const { author, category, subcategory, title } = post;
+  const { author, category, subcategory,} = post;
 
   return (
     <Container>
@@ -257,7 +257,7 @@ const PostDetails = () => {
         <Post>
           <h1>{post.title}</h1>
           <h5>
-            By: {post.writer} - <TimeAgo createdAt={post.$createdAt} />
+            By: {post.author} - <TimeAgo createdAt={post.$createdAt} />
           </h5>
           <h5>
             {post.category} | {post.subcategory} | Read {post.views}

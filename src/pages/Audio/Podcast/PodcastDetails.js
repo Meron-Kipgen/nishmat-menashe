@@ -1,32 +1,29 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { usePodcastData } from './usePodcastData'; // Adjust import path as needed
-import AudioPlayer from '../../../Features/AudioPlayer/AudioPlayer';
-import playerVars from '../../../Features/AudioPlayer/PlayerVars';
-import AddEpisode from './AddEpisode';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { usePodcastData } from "./usePodcastData"; 
+import AddEpisodeForm from "./AddEpisodeForm"; 
+import AudioPlayer from "../../../Features/AudioPlayer/AudioPlayer"; 
+import playerVars from "../../../Features/AudioPlayer/PlayerVars";
+import EditPodcast from "./EditPodcast";
+import styled from "styled-components";
+import UpdateEpisodeForm from "./UpdateEpisodeForm";
 
 const Container = styled.div`
   display: flex;
-  gap: 30px;
+  gap: 20px;
   width: 100%;
   padding: 20px;
   background-color: #f5f5f5;
 `;
-const ScrollableContainer = styled.div`
-  max-height: 600px; /* Adjust as needed */
-  overflow-y: auto;
-  padding-right: 10px; /* Space for the scrollbar */
-  
-  /* Hide scrollbar */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
+
+const MiddleContent = styled.div`
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
+
 const Thumbnail = styled.div`
   width: 100%;
   margin-bottom: 20px;
@@ -34,7 +31,7 @@ const Thumbnail = styled.div`
   justify-content: center;
 
   img {
-    width: 60%;
+    width: 100%;
     height: auto;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -64,195 +61,186 @@ const Description = styled.p`
   text-align: justify;
 `;
 
-const SuggestionContainer = styled(ScrollableContainer)`
-  width: 300px;
-  background: #ffffff;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-`;
-
-const EpisodeContainer = styled(ScrollableContainer)`
-  width: 400px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-`;
-
-const PodcastContainer = styled.div`
-  width: 700px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-`;
-
-const AudioPlayerContainer = styled.div`
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const EpisodeList = styled.div`
-  width: 100%;
-  margin-top: 20px;
-
-  h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  button {
-    margin-bottom: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #ffffff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: #0056b3;
-    }
-  }
-`;
-
-const Episode = styled.div`
-  margin-bottom: 15px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+const Button = styled.button`
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #dc3545;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  }
-
-  h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-
-  p {
-    margin-bottom: 10px;
-    color: #555;
-  }
-
-  button {
-    margin-right: 10px;
-    padding: 8px 15px;
-    font-size: 14px;
-    color: #ffffff;
-    background-color: #28a745;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: #218838;
-    }
-
-    &:last-child {
-      background-color: #dc3545;
-
-      &:hover {
-        background-color: #c82333;
-      }
-    }
-  }
-
-  div {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-
-    svg {
-      margin-right: 10px;
-      cursor: pointer;
-    }
+    background-color: #c82333;
   }
 `;
 
-const FormContainer = styled.div`
-position: absolute;
-top: 60px;
-  right: 10px;
-  padding: 20px;
-  background-color: white;
-  border-radius: 15px;
+const EpisodeContainer = styled.div`
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const EpisodeTitle = styled.h3`
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+`;
+
+const EpisodeActions = styled.div`
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+`;
+
+const EpisodeButton = styled.button`
+  padding: 5px 10px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const PodcastDetails = () => {
   const { id } = useParams();
-  const { podcastData } = usePodcastData();
+  const { podcastData, fetchEpisodes, deletePodcast, deleteEpisode } = usePodcastData();
   const [isAddingEpisode, setIsAddingEpisode] = useState(false);
-
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdatingEpisode, setIsUpdatingEpisode] = useState(null);
+  const [episodes, setEpisodes] = useState([]);
+  const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(null);
+  const [selectedAudioUrl, setSelectedAudioUrl] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState(null);
+const navigate = useNavigate()
   const podcast = podcastData.find(podcast => podcast.$id === id);
+
+  useEffect(() => {
+    if (podcast) {
+      const loadEpisodes = async () => {
+        const episodes = await fetchEpisodes(podcast.$id);
+        setEpisodes(episodes);
+      };
+      loadEpisodes();
+    }
+  }, [podcast, fetchEpisodes]);
 
   if (!podcast) {
     return <div>Podcast not found</div>;
   }
 
-  const episodes = podcast.episodes || [];
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this podcast?")) {
+      await deletePodcast(podcast.$id);
+      navigate(`/Audio/Podcast`);
+    }
+  };
+
+  const handleDeleteEpisode = async episodeId => {
+    if (window.confirm("Are you sure you want to delete this episode?")) {
+      await deleteEpisode(episodeId);
+      setEpisodes(episodes.filter(episode => episode.$id !== episodeId));
+    }
+  };
+
+  const handlePlayEpisode = (index) => {
+    setCurrentEpisodeIndex(index);
+    const episode = episodes[index];
+    setSelectedAudioUrl(episode.audioId);
+    setSelectedTitle(episode.title);
+  };
+
+  const handleNextEpisode = () => {
+    if (currentEpisodeIndex !== null && currentEpisodeIndex < episodes.length - 1) {
+      handlePlayEpisode(currentEpisodeIndex + 1);
+    }
+  };
+
+  const handlePreviousEpisode = () => {
+    if (currentEpisodeIndex !== null && currentEpisodeIndex > 0) {
+      handlePlayEpisode(currentEpisodeIndex - 1);
+    }
+  };
 
   return (
     <Container>
-      <SuggestionContainer>
-        {/* Add content for suggestions here */}
-        suggestion
-      </SuggestionContainer>
-
-      <PodcastContainer>
+      <MiddleContent>
         <Thumbnail>
           <img src={podcast.thumbnail} alt={`${podcast.title} thumbnail`} />
         </Thumbnail>
         <Title>{podcast.title}</Title>
         <Rabbi>{podcast.rabbi}</Rabbi>
         <Description>{podcast.description}</Description>
-        <AudioPlayerContainer>
-          <AudioPlayer 
-            key={podcast.audioUrl} 
-            audioUrl={podcast.audioUrl} 
-            playerVars={playerVars} 
-          />
-        </AudioPlayerContainer>
-      </PodcastContainer>
-      
-      <EpisodeContainer>
-        <EpisodeList>
-          <h2>Episodes</h2>
-          <button onClick={() => setIsAddingEpisode(true)}>Add New Episode</button>
-          {episodes.length > 0 ? (
-            episodes.map((episode, index) => (
-              <Episode key={index}>
-                <h3>{episode.title}</h3>
-                <p>Audio URL: {episode.audioId}</p>
-                <div>
-                  {/* Replace with actual play/pause icons */}
-                  <span>Play/Pause Icon</span>
-                </div>
-                <button>Edit</button>
-                <button>Delete</button>
-              </Episode>
-            ))
-          ) : (
-            <p>No episodes found for this podcast.</p>
-          )}
-        </EpisodeList>
-      </EpisodeContainer>
+        <AudioPlayer
+          audioUrl={selectedAudioUrl}
+          playerVars={playerVars}
+          shouldPlay={true}
+        />
+        <div>
+          <Button onClick={handlePreviousEpisode} disabled={currentEpisodeIndex === 0}>
+            Previous
+          </Button>
+          <Button onClick={handleNextEpisode} disabled={currentEpisodeIndex === episodes.length - 1}>
+            Next
+          </Button>
+        </div>
+        <Button onClick={handleDelete}>Delete Podcast</Button>
+        <Button onClick={() => setIsUpdating(true)}>Update Podcast</Button>
+        {isUpdating && (
+          <EditPodcast podcastId={id} onClose={() => setIsUpdating(false)} />
+        )}
+      </MiddleContent>
 
-      {isAddingEpisode && (
-        <FormContainer>
-        <AddEpisode 
-          podcastId={id} 
-          onClose={() => setIsAddingEpisode(false)} 
-        /></FormContainer>
-      )}
+      <div>
+        <button onClick={() => setIsAddingEpisode(true)}>Add Episode</button>
+
+        <div>
+          <h2>Episodes</h2>
+          {episodes.map((episode, index) => (
+            <EpisodeContainer key={episode.$id}>
+              <h1>Episode: {episode.episodeNum}</h1>
+              <EpisodeTitle>{episode.title}</EpisodeTitle>
+              
+              <EpisodeActions>
+                <EpisodeButton
+                  onClick={() => handlePlayEpisode(index)}
+                >
+                  Play
+                </EpisodeButton>
+                <EpisodeButton onClick={() => setIsUpdatingEpisode(episode)}>
+                  Update
+                </EpisodeButton>
+                <EpisodeButton onClick={() => handleDeleteEpisode(episode.$id)}>
+                  Delete
+                </EpisodeButton>
+              </EpisodeActions>
+            </EpisodeContainer>
+          ))}
+        </div>
+
+        {isAddingEpisode && (
+          <AddEpisodeForm
+            podcastId={podcast.$id}
+            onClose={() => setIsAddingEpisode(false)}
+          />
+        )}
+
+        {isUpdatingEpisode && (
+          <UpdateEpisodeForm
+            episodeId={isUpdatingEpisode.$id}
+            onClose={() => setIsUpdatingEpisode(null)}
+          />
+        )}
+      </div>
     </Container>
   );
 };

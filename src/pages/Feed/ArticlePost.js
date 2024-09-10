@@ -80,7 +80,7 @@ const ArticlePost = ({ post, maxPosts = 1 }) => {
         <Title>{post.title}</Title>
         {post.category}
         <Wrapper>
-          {post.writer} ⁃ <TimeAgo createdAt={post.$createdAt} /> ⁃ views: {post.views}
+         By: {post.author} ⁃ <TimeAgo createdAt={post.$createdAt} /> ⁃ views: {post.views}
           <p>
             <CommentIcon height="20px" width="20px" stroke="red" /> {post.description} {comments.length} {comments.length > 0 ? "Comments" : "Comment"}
           </p>
