@@ -5,40 +5,23 @@ import { useNavigate } from 'react-router-dom';
 import { useVideosData } from '../Video/useVideosData';
 import useCommentsData from '../../Features/Comment/useCommentsData';
 import CommentBox from '../../Features/Comment/CommentBox';
-import { CommentIcon } from '../../Assets/Icons';
-
-const Container = styled.div``;
 
 const TextWrapper = styled.section`
   padding: 10px 15px;
   cursor: pointer;
 `;
 
-const CommentContainer = styled.section`
-  border-top: 1px solid #ccc;
-`;
-const CommentButton = styled.section`
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 10px 40px;
-color: blue;
-cursor: pointer;
-&:hover{
-  color: darkblue;
-}
-`
 const CommentBoxContainer = styled.div`
   border-top: 1px solid #ccc;
 `;
-const VideoPost = ({ post, maxPosts = 1 }) => {
+const VideoPost = ({ post}) => {
   const navigate = useNavigate();
   const { updateViews } = useVideosData();
-  const { comments, loading, error, createComment, updateComment, deleteComment } = useCommentsData(post.$id);
+  const { comments, loading, error, createComment } = useCommentsData(post.$id);
 
 
   if (!post) {
-    return <div>Loading...</div>; // Handle undefined post gracefully
+    return <div>Loading...</div>; 
   }
 
   const handleClick = () => {
@@ -51,17 +34,17 @@ const VideoPost = ({ post, maxPosts = 1 }) => {
   };
 
   return (
-    <Container>
+    <>
       <Player src={post.videoUrl} poster={post.poster} />
       <TextWrapper onClick={handleClick}>
         <h2>{post.title}</h2>
         <p>{post.category} ⁃ {post.subcategory} ⁃ {post.views} views</p>
-        <p>{post.description} |  <CommentIcon height="20px" width="20px" stroke="red" /> {comments.length} {comments.length > 0 ? "Comments": "Comment"}</p>
+        <p>{post.description} |  {comments.length} {comments.length > 0 ? "Comments": "Comment"}</p>
       </TextWrapper>
       <CommentBoxContainer>
         <CommentBox postId={post.$id} createComment={createComment} />
       </CommentBoxContainer>
-    </Container>
+    </>
   );
 };
 

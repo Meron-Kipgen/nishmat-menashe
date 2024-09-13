@@ -7,8 +7,15 @@ const Container = styled.div`
  display: flex;
  flex-direction: column;
  height: 350px;
- width: 200px;
+ width: 240px;
  background: white;
+ padding: 10px;
+ border-radius: 8px;
+ 
+ @media (max-width: 768px) {
+  width: 45%;
+  height: 320px;
+  }
 `;
 
 const ThumbnailImage = styled.img`
@@ -20,19 +27,42 @@ const ThumbnailImage = styled.img`
 
 const Title = styled.h3`
   margin: 0;
-  font-size: 20px;
+  padding-top: 10px;
+  font-size: 16px;
   color: #333;
-  font-family: 'Arial', sans-serif;
+  height: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `;
 
 const Description = styled.p`
   margin: 0;
   color: #666;
   font-size: 15px;
-  font-family: 'Arial', sans-serif;
-  text-align: center;
+  height: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  @media (max-width: 768px) {
+    height: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  }
 `;
-
+const InfoContainer = styled.div`
+display: flex;
+flex-direction: column;
+padding-top: 10px;
+align-items: flex-start;
+`
 const Info = styled.p`
   margin: 0;
   font-size: 14px;
@@ -52,12 +82,16 @@ const PodcastCard = ({ id, title, description, thumbnail, rabbi, season, isCompl
   return (
     <Container onClick={handleCardClick}>
       <ThumbnailImage src={thumbnail} alt={`${title} thumbnail`} />
+  
       <Title>{title}</Title>
       <Description>{description}</Description>
-      <Info>Rabbi: {rabbi}</Info>
+      <InfoContainer>
+        <Info>Rabbi: {rabbi}</Info>
       <Info>Season: {season}</Info>
       <Info>Played: {played}</Info>
       <Info>Status: {isComplete ? 'Completed' : 'Running'}</Info>
+      </InfoContainer>
+      
     </Container>
   );
 };

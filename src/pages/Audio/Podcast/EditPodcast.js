@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { usePodcastData } from './usePodcastData'; // Adjust import path as needed
 
@@ -10,6 +10,30 @@ const FormContainer = styled.div`
   background-color: white;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px; // Fixed width for larger screens
+
+  @media (max-width: 768px) {
+    width: 100%; // Full width on mobile devices
+    right: 0; // Adjust right position for mobile
+    left: 0; // Adjust left position for mobile
+    border-radius: 0; // Optional: remove border radius on mobile for a full-width look
+  }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+
+  &:hover {
+    color: #ff0000;
+  }
 `;
 
 const Input = styled.input`
@@ -58,6 +82,16 @@ const EditPodcast = ({ podcastId, onClose }) => {
   const [season, setSeason] = useState(podcast.season || '');
   const [isComplete, setIsComplete] = useState(podcast.isComplete || false);
 
+  useEffect(() => {
+    if (podcast) {
+      setTitle(podcast.title || '');
+      setRabbi(podcast.rabbi || '');
+      setDescription(podcast.description || '');
+      setSeason(podcast.season || '');
+      setIsComplete(podcast.isComplete || false);
+    }
+  }, [podcast]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedPodcast = { title, rabbi, description, season, isComplete };
@@ -67,6 +101,7 @@ const EditPodcast = ({ podcastId, onClose }) => {
 
   return (
     <FormContainer>
+      <CloseButton onClick={onClose}>&times;</CloseButton>
       <h2>Update Podcast</h2>
       <form onSubmit={handleSubmit}>
         <Input

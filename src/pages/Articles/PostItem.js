@@ -13,7 +13,7 @@ const PostItemContainer = styled.div`
   background: white;
 
   @media (max-width: 768px) {
-    width: 100%;
+    width: 95%;
     padding: 10px;
   }
 `;
@@ -34,6 +34,7 @@ const Body = styled.div`
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
+  
 `;
 
 const Wrapper = styled.div`
@@ -88,7 +89,7 @@ const PostItem = ({
   };
 
   const sanitizedBody = DOMPurify.sanitize(body);
-  const truncatedBody = truncateText(sanitizedBody, 100); // Limit body to 300 words
+  const truncatedBody = truncateText(sanitizedBody, 600); 
 
   return (
     <PostItemContainer>

@@ -14,6 +14,11 @@ const Container = styled.div`
   width: 100%;
   padding: 20px;
   background-color: #f5f5f5;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
 `;
 
 const MiddleContent = styled.div`
@@ -22,6 +27,10 @@ const MiddleContent = styled.div`
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 const Thumbnail = styled.div`
@@ -35,6 +44,11 @@ const Thumbnail = styled.div`
     height: auto;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: 768px) {
+      width: 100%;
+      height: auto;
+    }
   }
 `;
 
@@ -44,6 +58,10 @@ const Title = styled.h1`
   margin-bottom: 10px;
   text-align: center;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const Rabbi = styled.h5`
@@ -51,6 +69,10 @@ const Rabbi = styled.h5`
   color: #666;
   margin-bottom: 20px;
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const Description = styled.p`
@@ -59,6 +81,11 @@ const Description = styled.p`
   margin-bottom: 30px;
   line-height: 1.8;
   text-align: justify;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
 `;
 
 const Button = styled.button`
@@ -74,6 +101,11 @@ const Button = styled.button`
   &:hover {
     background-color: #c82333;
   }
+
+  @media (max-width: 768px) {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
 `;
 
 const EpisodeContainer = styled.div`
@@ -82,18 +114,30 @@ const EpisodeContainer = styled.div`
   padding: 15px;
   margin-bottom: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 const EpisodeTitle = styled.h3`
   font-size: 24px;
   color: #333;
   margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const EpisodeActions = styled.div`
   margin-top: 10px;
   display: flex;
   gap: 10px;
+
+  @media (max-width: 768px) {
+    gap: 5px;
+  }
 `;
 
 const EpisodeButton = styled.button`
@@ -109,6 +153,11 @@ const EpisodeButton = styled.button`
   &:hover {
     background-color: #0056b3;
   }
+
+  @media (max-width: 768px) {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
 `;
 
 const PodcastDetails = () => {
@@ -121,7 +170,7 @@ const PodcastDetails = () => {
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(null);
   const [selectedAudioUrl, setSelectedAudioUrl] = useState(null);
   const [selectedTitle, setSelectedTitle] = useState(null);
-const navigate = useNavigate()
+  const navigate = useNavigate();
   const podcast = podcastData.find(podcast => podcast.$id === id);
 
   useEffect(() => {

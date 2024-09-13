@@ -151,7 +151,7 @@ const navigate = useNavigate()
                   views={article.views}
                   author={article.author}
                   createdAt={article.$createdAt}
-                  body={article.body.substring(0, 200) + " ....."}
+                  body={article.body.substring(0, 350) + " ..."}
                   subcategory={article.subcategory}
                   onClick={() => handleReadMore(article.$id)} 
                   updateViews={updateViews} 

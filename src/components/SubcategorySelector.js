@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import styled, { css } from 'styled-components';
 
 const SubcategoryWrapper = styled.div`
   margin-bottom: 20px;
@@ -10,13 +10,22 @@ const SubcategoryWrapper = styled.div`
   padding: 10px;
   background-color: #f5f5f5;
   height: 80vh;
-  overflow-y: scroll;
-  
+  overflow-y: auto; /* Adjusted to 'auto' to ensure scrolling */
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  ${({ isClosing }) =>
+    isClosing &&
+    css`
+      opacity: 0;
+      transform: translateX(-100%);
+    `}
+
   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
+  -ms-overflow-style: none; /* IE and Edge */
 
   &::-webkit-scrollbar {
-    width: 0;  /* Safari and Chrome */
+    width: 0; /* Safari and Chrome */
     height: 0;
   }
 
@@ -52,23 +61,32 @@ const CategoryButton = styled.button`
 const TopSection = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center; /* Align the items vertically */
   font-size: 1.4rem;
   position: relative; /* Ensure the close button is correctly positioned */
 `;
 
 const CloseButton = styled.button`
-  background: transparent;
+  background: #142B42; 
   border: none;
-  font-size: 16px;
+  border-radius: 30px; 
+  width: 90px; 
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px; /* Adjust font size if needed */
   font-weight: bold;
   cursor: pointer;
-  color: #333;
+  color: white;
   position: absolute;
-  top: 10px;
+  top: 0px;
   right: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 
   &:hover {
-    color: #007BFF;
+    background: #0056b3; /* Darker blue on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
   }
 
   &:focus {
@@ -78,20 +96,40 @@ const CloseButton = styled.button`
 
 const SubcategorySelector = ({ subcategories, selectedSubcategories, onSelectSubcategory, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isClosing, setIsClosing] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(null);
 
   const handleClose = (event) => {
     event.stopPropagation(); // Prevent clicks from propagating and triggering other actions
-    setIsVisible(false);
-    onClose(); // Call the onClose function passed as a prop
+    setIsClosing(true); // Trigger closing transition
+    setTimeout(() => {
+      setIsVisible(false); // Hide the component after the transition
+      onClose(); // Call the onClose function passed as a prop
+    }, 300); // Duration of the transition in milliseconds
+  };
+
+  const handleTouchStart = (event) => {
+    setTouchStartX(event.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (event) => {
+    const touchEndX = event.changedTouches[0].clientX;
+    if (touchStartX - touchEndX > 50) { // Swipe left threshold
+      handleClose(event);
+    }
   };
 
   if (!isVisible) return null;
 
   return (
-    <SubcategoryWrapper>
+    <SubcategoryWrapper
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      isClosing={isClosing}
+    >
       <TopSection>
         <p>Subcategories</p>
-        <CloseButton onClick={handleClose}>×</CloseButton>
+        <CloseButton onClick={handleClose}>Close</CloseButton>
       </TopSection>
       
       <CategoryButton

@@ -1,4 +1,3 @@
-// Podcast.js
 import React, { useState } from "react";
 import PodcastCard from "./PodcastCard";
 import { usePodcastData } from "./usePodcastData";
@@ -8,7 +7,7 @@ import AddNewPodcast from "./AddNewPodcast";
 import { Outlet, useOutlet } from "react-router-dom";
 
 const PodcastContainer = styled.div`
-  margin: 45px 0;
+  margin: 45px 0 60px 0;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -31,14 +30,16 @@ export default function Podcast() {
   const [filter, setFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
-  const outlet = useOutlet()
+  const outlet = useOutlet();
 
   const toggleAddForm = () => setShowAddForm(!showAddForm);
 
-  const filteredData = podcastData
+  const filteredData = (podcastData || [])
     .filter((podcast) => {
       if (filter === "All") return true;
-      return podcast.status === filter;
+      if (filter === "Completed") return podcast.isComplete === true;
+      if (filter === "On going") return podcast.isComplete === false;
+      return true; 
     })
     .filter((podcast) =>
       podcast.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -48,38 +49,39 @@ export default function Podcast() {
     <PodcastContainer>
       {!outlet && (
         <>
-  <Filters
-        filter={filter}
-        setFilter={setFilter}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        showAddForm={showAddForm}
-        toggleAddForm={toggleAddForm}
-      />
-      <CardContainer>
-        {filteredData.map(item => (
-          <PodcastCard 
-            key={item.$id}
-            id={item.$id}
-            title={item.title}
-            description={item.description}
-            thumbnail={item.thumbnail}
-            rabbi={item.rabbi}
-            season={item.season}
-            isComplete={item.isComplete}
-            played={item.played}
+          <Filters
+            filter={filter}
+            setFilter={setFilter}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            showAddForm={showAddForm}
+            toggleAddForm={toggleAddForm}
+            podcastData={podcastData} 
           />
-        ))}
-      </CardContainer>
-</>
+          <CardContainer>
+            {filteredData.map(item => (
+              <PodcastCard 
+                key={item.$id}
+                id={item.$id}
+                title={item.title}
+                description={item.description}
+                thumbnail={item.thumbnail}
+                rabbi={item.rabbi}
+                season={item.season}
+                isComplete={item.isComplete}
+                played={item.played}
+              />
+            ))}
+          </CardContainer>
+        </>
       )}
-    
       {showAddForm && (
         <AddFormContainer>
-          <AddNewPodcast onClose={toggleAddForm}/>
+          <AddNewPodcast onClose={toggleAddForm} />
         </AddFormContainer>
       )}
       <Outlet />
     </PodcastContainer>
   );
 }
+

@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { usePodcastData } from './usePodcastData';
-import Draggable from 'react-draggable';
 
 const FormContainer = styled.div`
-  position: absolute; 
+  position: absolute;
   background: white;
   padding: 20px;
   top: 70px;
@@ -14,6 +13,16 @@ const FormContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
   width: 600px;
   margin: 20px auto;
+
+  // Media query for mobile devices
+  @media (max-width: 600px) {
+    width: 100%;
+    top: 40;
+    right: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 10px;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -79,7 +88,6 @@ const AddNewPodcast = ({ onClose }) => {
     season: '', // Ensure season is treated as a text
     isComplete: false,
     thumbnail: '',
-
   });
 
   const handleChange = (e) => {
@@ -101,7 +109,6 @@ const AddNewPodcast = ({ onClose }) => {
         season: '', // Reset season as text
         isComplete: false,
         thumbnail: '',
-      
       });
       onClose();
     } catch (error) {
@@ -110,72 +117,65 @@ const AddNewPodcast = ({ onClose }) => {
   };
 
   return (
-    <Draggable>
-      <FormContainer>
-        <CloseButton onClick={onClose}>&times;</CloseButton> 
-        <form onSubmit={handleSubmit}>
-          <FormField>
-            <Label>Title</Label>
-            <Input
-              type="text"
-              name="title"
-              value={newPodcast.title}
-              onChange={handleChange}
-           
-            />
-          </FormField>
-          <FormField>
-            <Label>Description</Label>
-            <TextArea
-              name="description"
-              value={newPodcast.description}
-              onChange={handleChange}
-           
-            />
-          </FormField>
-          <FormField>
-            <Label>Rabbi</Label>
-            <Input
-              type="text"
-              name="rabbi"
-              value={newPodcast.rabbi}
-              onChange={handleChange}
-             
-            />
-          </FormField>
-          <FormField>
-            <Label>Season</Label>
-            <Input
-              type="text"
-              name="season"
-              value={newPodcast.season}
-              onChange={handleChange}
-           
-            />
-          </FormField>
-          <FormField>
-            <Label>Is Complete</Label>
-            <Input
-              type="checkbox"
-              name="isComplete"
-              checked={newPodcast.isComplete}
-              onChange={handleChange}
-            />
-          </FormField>
-          <FormField>
-            <Label>Thumbnail URL</Label>
-            <Input
-              type="text"
-              name="thumbnail"
-              value={newPodcast.thumbnail}
-              onChange={handleChange}
-            
-            />
-          </FormField>
-          <Button type="submit">Add Podcast</Button>
-        </form>
-      </FormContainer>
-    </Draggable>
+    <FormContainer>
+      <CloseButton onClick={onClose}>&times;</CloseButton>
+      <form onSubmit={handleSubmit}>
+        <FormField>
+          <Label>Title</Label>
+          <Input
+            type="text"
+            name="title"
+            value={newPodcast.title}
+            onChange={handleChange}
+          />
+        </FormField>
+        <FormField>
+          <Label>Description</Label>
+          <TextArea
+            name="description"
+            value={newPodcast.description}
+            onChange={handleChange}
+          />
+        </FormField>
+        <FormField>
+          <Label>Rabbi</Label>
+          <Input
+            type="text"
+            name="rabbi"
+            value={newPodcast.rabbi}
+            onChange={handleChange}
+          />
+        </FormField>
+        <FormField>
+          <Label>Season</Label>
+          <Input
+            type="text"
+            name="season"
+            value={newPodcast.season}
+            onChange={handleChange}
+          />
+        </FormField>
+        <FormField>
+          <Label>Is Complete</Label>
+          <Input
+            type="checkbox"
+            name="isComplete"
+            checked={newPodcast.isComplete}
+            onChange={handleChange}
+          />
+        </FormField>
+        <FormField>
+          <Label>Thumbnail URL</Label>
+          <Input
+            type="text"
+            name="thumbnail"
+            value={newPodcast.thumbnail}
+            onChange={handleChange}
+          />
+        </FormField>
+        <Button type="submit">Add Podcast</Button>
+      </form>
+    </FormContainer>
   );
 };
 

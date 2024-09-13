@@ -16,6 +16,9 @@ const FormContainer = styled.form`
   border: 1px solid #ced4da;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const FormGroup = styled.div`

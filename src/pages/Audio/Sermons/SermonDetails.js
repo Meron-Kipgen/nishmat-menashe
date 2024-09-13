@@ -14,14 +14,45 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 700px;
   padding: 20px 0;
   background-color: #ffffff;
-
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+  margin: 0 auto;
 `;
-const DetailsSection = styled.div`
-`
+
+const MenuContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  border-radius: 8px;
+`;
+
+const BackButton = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const DetailsSection = styled.div``;
+
 const Thumbnail = styled.div`
   width: 100%;
   margin-bottom: 30px;
@@ -78,8 +109,6 @@ const Description = styled.p`
 
 const AudioPlayerContainer = styled.div`
   width: 100%;
-
-
 `;
 
 const ButtonContainer = styled.div`
@@ -103,9 +132,10 @@ const Button = styled.button`
     background: ${props => props.hoverColor || "#0056b3"};
   }
 `;
+
 const CommentsContainer = styled.div`
-width: 100%;
-`
+  width: 100%;
+`;
 
 const SermonDetails = () => {
   const { id } = useParams();
@@ -122,6 +152,7 @@ const SermonDetails = () => {
     createComment,
   } = useCommentsData(post?.$id);
   const { isAdmin } = useContext(UserContext);
+  
   if (!sermonData || sermonData.length === 0) {
     return <div>Loading audio data...</div>;
   }
@@ -149,8 +180,34 @@ const SermonDetails = () => {
     }
   };
 
+  const handleBackClick = () => {
+    navigate(-1); 
+  };
+
   return (
     <Container>
+      <MenuContainer>
+        <BackButton onClick={handleBackClick}>Back</BackButton>
+        {isAdmin && (
+          <ButtonContainer>
+            <Button
+              onClick={handleEditClick}
+              bgColor="#007bff"
+              hoverColor="#0056b3"
+            >
+              Edit Audio
+            </Button>
+            <Button
+              onClick={handleDeleteClick}
+              bgColor="#ff4d4d"
+              hoverColor="#e60000"
+            >
+              Delete Audio
+            </Button>
+          </ButtonContainer>
+        )}
+      </MenuContainer>
+
       <DetailsSection>
         <Thumbnail>
           <img src={post.thumbnail} alt={`${post.title} thumbnail`} />
@@ -158,7 +215,7 @@ const SermonDetails = () => {
         <Title>{post.title}</Title>
         <Rabbi>By: {post.rabbi} - Played {post.played}</Rabbi>
         <Category>
-        {post.category} | {post.subcategory} | <TimeAgo createdAt={post.$createdAt}/>
+          {post.category} | {post.subcategory} | <TimeAgo createdAt={post.$createdAt} />
         </Category>
         <Description>{post.description}</Description>
       </DetailsSection>
@@ -171,41 +228,23 @@ const SermonDetails = () => {
           shouldPlay={true}
         />
       </AudioPlayerContainer>
-      {isAdmin && (
-        <ButtonContainer>
-          <Button
-            onClick={handleEditClick}
-            bgColor="#007bff"
-            hoverColor="#0056b3"
-          >
-            Edit Audio
-          </Button>
-          <Button
-            onClick={handleDeleteClick}
-            bgColor="#ff4d4d"
-            hoverColor="#e60000"
-          >
-            Delete Audio
-          </Button>
-        </ButtonContainer>
-      )}
-
+     
       {isEditFormVisible && (
         <EditSermonForm audio={post} onClose={handleCloseForm} />
       )}
-<CommentsContainer>
-   <CommentsSection
-        postId={post.$id}
-        comments={comments}
-        loading={loading}
-        error={error}
-        createComment={createComment}
-        updateComment={updateComment}
-        deleteComment={deleteComment}
-        maxPosts={comments.length}
-      />
-</CommentsContainer>
-     
+
+      <CommentsContainer>
+        <CommentsSection
+          postId={post.$id}
+          comments={comments}
+          loading={loading}
+          error={error}
+          createComment={createComment}
+          updateComment={updateComment}
+          deleteComment={deleteComment}
+          maxPosts={comments.length}
+        />
+      </CommentsContainer>
     </Container>
   );
 };

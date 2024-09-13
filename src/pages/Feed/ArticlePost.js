@@ -7,7 +7,6 @@ import DOMPurify from "dompurify";
 import TimeAgo from "../../utils/TimeAgo";
 import useCommentsData from "../../Features/Comment/useCommentsData";
 import CommentBox from "../../Features/Comment/CommentBox";
-import { CommentIcon } from "../../Assets/Icons";
 
 const truncateText = (text, wordCount) => {
   const words = text.split(' ');
@@ -51,13 +50,13 @@ const CommentBoxContainer = styled.div`
 border-top: 1px solid #ccc;
 `
 
-const ArticlePost = ({ post, maxPosts = 1 }) => {
-  const { comments, loading, error, createComment, updateComment, deleteComment } = useCommentsData(post.$id);
+const ArticlePost = ({ post}) => {
+  const { comments, loading, error, createComment} = useCommentsData(post.$id);
   const navigate = useNavigate();
   const { updateViews } = useArticlesData();
 
   if (!post) {
-    return <div>Loading...</div>; // Handle undefined post gracefully
+    return <div>Loading...</div>; 
   }
 
   const handleReadMore = () => {
@@ -82,7 +81,7 @@ const ArticlePost = ({ post, maxPosts = 1 }) => {
         <Wrapper>
          By: {post.author} ⁃ <TimeAgo createdAt={post.$createdAt} /> ⁃ views: {post.views}
           <p>
-            <CommentIcon height="20px" width="20px" stroke="red" /> {post.description} {comments.length} {comments.length > 0 ? "Comments" : "Comment"}
+           {post.description} {comments.length} {comments.length > 0 ? "Comments" : "Comment"}
           </p>
         </Wrapper>
         <Body dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(truncatedBody) }} />

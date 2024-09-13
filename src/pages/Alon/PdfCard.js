@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { usePdfData } from "./usePdfData";
 import PdfUpdate from "./PdfUpdate"; // Import the PdfUpdate component
 import { DotHorizon } from "../../Assets/Icons";
 import WarningDelete from "../../components/WarningDelete"; // Import the WarningDelete component
+import { UserContext } from "../../contexts/UserContext";
 
 const Thumbnail = styled.div`
   border-radius: 10px;
@@ -48,6 +49,7 @@ const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 260px;
 `;
 const DropMenu = styled.div`
   position: absolute;
@@ -136,7 +138,7 @@ export default function PdfCard({
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDropMenu, setShowDropMenu] = useState(false);
-
+const {isAdmin} = useContext(UserContext)
   const handleUpdateClick = () => setShowUpdateModal(true);
   const handleDeleteClick = () => setShowDeleteModal(true);
 
@@ -175,9 +177,10 @@ export default function PdfCard({
           <img src="../alon.png" alt="Thumbnail" />
         </Thumbnail>
         <InfoSection>
-          <DropMenu onClick={dropmenuhandle}>
+          {isAdmin &&  <DropMenu onClick={dropmenuhandle}>
             <DotHorizon height={30} width={30} />
-          </DropMenu>
+          </DropMenu>}
+         
           {showDropMenu && (
             <DropMenuWrapper>
               <ActionBtn bgColor="#f0ad4e" onClick={handleUpdateClick}>
@@ -202,7 +205,7 @@ export default function PdfCard({
             >
               Download
             </ActionBtn>
-            <ActionBtn bgColor="#007bff" onClick={handleShareClick}>
+            <ActionBtn bgColor="#38BABE" onClick={handleShareClick}>
               Share
             </ActionBtn>
           </ButtonWrapper>

@@ -14,8 +14,12 @@ const SubcategoryContainer = styled.div`
   justify-content: center;
   font-weight: bold;
   margin-bottom: 10px;
- 
   position: relative;
+
+  background-color: #e5e5f7;
+opacity: 0.8;
+background-image: linear-gradient(45deg, #ffffff 25%, #f2f2f2 25%, #f2f2f2 50%, #ffffff 50%, #ffffff 75%, #f2f2f2 75%, #f2f2f2 100%);
+background-size: 56.57px 56.57px;
 `;
 
 const TextOverlay = styled.div`

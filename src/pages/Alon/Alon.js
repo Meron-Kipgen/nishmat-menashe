@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
 
@@ -8,6 +8,7 @@ import SideSection from "./SideSection";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import AddNewForm from "./AddNewForm";
 import { usePdfData } from "./usePdfData";
+import { UserContext } from "../../contexts/UserContext";
 
 const Container = styled.section`
   display: flex;
@@ -21,6 +22,7 @@ const Container = styled.section`
     padding: 0 5px;
   }
 `;
+
 const AddNewButton = styled.div`
   position: absolute;
   display: flex;
@@ -48,12 +50,14 @@ const AddNewButton = styled.div`
     transform: scale(0.98);
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   }
+  
   @media (max-width: 768px) {
     top: 50px;
     margin-right: 10px;
     height: 40px;
   }
 `;
+
 const ToggleButton = styled.div`
   position: absolute;
   display: flex;
@@ -83,7 +87,6 @@ const ToggleButton = styled.div`
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   }
 `;
-
 
 const Title = styled.h2`
   text-align: center;
@@ -116,6 +119,7 @@ export default function Alon() {
   const location = useLocation();
   const currentUrl = window.location.origin + location.pathname;
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { isAdmin } = useContext(UserContext);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -134,18 +138,17 @@ export default function Alon() {
     document.body.removeChild(link);
   };
 
-  // Ensure pdfData is defined before filtering
+  // Ensure pdfData is defined before filtering and sorting
   const filteredPdfData =
-    pdfData?.filter(pdf => {
-      return (
-        (filters.volume === "" ||
-          pdf.volume.toString().includes(filters.volume)) &&
-        (filters.issue === "" ||
-          pdf.issue.toString().includes(filters.issue)) &&
-        (filters.parasha === "" ||
-          pdf.parasha.toLowerCase().includes(filters.parasha.toLowerCase()))
-      );
-    }) || [];
+    pdfData
+      ?.filter(pdf => {
+        return (
+          (filters.volume === "" || pdf.volume.toString().includes(filters.volume)) &&
+          (filters.issue === "" || pdf.issue.toString().includes(filters.issue)) &&
+          (filters.parasha === "" || pdf.parasha.toLowerCase().includes(filters.parasha.toLowerCase()))
+        );
+      })
+      .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt)) || [];
 
   const toggleSideSection = () => {
     setSideSectionVisible(prev => !prev);
@@ -157,7 +160,8 @@ export default function Alon() {
 
   return (
     <Container>
-      <AddNewButton onClick={addnewtoggle}>Add New</AddNewButton>
+      {isAdmin && <AddNewButton onClick={addnewtoggle}>Add New</AddNewButton>}
+     
       {addnew && <AddNewForm onCancel={() => setAddnew(false)} />}
 
       {isMobile && (

@@ -3,7 +3,6 @@ import TimeAgo from "../../utils/TimeAgo";
 import { useSermonsData } from "../Audio/Sermons/useSermonsData";
 import useCommentsData from "../../Features/Comment/useCommentsData";
 import CommentBox from "../../Features/Comment/CommentBox";
-import { CommentIcon } from "../../Assets/Icons";
 import { useNavigate } from "react-router-dom";
 
 const CardContainer = styled.div`
@@ -83,15 +82,13 @@ const FooterText = styled.div`
 const PlayButton = styled.div`
   position: absolute;
   display: flex;
-  top: 80px;
-  right: 20px;
+  top: 40px;
+  left: 35px;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
-  border: 1px solid #142b42;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  color: #142b42;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: background 0.3s, transform 0.3s;
@@ -99,12 +96,8 @@ const PlayButton = styled.div`
   &:hover {
     transform: scale(1.1);
   }
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
 `;
+
 const CommentBoxContainer = styled.div`
 border-top: 1px solid #ccc;
 `
@@ -120,20 +113,37 @@ const AudioPost = ({ post }) => {
   } = useCommentsData(post.$id);
 
   if (!post) {
-    return <div>Loading...</div>; // Handle undefined post gracefully
+    return <div>Loading...</div>;
   }
 
-  const handlePlay = () => {
+  const handleClick = () => {
     navigate(`/Audio/Sermon/${post.$id}`);
     updatePlayed(post.$id);
   };
 
   return (
     <>
-      <CardContainer>
+      <CardContainer onClick={handleClick}>
         <Thumbnail>
           <img src={post.thumbnail} alt={`${post.title} thumbnail`} />
         </Thumbnail>
+        <PlayButton onClick={handleClick}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="icon icon-tabler icon-tabler-player-play"
+          width="50"
+          height="50"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#ffffff"
+          fill="#ffffff"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M7 4v16l13 -8z" />
+        </svg>
+      </PlayButton>
         <Content>
           <Header>
             <h1>{post.title}</h1>
@@ -147,12 +157,9 @@ const AudioPost = ({ post }) => {
           <FooterContainer>
             <FooterText>
               {post.played} Played ⁃{" "}
-              <CommentIcon height="20px" width="20px" stroke="red" />{" "}
               {comments.length} {comments.length > 0 ? "Comments" : "Comment"}
             </FooterText>
-            <PlayButton onClick={() => handlePlay(post.audioUrl)}>
-              play
-            </PlayButton>
+            
           </FooterContainer>
         </Content>
       </CardContainer>

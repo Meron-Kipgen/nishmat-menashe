@@ -6,20 +6,16 @@ const CategoryWrapper = styled.div`
   flex-wrap: nowrap;
   height: 45px;
   gap: 10px;
-  padding:8px;
+  padding: 8px;
   background-color: #f9f9f9;
   overflow-x: auto; 
   overflow-y: hidden; 
-  
 
   &::-webkit-scrollbar {
     display: none;
   }
-  
+
   scrollbar-width: none;
-  p{
-    color: red;
-  }
 `;
 
 const CategoryButton = styled.div`
@@ -31,6 +27,10 @@ const CategoryButton = styled.div`
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease, transform 0.3s ease;
+
+  white-space: nowrap; // Prevent text from wrapping
+  overflow: hidden; // Hide overflowed text
+  flex-shrink: 0; // Prevent the button from shrinking
 
   &:hover {
     background-color: ${({ isSelected }) => (isSelected ? '#0056b3' : '#c0c0c0')};
@@ -45,7 +45,6 @@ const CategoryButton = styled.div`
 
 const CategorySelector = ({ categories, selectedCategories, onSelectCategory }) => (
   <CategoryWrapper>
-    
     <CategoryButton
       key="all"
       isSelected={selectedCategories.length === 0}

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import "react-quill/dist/quill.snow.css"; 
 import styled, { createGlobalStyle } from "styled-components";
+import { MaximizeIcon, MinimizeIcon } from "../Assets/Icons";
 
 const GlobalStyle = createGlobalStyle`
   body.fullscreen-mode {
@@ -23,23 +24,12 @@ const EditorContainer = styled.div`
   transition: all 0.3s ease;
 `;
 
-const FullscreenButton = styled.button`
+const FullscreenButton = styled.div`
   position: absolute;
   top: 10px;
-  right: 10px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
+  right: 5px;
+  padding: 10px 0 0 10px;
   cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
 `;
 
 const MenuContainer = styled.div`
@@ -79,7 +69,7 @@ const TextEditor = ({ value, onChange }) => {
       <GlobalStyle />
       <MenuContainer>
         <FullscreenButton onClick={toggleFullscreen}>
-          {fullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          {fullscreen ? <MinimizeIcon height={20} width={20}/>: <MaximizeIcon height={20} width={20}/>}
         </FullscreenButton>
       </MenuContainer>
       <ReactQuill

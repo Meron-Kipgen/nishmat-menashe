@@ -14,9 +14,10 @@ const Container = styled.div`
     flex-direction: column-reverse;
   }
 `;
+
 const AudioTitleContainer = styled.div`
   padding: 0 90px 0 30px;
-  height: 50px;
+  height: 30px;
   display: flex;
   justify-content: space-between;
   width: 100%; 
@@ -30,22 +31,27 @@ const AudioTitleContainer = styled.div`
       color: red;
     }
   }
+   @media (max-width: 768px) {
+    margin-top: 10px;
+    padding: 0 10px;
+  }
 `;
 const SermonContainer = styled.div`
-  width: 1000px;
+  width: 65%;
   height: 100vh;
   display: flex;
   flex-wrap: wrap;
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
-
+justify-content: center;
   &::-webkit-scrollbar {
     display: none;
   }
 
   @media (max-width: 768px) {
-    width: 100%;
+    width: 95%;
+    margin-inline: auto;
     height: auto;
     overflow-y: hidden;
   }
@@ -57,6 +63,7 @@ const PodcastTitleContainer = styled.div`
   width: 100%;
 
   @media (max-width: 768px) {
+    
     position: absolute;
     top: 50px;
     padding: 0 10px;
@@ -68,7 +75,7 @@ const PodcastTitleContainer = styled.div`
   }
 `;
 const PodcastContainer = styled.div`
-  width: 500px;
+  width:35%;
   height: 100vh;
   display: flex;
   gap: 10px;
@@ -84,12 +91,14 @@ const PodcastContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     height: auto;
+    margin-inline: auto;
     flex-direction: row;
     overflow-x: auto;
     overflow-y: hidden;
     flex-wrap: nowrap;
     gap: 15px;
-    margin-top: 50px;
+
+    margin-top: 30px;
   }
 
   & > * {

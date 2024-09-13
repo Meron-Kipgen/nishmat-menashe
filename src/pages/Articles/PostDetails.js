@@ -51,8 +51,9 @@ const Post = styled.div`
 `;
 
 const Body = styled.div`
-  font-size: ${props => props.fontSize}px; /* Apply font size dynamically */
+  font-size: ${props => props.fontSize}px; 
   line-height: 1.7rem;
+  text-align: justify;
   p {
     margin-bottom: 10px;
   }

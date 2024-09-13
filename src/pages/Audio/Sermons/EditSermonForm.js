@@ -12,6 +12,10 @@ const FormContainer = styled.div`
   position: absolute;
   z-index: 9999;
   cursor: move;
+  @media (max-width: 768px) {
+    width: 100%;
+
+  }
 `;
 
 const CloseButton = styled.button`

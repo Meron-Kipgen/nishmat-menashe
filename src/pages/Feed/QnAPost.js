@@ -5,7 +5,6 @@ import Avatar from "../../Features/User/Avatar";
 import TimeAgo from "../../utils/TimeAgo";
 import CommentBox from "../../Features/Comment/CommentBox";
 import useCommentsData from "../../Features/Comment/useCommentsData";
-import { CommentIcon } from "../../Assets/Icons";
 
 const CardContainer = styled.div`
   padding: 20px;
@@ -97,7 +96,6 @@ export default function Card({ post, maxPosts = 1 }) {
                 <TimeAgo createdAt={post.$createdAt} /> ⁃ {post.views} views
               </p>
               <p>
-                <CommentIcon height="20px" width="20px" stroke="red" />{" "}
                 {comments.length}{" "}
                 {comments.length > 0 ? "Comments" : "Comment"}
               </p>

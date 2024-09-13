@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-
 import { useSermonsData } from "../Audio/Sermons/useSermonsData";
 import { useVideosData } from "../Video/useVideosData";
 import { useArticlesData } from "../Articles/useArticlesData";
@@ -22,7 +21,7 @@ export const useAllPosts = () => {
       ...(feedbackData || []).map(post => ({ ...post, type: "feedback" })),
     ];
 
-    // Sort posts by timestamp in descending order
+   
     return allPosts.sort(
       (a, b) => new Date(b.$createdAt) - new Date(a.$createdAt)
     );

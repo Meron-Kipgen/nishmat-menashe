@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Draggable from "react-draggable";
 import { useSermonsData } from "./useSermonsData"; // Adjust the path as necessary
 
 const FormContainer = styled.div`
@@ -12,7 +11,11 @@ const FormContainer = styled.div`
   margin: 20px auto;
   position: absolute;
   z-index: 9999;
-  cursor: move; /* Show that it's draggable */
+  cursor: move; 
+  @media (max-width: 768px) {
+    width: 100%;
+
+  }
 `;
 
 const CloseButton = styled.button`
@@ -83,7 +86,7 @@ const ErrorMessage = styled.p`
 `;
 
 const AddSermonForm = ({ onClose }) => {
-  const { sermonData, addSermon} = useSermonsData();
+  const { addSermon} = useSermonsData();
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -106,14 +109,14 @@ const AddSermonForm = ({ onClose }) => {
     e.preventDefault();
     try {
       await addSermon(formData);
-      onClose(); // Close the form on successful submission
+      onClose(); 
     } catch (err) {
       setError("Failed to add audio. Please try again.");
     }
   };
 
   return (
-    <Draggable>
+
       <FormContainer>
         <CloseButton onClick={onClose}>×</CloseButton>
         <Title>Add New Audio</Title>
@@ -179,7 +182,7 @@ const AddSermonForm = ({ onClose }) => {
           <Button type="submit">Add Audio</Button>
         </Form>
       </FormContainer>
-    </Draggable>
+   
   );
 };
 

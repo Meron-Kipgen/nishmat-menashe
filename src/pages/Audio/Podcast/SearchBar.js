@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const SearchContainer = styled.div`
   position: relative;
   width: 200px;
-
+  margin-left: 10px;
 `;
 
 const SearchInput = styled.input`
@@ -57,7 +57,7 @@ const AutocompleteItem = styled.li`
   }
 `;
 
-export default function SearchBar({ podcastData, searchTerm, setSearchTerm }) {
+export default function SearchBar({ podcastData = [], searchTerm, setSearchTerm }) {
   const [suggestions, setSuggestions] = useState([]);
 
   const handleSearchChange = (e) => {

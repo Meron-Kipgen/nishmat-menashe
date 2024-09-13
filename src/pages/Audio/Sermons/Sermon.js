@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Outlet, useOutlet } from "react-router-dom";
 import { useSermonsData } from "./useSermonsData";
-import AudioCard from "./SermonCard";
 import styled from "styled-components";
 import AddSermonForm from "./AddSermonForm";
 import CategorySelector from "../../../components/CategorySelector";
@@ -9,13 +8,13 @@ import SubcategorySelector from "../../../components/SubcategorySelector";
 import ExploreBtn from "../../../components/ExploreBtn";
 import AddNewBtn from "../../../components/AddNewBtn";
 import { UserContext } from "../../../contexts/UserContext";
+import SermonCard from "./SermonCard";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 45px 0;
 `;
-
 
 const PostContainer = styled.div`
   display: flex;
@@ -33,8 +32,9 @@ const ItemContainer = styled.div`
   flex-wrap: wrap;
   gap: 10px;
   @media (max-width: 768px) {
-    width: 100%;
+    width: 95%;
     gap: 0;
+    margin-inline: auto;
   }
 `;
 
@@ -131,23 +131,23 @@ export default function Sermon() {
               )}
             </SubCatContainer>
             <ItemContainer>
-      {filteredSermons.map((audio, index) => (
-        <AudioCard
-          key={index}
-          id={audio.$id}
-          title={audio.title}
-          thumbnail={audio.thumbnail}
-          createdAt={audio.$createdAt}
-          rabbi={audio.rabbi}
-          category={audio.category}
-          subcategory={audio.subcategory}
-          played={audio.played}
-        />
-      ))}
-    </ItemContainer>
+              {filteredSermons.map((audio, index) => (
+                <SermonCard
+                  key={index}
+                  id={audio.$id}
+                  title={audio.title}
+                  thumbnail={audio.thumbnail}
+                  createdAt={audio.$createdAt}
+                  rabbi={audio.rabbi}
+                  category={audio.category}
+                  subcategory={audio.subcategory}
+                  played={audio.played}
+                />
+              ))}
+            </ItemContainer>
           </>
         )}
-      <Outlet/>
+        <Outlet />
       </PostContainer>
     </Container>
   );

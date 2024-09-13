@@ -10,7 +10,6 @@ const AskContainerWrapper = styled.section`
   max-width: 700px;
   padding: 20px;
   margin-top: 10px;
-  border-radius: 8px;
   margin-bottom: 20px;
 
   input, textarea, select {

@@ -9,8 +9,11 @@ const Container = styled.section`
   height: 40px;
   border-radius: 5px;
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start; 
   align-items: center;
+ 
+  white-space: nowrap;
+  padding: 0 5px;
 `;
 
 const FilterButton = styled.div`
@@ -18,17 +21,14 @@ const FilterButton = styled.div`
   padding: 5px 10px;
   border-radius: 30px;
   transition: background 0.3s, color 0.3s;
-
-  // Default style
+  display: inline-block; 
   background: ${props => (props.active ? "#142B42" : "#fff")};
   color: ${props => (props.active ? "#fff" : "#000")};
 
-  // Hover style
   &:hover {
     background: #e2e6ea;
   }
 
-  // Active style
   &.active {
     background: #007bff;
     color: #000;
@@ -38,34 +38,12 @@ const FilterButton = styled.div`
 const AddButton = styled.div`
   cursor: pointer;
   color: red;
+  display: inline-block; 
 `;
 
 const Filters = ({ filter, setFilter, searchTerm, setSearchTerm, showAddForm, toggleAddForm }) => {
   return (
     <Container>
-      <FilterButton
-        active={filter === "All"}
-        onClick={() => setFilter("All")}
-      >
-        All
-      </FilterButton>
-      <FilterButton
-        active={filter === "Completed"}
-        onClick={() => setFilter("Completed")}
-      >
-        Completed
-      </FilterButton>
-      <FilterButton
-        active={filter === "On going"}
-        onClick={() => setFilter("On going")}
-      >
-        On going
-      </FilterButton>
-
-      <SearchBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
       <AddButton onClick={toggleAddForm}>
         {showAddForm ? (
           <svg
@@ -109,6 +87,30 @@ const Filters = ({ filter, setFilter, searchTerm, setSearchTerm, showAddForm, to
           </svg>
         )}
       </AddButton>
+      <FilterButton
+        active={filter === "All"}
+        onClick={() => setFilter("All")}
+      >
+        All
+      </FilterButton>
+      
+      <FilterButton
+        active={filter === "Completed"}
+        onClick={() => setFilter("Completed")}
+      >
+        Completed
+      </FilterButton>
+      <FilterButton
+        active={filter === "On going"}
+        onClick={() => setFilter("On going")}
+      >
+        On going
+      </FilterButton>
+
+      <SearchBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+      />
     </Container>
   );
 };

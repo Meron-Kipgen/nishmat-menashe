@@ -22,7 +22,7 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(50); 
   const [isMuted, setIsMuted] = useState(false);
-  const [isDataLoaded, setIsDataLoaded] = useState(false); // Track data loading
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     const loadYouTubeAPI = () => {
@@ -62,8 +62,11 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
     };
   }, [audioUrl, playerVars]);
 
-  
   useEffect(() => {
+    if (window.innerWidth <= 768) {
+      setVolume(100); 
+    }
+
     if (isPlayerReady && isDataLoaded && shouldPlay) {
       try {
         playerRef.current.playVideo();
@@ -85,7 +88,7 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
     if (isPlayerReady && playerRef.current) {
       if (typeof playerRef.current.setVolume === 'function') {
         playerRef.current.setVolume(volume);
-        if (volume === 0) {
+        if (volume == 0) {
           playerRef.current.mute();
           setIsMuted(true);
         } else {
@@ -103,7 +106,7 @@ const AudioPlayer = ({ audioUrl, shouldPlay, playerVars = {} }) => {
       setDuration(videoDuration);
     }
     updateProgress();
-    setIsDataLoaded(true); // Set data loaded to true
+    setIsDataLoaded(true); 
   };
 
   const onPlayerStateChange = (event) => {
