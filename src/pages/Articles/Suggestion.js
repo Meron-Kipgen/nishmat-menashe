@@ -36,7 +36,7 @@ const Suggestion = ({ author, category, subcategory, postId, postData }) => {
       post.author === author &&
       post.category === category &&
       post.subcategory === subcategory &&
-      post.id !== postId // Exclude the current post
+      post.$id !== postId
   );
   if (suggestions.length === 0) {
     return null;
@@ -47,7 +47,7 @@ const Suggestion = ({ author, category, subcategory, postId, postData }) => {
       <SuggestionTitle>More from {author}</SuggestionTitle>
       <SuggestionList>
         {suggestions.map(post => (
-          <SuggestionItem key={post.id}>
+          <SuggestionItem key={post.$id}>
             {post.title}
           </SuggestionItem>
         ))}

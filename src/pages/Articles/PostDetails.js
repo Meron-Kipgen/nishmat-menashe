@@ -9,7 +9,7 @@ import DOMPurify from "dompurify";
 import TimeAgo from "../../utils/TimeAgo";
 import useCommentsData from "../../Features/Comment/useCommentsData";
 import CommentsSection from "../../Features/Comment/CommentSection";
-
+import 'quill/dist/quill.snow.css';
 const Container = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -51,13 +51,14 @@ const Post = styled.div`
 `;
 
 const Body = styled.div`
-  font-size: ${props => props.fontSize}px; 
-  line-height: 1.7rem;
-  text-align: justify;
+  font-size: ${(props) => props.fontSize}px;
+  line-height: ${(props) => props.fontSize * 1.3}px; 
+ 
   p {
     margin-bottom: 10px;
   }
 `;
+
 
 const SuggestionContainer = styled.div`
   background: white;
@@ -131,6 +132,8 @@ const PostDetails = () => {
     deleteComment,
     createComment,
   } = useCommentsData(post?.$id);
+
+ 
   if (!post) {
     return <div>Post not found</div>;
   }
@@ -265,7 +268,7 @@ const PostDetails = () => {
           </h5>
           <Body fontSize={fontSize}>
             {post.body && (
-              <div
+              <div  class="ql-editor"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(post.body),
                 }}

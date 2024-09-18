@@ -31,7 +31,6 @@ const Video = styled.video`
   object-fit: cover;
 `;
 
-
 const ControlsContainer = styled.div`
   position: absolute;
   display: flex;
@@ -39,13 +38,20 @@ const ControlsContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: 10px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.4);  /* Semi-transparent for larger screens */
   bottom: 0;
   left: 0;
   z-index: 1;
   opacity: ${(props) => (props.showControls ? 1 : 0)};
   transition: opacity 0.3s ease;
+
+
+  @media (max-width: 768px) {
+    background: transparent;
+    height: 100%;
+  }
 `;
+
 
 const ControlTop = styled.div`
   width: 100%;
@@ -69,7 +75,65 @@ const CenterContol = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
 `;
+const MobileTop = styled.span` 
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 20px;
+  @media (max-width: 768px) {
+ 
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    width: 100px;
+    justify-content: space-between;
+  }
+`
+const MobileDuration = styled.span` 
+display: flex;
+align-items: center;
 
+  @media (max-width: 768px) {
+
+    position: absolute;
+    bottom:10px;
+    left: 10px;
+  }
+`
+const Fullscreen = styled.span` 
+
+  @media (max-width: 768px) {
+
+    position: absolute;
+    bottom:10px;
+    right: 10px;
+  }
+`
+const PlayControls = styled.span` 
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 20px;
+  @media (max-width: 768px) {
+display: flex;
+gap: 30px;
+position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  }
+`
+const Volume = styled.span` 
+
+
+  @media (max-width: 768px) {
+
+position: absolute;
+  top: 45%;
+  right: 10px;
+  
+  }
+`
 const Player = ({
   src,
   poster,
@@ -172,7 +236,7 @@ const Player = ({
   };
 
   const handleVideoClick = (event) => {
-    event.preventDefault(); // Prevent default play/pause behavior on video click
+    event.preventDefault(); 
   };
 
   const handleQualityChange = (quality) => {
@@ -236,7 +300,8 @@ const Player = ({
         <ControlsContainer showControls={showControls}>
          
           <LeftControls>
-            {showBackwardSeekButton && (
+            <PlayControls>
+{showBackwardSeekButton && (
               <BackwardSeekButton onSeekBackward={handleSeekBackward} />
             )}
             {showPlay && (
@@ -245,11 +310,19 @@ const Player = ({
             {showForwardSeekButton && (
               <ForwardSeekButton onSeekForward={handleSeekForward} />
             )}
-            {showDuration && <DurationDisplay videoRef={videoRef} src={src} />}
-            {showVolume && <VolumeControl videoRef={videoRef} />}
+            </PlayControls>
+            
+            <MobileDuration>
+               {showDuration && <DurationDisplay videoRef={videoRef} src={src} />}
+            </MobileDuration>
+           <Volume>
+             {showVolume && <VolumeControl videoRef={videoRef} />}
+           </Volume>
+           
           </LeftControls>
           <RightControls>
-            {showQuality && (
+<MobileTop>
+  {showQuality && (
               <QualitySelector
                 qualities={qualities}
                 currentQuality={currentQuality}
@@ -262,15 +335,20 @@ const Player = ({
                 onChange={handleSpeedChange}
               />
             )}
-            {showFullscreen && <FullscreenButton containerRef={containerRef} />}
+</MobileTop>
+            <Fullscreen>
+                  {showFullscreen && <FullscreenButton containerRef={containerRef} />}
+            </Fullscreen>
+        
           </RightControls>
         </ControlsContainer>
-        <CenterContol>
+        {/* <CenterContol>
           {showCenterPlayButton && (
             <CenterPlayButton onClick={togglePlay} isplaying={isPlaying} />
           )}
-        </CenterContol>
+        </CenterContol> */}
       </Container>
+      
     </>
   );
 };

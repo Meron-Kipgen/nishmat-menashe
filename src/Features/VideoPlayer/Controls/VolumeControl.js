@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
 
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { MuteIcon, VolumeIcon} from '../../../Assets/Icons';
 const VolumeContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-const VolumeIcon = styled.div`
-margin-right: 5px;
-cursor: pointer;
-`
+
+const Icons = styled.div`
+  margin-right: 5px;
+  cursor: pointer;
+`;
+
 const VolumeSlider = styled.input`
   -webkit-appearance: none;
   width: 100px;
   height: 5px;
-  background: linear-gradient(to right, red ${props => props.value * 100}%, white ${props => props.value * 100}%);
+  background: linear-gradient(to right, red ${(props) => props.value * 100}%, white ${(props) => props.value * 100}%);
   outline: none;
 
   &::-webkit-slider-thumb {
@@ -34,11 +37,26 @@ const VolumeSlider = styled.input`
     border-radius: 50%;
     border: none;
   }
+
+  /* Hide on mobile */
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const VolumeControl = ({ videoRef }) => {
   const [volume, setVolume] = useState(1); // Default volume is 100%
   const [isMuted, setIsMuted] = useState(false); // Default is not muted
+
+  useEffect(() => {
+    // Set default volume to 100% on mobile
+    if (window.innerWidth <= 768) {
+      setVolume(1);
+      if (videoRef.current) {
+        videoRef.current.volume = 1;
+      }
+    }
+  }, []);
 
   const handleVolumeChange = (e) => {
     const newVolume = e.target.value;
@@ -47,7 +65,7 @@ const VolumeControl = ({ videoRef }) => {
       videoRef.current.volume = newVolume;
     }
     if (isMuted && newVolume > 0) {
-      setIsMuted(false); // Unmute if volume is adjusted while muted
+      setIsMuted(false); 
     }
   };
 
@@ -57,23 +75,26 @@ const VolumeControl = ({ videoRef }) => {
     if (videoRef.current) {
       videoRef.current.muted = newMutedState;
       if (newMutedState) {
-        setVolume(0); // Set volume to 0 if muted
+        setVolume(0); 
       } else {
-        setVolume(videoRef.current.volume); // Restore previous volume
+        setVolume(videoRef.current.volume); 
       }
     }
   };
 
   return (
     <VolumeContainer>
-      <VolumeIcon>
-           {isMuted ? (
-        <span><img src='/icons/video/mute.svg' alt="Mute" onClick={toggleMute} /></span>
-      ) : (
-        <span><img src='/icons/video/volume-high.svg' alt="Unmute" onClick={toggleMute} /></span>
-      )}
-      </VolumeIcon>
-   
+      <Icons>
+        {isMuted ? (
+          <span onClick={toggleMute}>
+            <MuteIcon height={30} width={30}   />
+          </span>
+        ) : (
+          <span onClick={toggleMute}>
+            <VolumeIcon height={30} width={30} />
+          </span>
+        )}
+      </Icons>
       <VolumeSlider
         type="range"
         min="0"
@@ -82,6 +103,7 @@ const VolumeControl = ({ videoRef }) => {
         value={volume}
         onChange={handleVolumeChange}
       />
+  
     </VolumeContainer>
   );
 };

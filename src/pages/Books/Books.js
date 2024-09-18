@@ -59,10 +59,14 @@ const BookList = styled.div`
     }
   }
 `;
-
+const ComingSoon = styled.h1`
+text-align: center;
+color: red;
+`
 export default function Books() {
   return (
     <Container>
+      <ComingSoon>Coming soon.....</ComingSoon>
       <Section>
         <Title>Torah</Title>
         <BookList>

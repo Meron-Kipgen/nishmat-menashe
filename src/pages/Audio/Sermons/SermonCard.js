@@ -14,6 +14,7 @@ const CardContainer = styled.div`
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
+  cursor: pointer;
   @media (max-width: 768px) {
     width: 100%;
     margin: 10px 0;
@@ -62,6 +63,7 @@ const Header = styled.div`
   h1 {
     font-size: 16px;
     color: #333;
+    height: auto;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -71,6 +73,13 @@ const Header = styled.div`
     width: 250px;
     @media (max-width: 768px) {
       width: 100%;
+      height: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
     }
   }
   h5 {

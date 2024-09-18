@@ -4,7 +4,7 @@ import useMediaQuery from "../../hooks/useMediaQuery"; // Import your useMediaQu
 
 const DescriptionContainer = styled.article`
   padding: 10px 0;
-  width: 100%;
+  width: 80%;
   button {
     border: none;
     background: none;

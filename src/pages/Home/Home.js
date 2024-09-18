@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import HeroSection from './HeroSection';
 import styled from 'styled-components';
 import AboutUs from './AboutUs';
-import OurProjects from './OurProjects';
 
 
 const Container = styled.div`
@@ -11,18 +10,14 @@ const Container = styled.div`
 
 function Home() {
   const aboutUsRef = useRef(null);
-  const ourProjectRef = useRef(null);
+
 
   return (
     <Container>
-      <HeroSection aboutUsRef={aboutUsRef} ourProjectRef={ourProjectRef} />
+      <HeroSection aboutUsRef={aboutUsRef}/>
       <div ref={aboutUsRef}>
         <AboutUs />
       </div>
-      <div ref={ourProjectRef}>
-        <OurProjects />
-      </div>
-
     </Container>
   );
 }

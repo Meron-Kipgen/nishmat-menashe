@@ -32,8 +32,8 @@ const FeedbackContainer = styled.section`
 
   @media (max-width: 768px) {
     width: 100%;  
- 
     margin-top: 10px;
+    padding:10px 5px;
   }
 
   textarea {
@@ -50,6 +50,10 @@ const FeedbackContainer = styled.section`
 
     &:disabled {
       background-color: #E0E0E0; 
+    }
+    @media (max-width: 768px) {
+     width: 90px;
+     
     }
   }
 
@@ -71,7 +75,8 @@ const FeedbackContainer = styled.section`
     opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 
     @media (max-width: 768px) {
-      right: 20px;
+      right: 12px;
+     
     }
     
     svg {

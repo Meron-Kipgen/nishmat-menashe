@@ -18,50 +18,16 @@ const HeroText = styled.div`
   padding: 30px;
   box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.4);
-
-  @font-face {
-    font-family: 'Stam';
-    src: url('./fonts/Stam.woff2') format('woff2');
-    font-weight: 600;
+  img{
+    margin-top: 50px;
+    width: 45%;
+    height: auto;
   }
-  @font-face {
-    font-family: 'TaameyAshkenaz';
-    src: url('./fonts/TaameyAshkenaz.woff2') format('woff2');
-    font-weight: 900;
-  }
-
-  h1 {
-    font-family: 'Stam';
-    font-size: 9rem;
-    margin: 0;
-    font-variant-ligatures: discretionary-ligatures;
-    font-feature-settings: 'calt', 'liga', 'swsh', 'smcp', 'ss01';
-    white-space: nowrap;
-  }
-
-  h2 {
-    font-family: 'TaameyAshkenaz';
-    font-size: 7rem;
-    font-weight: 900;
-  }
-
   @media (max-width: 768px) {
-    padding: 30% 0 0 0;
-    h1 {
-      font-size: 4rem;
-      white-space: nowrap;
-    }
-
-    h2 {
-      font-size: 3rem;
-    }
+  img{
+    margin-top: 50%;
+    width: 90%;
   }
-`;
-
-const Big = styled.span`
-  font-size: 14rem;
-  @media (max-width: 768px) {
-    font-size: 6rem;
   }
 `;
 const ButtonContainer = styled.div`
@@ -117,7 +83,7 @@ const Button = styled.button`
   }
 `;
 
-function HeroSection({ aboutUsRef, ourProjectRef }) {
+function HeroSection({ aboutUsRef}) {
   const scrollToSection = (ref) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -125,14 +91,9 @@ function HeroSection({ aboutUsRef, ourProjectRef }) {
   return (
     <HeroContainer>
       <HeroText>
-        <h1>
-          <Big>נ</Big>שמת מנש<Big>ה</Big>
-        </h1>
-        <h2>NISHMAT</h2>
-        <h2>MENASHE</h2>
+       <img src='../nmlogo.png' alt='nishmat menashe'/>
         <ButtonContainer>
-          <Button onClick={() => scrollToSection(aboutUsRef)}>About us</Button>
-          <Button onClick={() => scrollToSection(ourProjectRef)}>Our Project</Button>
+          <Button onClick={() => scrollToSection(aboutUsRef)}>About us </Button>
         </ButtonContainer>
       </HeroText>
     </HeroContainer>

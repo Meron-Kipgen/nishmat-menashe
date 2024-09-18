@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { BackwardIcon } from '../../../Assets/Icons';
 
 const SeekButton = styled.div`
   margin-left: 10px;
@@ -15,7 +16,7 @@ const BackwardSeekButton = ({ onSeekBackward }) => {
   };
 
   return (
-    <SeekButton onClick={handleSeekBackward}><img src="/icons/video/backward.svg" alt='backward'/></SeekButton>
+    <SeekButton onClick={handleSeekBackward}><BackwardIcon height={30} width={30}/></SeekButton>
   );
 };
 

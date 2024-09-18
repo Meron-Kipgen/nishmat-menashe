@@ -1,4 +1,3 @@
-import React from "react";
 import { VideosDataProvider } from "./pages/Video/useVideosData";
 import { BookDataProvider } from "./pages/Books/useBookData";
 import { ArticlesDataProvider } from "./pages/Articles/useArticlesData";
@@ -11,21 +10,19 @@ import { PdfDataProvider } from "./pages/Alon/usePdfData";
 const Providers = ({ children }) => {
   return (
     <PdfDataProvider>
-    <FeedbackDataProvider>
-      <VideosDataProvider>
-        <QuestionAnswerDataProvider>
-          <SermonDataProvider>
-            <BookDataProvider>
-              <PodcastDataProvider>
-                <ArticlesDataProvider>
-                  {children}
-                </ArticlesDataProvider>
-              </PodcastDataProvider>
-            </BookDataProvider>
-          </SermonDataProvider>
-        </QuestionAnswerDataProvider>
-      </VideosDataProvider>
-    </FeedbackDataProvider>
+      <FeedbackDataProvider>
+        <VideosDataProvider>
+          <QuestionAnswerDataProvider>
+            <SermonDataProvider>
+              <BookDataProvider>
+                <PodcastDataProvider>
+                  <ArticlesDataProvider>{children}</ArticlesDataProvider>
+                </PodcastDataProvider>
+              </BookDataProvider>
+            </SermonDataProvider>
+          </QuestionAnswerDataProvider>
+        </VideosDataProvider>
+      </FeedbackDataProvider>
     </PdfDataProvider>
   );
 };

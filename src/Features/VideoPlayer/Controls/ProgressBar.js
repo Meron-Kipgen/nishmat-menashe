@@ -31,36 +31,22 @@ const ProgressSlider = styled.input`
   &::-moz-range-track {
     width: 100%;
     height: 100%;
-    background: white; /* Red color fills the track */
+    background: red; /* Red color fills the track */
     border-radius: 0; /* No border radius */
   }
 
+  /* Hide the thumb */
   &::-webkit-slider-thumb {
     appearance: none;
-    width: 20px; /* Larger thumb */
-    height: 20px; /* Larger thumb */
-    background: white; /* Thumb color */
-    border-radius: 50%;
-    margin-top: -8px; /* Center the thumb */
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    transition: background 0.2s ease;
+    width: 0; 
+    height: 0;
   }
 
   &::-moz-range-thumb {
-    width: 6px; /* Larger thumb */
-    height: 6px; /* Larger thumb */
-    background: orange; /* Thumb color */
-
-    border: none;
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    transition: background 0.2s ease;
-   
+    width: 0; 
+    height: 0;
   }
- 
+
   &:focus::-webkit-slider-runnable-track {
     background: white;
   }
@@ -68,12 +54,14 @@ const ProgressSlider = styled.input`
   &:focus::-moz-range-track {
     background: white;
   }
+
   &::-moz-range-progress {
     background: red;
     height: 100%;
     border-radius: 0; /* No border radius */
   }
 `;
+
 
 const Tooltip = styled.div`
   position: absolute;

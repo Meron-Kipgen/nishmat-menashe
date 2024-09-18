@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { usePodcastData } from "./usePodcastData"; 
-import AddEpisodeForm from "./AddEpisodeForm"; 
-import AudioPlayer from "../../../Features/AudioPlayer/AudioPlayer"; 
+import { usePodcastData } from "./usePodcastData";
+import AddEpisodeForm from "./AddEpisodeForm";
+import AudioPlayer from "../../../Features/AudioPlayer/AudioPlayer";
 import playerVars from "../../../Features/AudioPlayer/PlayerVars";
 import EditPodcast from "./EditPodcast";
 import styled from "styled-components";
 import UpdateEpisodeForm from "./UpdateEpisodeForm";
-
+import { UserContext } from "../../../contexts/UserContext";
+import CommentsSection from "../../../Features/Comment/CommentSection";
+import useCommentsData from "../../../Features/Comment/useCommentsData";
 const Container = styled.div`
   display: flex;
   gap: 20px;
@@ -21,13 +23,14 @@ const Container = styled.div`
   }
 `;
 
-const MiddleContent = styled.div`
-  flex: 1;
+const PlayerContainer = styled.div`
+  height: 220px;
   background-color: #ffffff;
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
+  position: relative;
+  margin-bottom: 10px;
   @media (max-width: 768px) {
     padding: 15px;
   }
@@ -109,6 +112,7 @@ const Button = styled.button`
 `;
 
 const EpisodeContainer = styled.div`
+  width: 100%;
   background-color: #ffffff;
   border-radius: 10px;
   padding: 15px;
@@ -159,10 +163,46 @@ const EpisodeButton = styled.button`
     font-size: 12px;
   }
 `;
-
+const LeftContainer = styled.div`
+  width: 300px;
+`;
+const RightContainer = styled.div`
+  width: 500px;
+`;
+const EpisodeWrapper = styled.div`
+  width: 500px;
+`;
+const NextPrevious = styled.div`
+  position: absolute;
+  top: 60px;
+  width: 94%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+const NextAndPreviousButton = styled.div`
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 40px;
+  cursor: pointer;
+`;
+const Buttoncontainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const TitleAndBtnContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const MiddleContainer = styled.div`
+  flex: 1;
+`;
 const PodcastDetails = () => {
   const { id } = useParams();
-  const { podcastData, fetchEpisodes, deletePodcast, deleteEpisode } = usePodcastData();
+  const { podcastData, fetchEpisodes, deletePodcast, deleteEpisode } =
+    usePodcastData();
   const [isAddingEpisode, setIsAddingEpisode] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUpdatingEpisode, setIsUpdatingEpisode] = useState(null);
@@ -172,6 +212,15 @@ const PodcastDetails = () => {
   const [selectedTitle, setSelectedTitle] = useState(null);
   const navigate = useNavigate();
   const podcast = podcastData.find(podcast => podcast.$id === id);
+  const { isAdmin } = useContext(UserContext);
+  const {
+    comments,
+    loading,
+    error,
+    updateComment,
+    deleteComment,
+    createComment,
+  } = useCommentsData(podcast?.$id);
 
   useEffect(() => {
     if (podcast) {
@@ -201,7 +250,7 @@ const PodcastDetails = () => {
     }
   };
 
-  const handlePlayEpisode = (index) => {
+  const handlePlayEpisode = index => {
     setCurrentEpisodeIndex(index);
     const episode = episodes[index];
     setSelectedAudioUrl(episode.audioId);
@@ -209,7 +258,10 @@ const PodcastDetails = () => {
   };
 
   const handleNextEpisode = () => {
-    if (currentEpisodeIndex !== null && currentEpisodeIndex < episodes.length - 1) {
+    if (
+      currentEpisodeIndex !== null &&
+      currentEpisodeIndex < episodes.length - 1
+    ) {
       handlePlayEpisode(currentEpisodeIndex + 1);
     }
   };
@@ -222,74 +274,110 @@ const PodcastDetails = () => {
 
   return (
     <Container>
-      <MiddleContent>
+      <LeftContainer>
         <Thumbnail>
           <img src={podcast.thumbnail} alt={`${podcast.title} thumbnail`} />
         </Thumbnail>
         <Title>{podcast.title}</Title>
         <Rabbi>{podcast.rabbi}</Rabbi>
         <Description>{podcast.description}</Description>
-        <AudioPlayer
-          audioUrl={selectedAudioUrl}
-          playerVars={playerVars}
-          shouldPlay={true}
+        {isAdmin && (
+          <Buttoncontainer>
+            <Button onClick={handleDelete}>Delete</Button>
+            <Button onClick={() => setIsUpdating(true)}>Update</Button>
+            {isUpdating && (
+              <EditPodcast
+                podcastId={id}
+                onClose={() => setIsUpdating(false)}
+              />
+            )}
+          </Buttoncontainer>
+        )}
+      </LeftContainer>
+      <MiddleContainer>
+        <PlayerContainer>
+          <AudioPlayer
+            audioUrl={selectedAudioUrl}
+            playerVars={playerVars}
+            shouldPlay={true}
+          />
+          <NextPrevious>
+            <NextAndPreviousButton
+              onClick={handlePreviousEpisode}
+              disabled={currentEpisodeIndex === 0}
+            >
+              Previous
+            </NextAndPreviousButton>
+            <NextAndPreviousButton
+              onClick={handleNextEpisode}
+              disabled={currentEpisodeIndex === episodes.length - 1}
+            >
+              Next
+            </NextAndPreviousButton>
+          </NextPrevious>
+        </PlayerContainer>
+        <CommentsSection
+          postId={podcast.$id}
+          comments={comments}
+          loading={loading}
+          error={error}
+          createComment={createComment}
+          updateComment={updateComment}
+          deleteComment={deleteComment}
+          maxPosts={comments.length}
         />
-        <div>
-          <Button onClick={handlePreviousEpisode} disabled={currentEpisodeIndex === 0}>
-            Previous
-          </Button>
-          <Button onClick={handleNextEpisode} disabled={currentEpisodeIndex === episodes.length - 1}>
-            Next
-          </Button>
-        </div>
-        <Button onClick={handleDelete}>Delete Podcast</Button>
-        <Button onClick={() => setIsUpdating(true)}>Update Podcast</Button>
-        {isUpdating && (
-          <EditPodcast podcastId={id} onClose={() => setIsUpdating(false)} />
-        )}
-      </MiddleContent>
+      </MiddleContainer>
+      <RightContainer>
+        <EpisodeWrapper>
+          <button onClick={() => setIsAddingEpisode(true)}>Add Episode</button>
 
-      <div>
-        <button onClick={() => setIsAddingEpisode(true)}>Add Episode</button>
+          <div>
+            <h2>Episodes</h2>
+            {episodes.map((episode, index) => (
+              <EpisodeContainer key={episode.$id}>
+                <h1>Episode: {episode.episodeNum}</h1>
+                <TitleAndBtnContainer>
+                  <EpisodeTitle>{episode.title}</EpisodeTitle>
 
-        <div>
-          <h2>Episodes</h2>
-          {episodes.map((episode, index) => (
-            <EpisodeContainer key={episode.$id}>
-              <h1>Episode: {episode.episodeNum}</h1>
-              <EpisodeTitle>{episode.title}</EpisodeTitle>
-              
-              <EpisodeActions>
-                <EpisodeButton
-                  onClick={() => handlePlayEpisode(index)}
-                >
-                  Play
-                </EpisodeButton>
-                <EpisodeButton onClick={() => setIsUpdatingEpisode(episode)}>
-                  Update
-                </EpisodeButton>
-                <EpisodeButton onClick={() => handleDeleteEpisode(episode.$id)}>
-                  Delete
-                </EpisodeButton>
-              </EpisodeActions>
-            </EpisodeContainer>
-          ))}
-        </div>
+                  <EpisodeActions>
+                    <EpisodeButton onClick={() => handlePlayEpisode(index)}>
+                      Play
+                    </EpisodeButton>
+                    {isAdmin && (
+                      <>
+                        <EpisodeButton
+                          onClick={() => setIsUpdatingEpisode(episode)}
+                        >
+                          Update
+                        </EpisodeButton>
+                        <EpisodeButton
+                          onClick={() => handleDeleteEpisode(episode.$id)}
+                        >
+                          Delete
+                        </EpisodeButton>
+                      </>
+                    )}
+                  </EpisodeActions>
+                </TitleAndBtnContainer>
+              </EpisodeContainer>
+            ))}
+          </div>
 
-        {isAddingEpisode && (
-          <AddEpisodeForm
-            podcastId={podcast.$id}
-            onClose={() => setIsAddingEpisode(false)}
-          />
-        )}
+          {isAddingEpisode && (
+            <AddEpisodeForm
+              podcastId={podcast.$id}
+              onClose={() => setIsAddingEpisode(false)}
+            />
+          )}
 
-        {isUpdatingEpisode && (
-          <UpdateEpisodeForm
-            episodeId={isUpdatingEpisode.$id}
-            onClose={() => setIsUpdatingEpisode(null)}
-          />
-        )}
-      </div>
+          {isUpdatingEpisode && (
+            <UpdateEpisodeForm
+              episodeId={isUpdatingEpisode.$id}
+              onClose={() => setIsUpdatingEpisode(null)}
+            />
+          )}
+        </EpisodeWrapper>
+      </RightContainer>
     </Container>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaCalendarAlt, FaHashtag, FaStar, FaBell } from 'react-icons/fa';
+
 import Khagim from '../../Features/Events/Khagim';
 
 const SidebarContainer = styled.div`
@@ -53,8 +53,6 @@ const RightSidebar = () => {
       <div>
        <Khagim/>
       </div>
-
-      
 
     </SidebarContainer>
   );

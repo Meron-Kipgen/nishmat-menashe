@@ -18,11 +18,29 @@ const Container = styled.section`
   padding: 20px;
   margin: 45px 0;
 
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
+    margin-top: 90px;
     padding: 0 5px;
+
   }
 `;
+const ImageContaier = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+img{
+  width: 20%;
+  margin-bottom: 30px;
+  @media (max-width: 768px) {
 
+    width: 80%;
+  }
+}
+@media (max-width: 768px) {
+    margin-top: 30px;
+    padding: 0 5px;
+  }
+`
 const AddNewButton = styled.div`
   position: absolute;
   display: flex;
@@ -88,23 +106,13 @@ const ToggleButton = styled.div`
   }
 `;
 
-const Title = styled.h2`
-  text-align: center;
-  color: #007bff;
-  margin-top: 0;
-  margin-bottom: 20px;
 
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    margin-top: 60px;
-  }
-`;
 
 const MainWrapper = styled.section`
+
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
 `;
 
 export default function Alon() {
@@ -172,14 +180,18 @@ export default function Alon() {
           {isSideSectionVisible && <SideSection currentUrl={currentUrl} />}
         </>
       )}
-      <Title>Nishmat Menashe Alon Pdf</Title>
+      <ImageContaier>
+         <img src="../nmalon.png"/>  
+         {!isMobile && <SideSection currentUrl={currentUrl} />}
+      </ImageContaier>
+    
       <Filter filters={filters} onInputChange={handleInputChange} />
       <MainWrapper>
         <MainSection
           filteredPdfData={filteredPdfData}
           handleDownloadClick={handleDownloadClick}
         />
-        {!isMobile && <SideSection currentUrl={currentUrl} />}
+      
       </MainWrapper>
     </Container>
   );

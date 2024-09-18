@@ -6,12 +6,12 @@ import { useNavigate } from 'react-router-dom';
 const Container = styled.div`
  display: flex;
  flex-direction: column;
- height: 350px;
+ height: 320px;
  width: 240px;
  background: white;
  padding: 10px;
  border-radius: 8px;
- 
+ cursor: pointer;
  @media (max-width: 768px) {
   width: 45%;
   height: 320px;
@@ -88,7 +88,6 @@ const PodcastCard = ({ id, title, description, thumbnail, rabbi, season, isCompl
       <InfoContainer>
         <Info>Rabbi: {rabbi}</Info>
       <Info>Season: {season}</Info>
-      <Info>Played: {played}</Info>
       <Info>Status: {isComplete ? 'Completed' : 'Running'}</Info>
       </InfoContainer>
       

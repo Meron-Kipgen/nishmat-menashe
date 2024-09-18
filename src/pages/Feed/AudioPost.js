@@ -83,7 +83,7 @@ const PlayButton = styled.div`
   position: absolute;
   display: flex;
   top: 40px;
-  left: 35px;
+  left: 40px;
   align-items: center;
   justify-content: center;
   width: 70px;

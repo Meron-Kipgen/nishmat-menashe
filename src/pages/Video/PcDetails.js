@@ -13,6 +13,7 @@ import useCommentsData from "../../Features/Comment/useCommentsData";
 import { UserContext } from "../../contexts/UserContext";
 import TimeAgo from "../../utils/TimeAgo";
 
+
 const Container = styled.section`
 width: 100%;
   display: flex;
@@ -33,16 +34,19 @@ const DetailsContainer = styled.section`
   background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(30px);
   padding: 10px 20px;
-  max-width: 100%;
+
 
   h1 {
+    width: 80%;
     font-size: 1.5rem;
   }
 
   h3 {
+    width: 80%;
     padding: 10px 0;
     font-size: 1rem;
   }
+  
 `;
 const AdminBtn = styled.div`
   
@@ -117,16 +121,16 @@ export default function PcDetails() {
   return (
     <Container>
       <VideoSection>
-        <VideoWrapper>
-          <Player src={video.videoUrl} poster={video.poster} />
-        </VideoWrapper>
+      <VideoWrapper>
+       <Player src={video.videoUrl} poster={video.poster} />
+       </VideoWrapper>
+          
         <DetailsContainer>
           <h1>{video.title}</h1>
-          <Description description={video.description} />
-          <h3>By: {video.rabbi}</h3>
-          <span>Views: {video.views}</span>
-
-          <p><TimeAgo createdAt={video.$createdAt}/></p>
+          <p>   <Description description={video.description} /> </p>
+          <h3>By: {video.rabbi} - <TimeAgo createdAt={video.$createdAt}/> </h3>
+          <p>Views: {video.views}</p>
+         
           {isAdmin && (
             <AdminBtn>
               <Delete videoId={id} />

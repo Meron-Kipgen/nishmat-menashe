@@ -369,7 +369,7 @@ export const QnAIcon = ({ height, width, stroke = "#2c3e50" }) => (
 );
 
 
-export const MaximizeIcon = ({ height, width, stroke = "#2c3e50" }) => (
+export const MaximizeIcon = ({ height, width, stroke = "#ffffff" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     className="icon icon-tabler icon-tabler-grid-3x3"
@@ -395,7 +395,7 @@ export const MaximizeIcon = ({ height, width, stroke = "#2c3e50" }) => (
 
   </svg>
 );
-export const MinimizeIcon = ({ height, width, stroke = "#2c3e50" }) => (
+export const MinimizeIcon = ({ height, width, stroke = "#ffffff" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     className="icon icon-tabler icon-tabler-grid-3x3"
@@ -421,4 +421,135 @@ export const MinimizeIcon = ({ height, width, stroke = "#2c3e50" }) => (
 
 
   </svg>
+);
+
+export const MuteIcon = ({ height, width, stroke = "#ffffff" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" />
+  <path d="M16 10l4 4m0 -4l-4 4" />
+
+
+
+  </svg>
+);
+
+export const VolumeIcon = ({ height, width, stroke = "#ffffff" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M15 8a5 5 0 0 1 0 8" />
+  <path d="M17.7 5a9 9 0 0 1 0 14" />
+  <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" />
+
+
+
+
+  </svg>
+);
+
+export const PlayIcon = ({ height, width, stroke = "#ffffff" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="#fff"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z" stroke-width="0" fill="currentColor" />
+
+  </svg>
+);
+
+export const PauseIcon = ({ height, width, stroke = "#ffffff" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="#fff"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M9 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" stroke-width="0" fill="currentColor" />
+  <path d="M17 4h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2z" stroke-width="0" fill="currentColor" />
+  </svg>
+);
+
+export const ForwardIcon = ({ height, width, stroke = "#ffffff" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M11 14l4 -4l-4 -4" />
+  <path d="M16 14l4 -4l-4 -4" />
+  <path d="M15 10h-7a4 4 0 1 0 0 8h1" />
+
+  </svg>
+);
+export const BackwardIcon = ({ height, width, stroke = "#ffffff" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="icon icon-tabler icon-tabler-grid-3x3"
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    strokeWidth="2.3"
+    stroke={stroke}
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+
+  <path d="M13 14l-4 -4l4 -4" />
+  <path d="M8 14l-4 -4l4 -4" />
+  <path d="M9 10h7a4 4 0 1 1 0 8h-1" />
+</svg>
+
 );

@@ -73,35 +73,12 @@ const Khagim = () => {
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [location, setLocation] = useState(null);
 
   useEffect(() => {
-    const getLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            setLocation(position.coords);
-          },
-          error => {
-            console.error('Error getting location:', error);
-            setError('Error getting location');
-          }
-        );
-      } else {
-        setError('Geolocation is not supported by this browser.');
-      }
-    };
-
-    getLocation();
-  }, []);
-
-  useEffect(() => {
-    if (!location) return;
-
     const loadHolidays = async () => {
       try {
         const response = await fetch(
-          `https://www.hebcal.com/hebcal/?v=1&cfg=json&year=now&maj=on&min=on&lat=${location.latitude}&lon=${location.longitude}`
+          'https://www.hebcal.com/hebcal/?v=1&cfg=json&year=now&maj=on&min=on'
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -126,7 +103,7 @@ const Khagim = () => {
     };
 
     loadHolidays();
-  }, [location]);
+  }, []);
 
   if (loading) return <Loading>Loading holidays...</Loading>;
   if (error) return <Error>{error}</Error>;

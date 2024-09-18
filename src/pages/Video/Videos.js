@@ -12,6 +12,7 @@ import { useVideosData } from "./useVideosData";
 import useMediaQuery from "../../hooks/useMediaQuery";
 import MobileDetails from "./MobileDetails"
 
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -65,7 +66,7 @@ const CardContainer = styled.div`
   flex-direction: column;
   width: 360px;
   border-radius: 10px;
-  height: 360px;
+  height: 350px;
   padding: 15px;
   background: white;
 
@@ -92,8 +93,10 @@ const ThumbnailContainer = styled.div`
   }
   @media (max-width: 768px) {
     img {
-      border-radius: 0px;
-      height: auto;
+      border-radius: 0;
+      width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
     }
   }
 `;
@@ -116,6 +119,7 @@ const TextContainer = styled.div`
     overflow: hidden;
     -webkit-line-clamp: 2;
     text-overflow: ellipsis;
+    margin-bottom: 10px;
   }
   h3 {
     font-size: 1rem;
@@ -204,6 +208,7 @@ const Video = () => {
                 />
               )}
             </SubCatContainer>
+        
             <ItemContainer>
               {filteredVideo.map((video, index) => (
                 <Card
@@ -216,6 +221,7 @@ const Video = () => {
                   poster={video.poster}
                   createdAt={video.$createdAt}
                   videoUrl={video.videoUrl}
+                  subcategory={video.subcategory}
                   category={video.category}
                   CardContainer={CardContainer}
                   TextContainer={TextContainer}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MaximizeIcon, MinimizeIcon } from '../../../Assets/Icons';
 
 const FullscreenButton = ({ containerRef }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -29,7 +30,7 @@ const FullscreenButton = ({ containerRef }) => {
 
   return (
     <div onClick={toggleFullscreen}>
-      {isFullscreen ? <img src="/icons/video/minimize.svg" alt='minimize'/> : <img src="/icons/video/maximize.svg" alt='maximize'/> }
+      {isFullscreen ? <MinimizeIcon height={30} width={30}/> : <MaximizeIcon height={30} width={30}/> }
     </div>
   );
 };

@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import TimeAgo from "../../utils/TimeAgo"; 
 import { useVideosData } from "./useVideosData";
 
-const CardFooter = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
+
 
 const Card = ({
   id,
@@ -16,6 +11,7 @@ const Card = ({
   rabbi,
   poster,
   category,
+  subcategory,
   createdAt,
   thumbnail,
   CardContainer,
@@ -46,14 +42,12 @@ const Card = ({
       </ThumbnailContainer>
 
       <TextContainer>
-        <h1>{title}</h1>
-        <p>
-          <TimeAgo createdAt={createdAt} /> ⁃ {category}
-        </p>
-        <CardFooter>
-          <h3>{rabbi}</h3><span>{views}</span>
+        <h1>{title}</h1>  
+        <h3>{rabbi} ⁃ <TimeAgo createdAt={createdAt} /></h3>
+        <p> {category} ⁃ {subcategory} </p>
+        <p> Views:{views}   </p>
          
-        </CardFooter>
+  
       </TextContainer>
     </CardContainer>
   );

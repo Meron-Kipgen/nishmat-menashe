@@ -19,7 +19,7 @@ const FormContainer = styled.form`
   flex-direction: column;
 
   @media (max-width: 768px) {
-    width: 95%;
+    width: 100%;
     padding: 15px;
   }
 `;

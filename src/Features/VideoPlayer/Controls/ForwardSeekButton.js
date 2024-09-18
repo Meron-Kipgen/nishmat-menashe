@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { ForwardIcon } from "../../../Assets/Icons";
 
 const SeekButton = styled.div`
   cursor: pointer;
@@ -12,7 +13,7 @@ const ForwardSeekButton = ({ onSeekForward }) => {
 
   return (
     <SeekButton onClick={handleSeekForward}>
-      <img src="/icons/video/forward.svg" alt="forward" />
+      <ForwardIcon height={30} width={30}/>
     </SeekButton>
   );
 };
